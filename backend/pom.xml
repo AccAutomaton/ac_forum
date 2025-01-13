@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.acautomaton.forum</groupId>
-    <artifactId>backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>backend</name>
-    <description>backend</description>
+    <artifactId>forum_backend</artifactId>
+    <version>1.0.0</version>
+    <name>forum_backend</name>
+    <description>forum_backend</description>
     <url/>
     <licenses>
         <license/>
@@ -33,6 +33,21 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
 
         <dependency>
@@ -53,7 +68,30 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profilesActive>dev</profilesActive>
+                <modifier>-dev</modifier>
+                <jarType>dev</jarType>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>preview</id>
+            <properties>
+                <profilesActive>preview</profilesActive>
+                <modifier>-preview</modifier>
+                <jarType>preview</jarType>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
+        <finalName>${artifactId}-${project.version}-${jarType}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -71,6 +109,10 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <profiles>
+                        <profile>dev</profile>
+                        <profile>preview</profile>
+                    </profiles>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -80,6 +122,19 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>banner.txt</include>
+                    <include>application.yml</include>
+                    <include>application-${profilesActive}.yml</include>
+                    <include>log4j2-${profilesActive}.yml</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>
