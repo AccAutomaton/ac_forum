@@ -1,4 +1,4 @@
-package com.acautomaton.forum.backend;
+package com.acautomaton.forum;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
