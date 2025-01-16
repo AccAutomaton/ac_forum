@@ -41,7 +41,7 @@ Configuration:
             modulate: true
             interval: 1
         DefaultRolloverStrategy:
-          max: 20
+          max: 256
       - name: EXCEPTION_ROLLING_FILE
         ignoreExceptions: false
         fileName: ${log.path}/exception/${project.name}_exception.log
@@ -77,7 +77,7 @@ Configuration:
             modulate: true
             interval: 1
         DefaultRolloverStrategy:
-          max: 20
+          max: 256
       - name: ROLLING_FILE_USER
         fileName: ${log.path}/user/user-${project.name}.log
         filePattern: "${log.path}/user/$${date:yyyy-MM-dd}/user-${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
@@ -98,7 +98,7 @@ Configuration:
             modulate: true
             interval: 1
         DefaultRolloverStrategy:
-          max: 100
+          max: 256
   Loggers:
     Root:
       level: debug
