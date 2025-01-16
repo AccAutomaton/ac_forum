@@ -101,7 +101,7 @@ Configuration:
           max: 256
   Loggers:
     Root:
-      level: debug
+      level: info
       AppenderRef:
         - ref: CONSOLE
         - ref: ROLLING_FILE
@@ -109,10 +109,10 @@ Configuration:
         - ref: WARN_ROLLING_FILE
     Logger:
       - name: exception
-        level: error
+        level: "error"
         additivity: true
         AppenderRef:
           - ref: EXCEPTION_ROLLING_FILE
       - name: com.acautomaton
-        level: debug
+        level: "info"
         additivity: true
