@@ -114,5 +114,8 @@ Configuration:
         AppenderRef:
           - ref: EXCEPTION_ROLLING_FILE
       - name: com.acautomaton
-        level: "info"
+        level: "debug"
         additivity: true
+      - name: org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer
+        level: "error"
+        additivity: false
