@@ -97,13 +97,6 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.35</version>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
@@ -134,11 +127,11 @@
             </activation>
         </profile>
         <profile>
-            <id>preview</id>
+            <id>pre</id>
             <properties>
-                <profilesActive>preview</profilesActive>
-                <modifier>-preview</modifier>
-                <jarType>preview</jarType>
+                <profilesActive>pre</profilesActive>
+                <modifier>-pre</modifier>
+                <jarType>pre</jarType>
             </properties>
         </profile>
     </profiles>
@@ -165,7 +158,7 @@
                 <configuration>
                     <profiles>
                         <profile>dev</profile>
-                        <profile>preview</profile>
+                        <profile>pre</profile>
                     </profiles>
                     <excludes>
                         <exclude>
