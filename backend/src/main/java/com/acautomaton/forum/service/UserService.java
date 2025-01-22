@@ -1,11 +1,17 @@
 package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.enumerate.UserStatus;
+import com.acautomaton.forum.enumerate.UserType;
 import com.acautomaton.forum.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
@@ -33,18 +39,33 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return this.getOne(queryWrapper);
     }
 
+    public boolean usernameExists(String username) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        return this.exists(queryWrapper);
+    }
+
     public boolean userEmailExists(String email) {
-        return getUserByEmail(email) != null;
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", email);
+        return this.exists(queryWrapper);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public User registerUser(User user) {
+    public boolean register(String username, String password, String email) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        Date now = new Date();
+        User user = new User(null, username, passwordEncoder.encode(password), email,
+                UserStatus.NORMAL, "", UserType.USER, "", now, now, 0);
+        addUser(user);
+        return user.getUid() != null && user.getUid() > 10000000;
+    }
+
+    private void addUser(User user) {
         this.save(user);
-        return user;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void updateUser(User user) {
-        this.saveOrUpdate(user);
+    private void updateUser(User user) {
+        this.updateById(user);
     }
 }

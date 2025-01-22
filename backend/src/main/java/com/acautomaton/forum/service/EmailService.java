@@ -53,12 +53,20 @@ public class EmailService {
         helper.setText(getEmailText(project, verifyCode), true);
 
         if ("dev".equals(env)) {
-            log.debug("-- dev mode -- 成功向 {} 发送 {} 验证码 {}", receiveAddress, project, verifyCode);
+            log.debug("[dev] 成功向 {} 发送 {} 验证码 {}", receiveAddress, project, verifyCode);
         }
         else {
             javaMailSender.send(mimeMessage);
             log.info("成功向 {} 发送 {} 验证码", receiveAddress, project);
         }
+    }
+
+    public boolean judgeVerifyCode(String receiveAddress, String verifyCode) {
+        return verifyCode.equals(redisUtil.get("emailVerifyCode_" + receiveAddress));
+    }
+
+    public void deleteVerifyCode(String receiveAddress) {
+        redisUtil.deleteKeys("emailVerifyCode_" + receiveAddress);
     }
 
     private String getEmailText(String project, String verifyCode) {

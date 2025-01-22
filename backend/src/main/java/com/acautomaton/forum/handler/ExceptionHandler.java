@@ -2,6 +2,7 @@ package com.acautomaton.forum.handler;
 
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumRequestTooFrequentException;
+import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -20,6 +21,7 @@ public class ExceptionHandler {
             value = {
                 ForumIllegalArgumentException.class,
                 UsernameNotFoundException.class,
+                ForumVerifyException.class
             }
     )
     public Response Exception(Exception e) {
