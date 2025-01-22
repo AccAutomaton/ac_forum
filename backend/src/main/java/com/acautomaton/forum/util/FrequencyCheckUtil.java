@@ -14,15 +14,15 @@ public class FrequencyCheckUtil {
         this.redisUtil = redisUtil;
     }
 
-    public boolean checkPrivateProject(String checkProjectName, User user, Long expire, Integer timesPerExpire, Long expireOfBan) {
+    public boolean privateProjectFrequencyAccess(String checkProjectName, User user, Long expire, Integer timesPerExpire, Long expireOfBan) {
         String keyOfBan = "Ban_" + checkProjectName + "_" + user.getUid();
         String keyOfRequestTimes = "RequestTimes_ " + checkProjectName + "_" + user.getUid();
         return check(expire, timesPerExpire, expireOfBan, keyOfBan, keyOfRequestTimes);
     }
 
-    public boolean checkPublicProject(String checkProjectName, String ip, Long expire, Integer timesPerExpire, Long expireOfBan) {
-        String keyOfBan = "Ban_" + checkProjectName + "_" + ip;
-        String keyOfRequestTimes = "RequestTimes_ " + checkProjectName + "_" + ip;
+    public boolean publicProjectFrequencyAccess(String checkProjectName, Long expire, Integer timesPerExpire, Long expireOfBan) {
+        String keyOfBan = "Ban_" + checkProjectName;
+        String keyOfRequestTimes = "RequestTimes_ " + checkProjectName;
         return check(expire, timesPerExpire, expireOfBan, keyOfBan, keyOfRequestTimes);
     }
 

@@ -1,19 +1,17 @@
-package com.acautomaton.forum.service.impl;
+package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.entity.SecurityUser;
 import com.acautomaton.forum.entity.User;
-import com.acautomaton.forum.service.inte.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     UserService userService;
     @Autowired
-    public UserDetailsServiceImpl(UserService userService) {
+    public UserDetailsService(UserService userService) {
         this.userService = userService;
     }
 

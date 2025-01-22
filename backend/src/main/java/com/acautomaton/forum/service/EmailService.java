@@ -1,5 +1,8 @@
-package com.acautomaton.forum.service.impl;
+package com.acautomaton.forum.service;
 
+import com.acautomaton.forum.exception.ForumRequestTooFrequentException;
+import com.acautomaton.forum.util.FrequencyCheckUtil;
+import com.acautomaton.forum.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -10,20 +13,38 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
 @Slf4j
 @Service
-public class EmailServiceImpl {
+public class EmailService {
     @Value("${spring.profiles.active}")
     private String env;
     JavaMailSender javaMailSender;
+    FrequencyCheckUtil frequencyCheckUtil;
+    RedisUtil redisUtil;
 
     @Autowired
-    public EmailServiceImpl(JavaMailSender javaMailSender) {
+    public EmailService(JavaMailSender javaMailSender, FrequencyCheckUtil frequencyCheckUtil, RedisUtil redisUtil) {
         this.javaMailSender = javaMailSender;
+        this.frequencyCheckUtil = frequencyCheckUtil;
+        this.redisUtil = redisUtil;
     }
 
-    public void sendVerifycode(String project, String receiveAddress, String verifyCode) throws MessagingException, UnsupportedEncodingException {
+    public void sendVerifycode(String project, String receiveAddress) throws MessagingException, UnsupportedEncodingException {
+        if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerMinute_" + receiveAddress,
+                60L, 1, 60L)) {
+            throw new ForumRequestTooFrequentException("一分钟内只能请求一次邮箱验证码，请稍后再试");
+        }
+        if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerHour_" + receiveAddress,
+                60 * 60L, 5, 60 * 60L)) {
+            throw new ForumRequestTooFrequentException("请求邮箱验证码的频率过高，请稍后再试");
+        }
+
+        Random random = new Random(System.currentTimeMillis() + 114514L);
+        String verifyCode = Integer.toString(random.nextInt(899999) + 100000);
+        redisUtil.set("emailVerifyCode_" + receiveAddress, verifyCode, 15 * 60L);
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
         helper.setFrom("ac_forum@mail.acautomaton.com", "AC论坛");
