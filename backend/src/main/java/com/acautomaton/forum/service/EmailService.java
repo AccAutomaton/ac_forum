@@ -32,12 +32,15 @@ public class EmailService {
     }
 
     public void sendVerifycode(String project, String receiveAddress) throws MessagingException, UnsupportedEncodingException {
+        log.info("邮箱 {} 正试图请求一个验证码", receiveAddress);
+
         if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerMinute_" + receiveAddress,
                 60L, 1, 60L)) {
             throw new ForumRequestTooFrequentException("一分钟内只能请求一次邮箱验证码，请稍后再试");
         }
         if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerHour_" + receiveAddress,
                 60 * 60L, 5, 60 * 60L)) {
+            log.warn("邮箱 {} 请求验证码频率过高已被封禁 1 小时", receiveAddress);
             throw new ForumRequestTooFrequentException("请求邮箱验证码的频率过高，请稍后再试");
         }
 
@@ -62,14 +65,21 @@ public class EmailService {
     }
 
     public boolean judgeVerifyCode(String receiveAddress, String verifyCode) {
-        return verifyCode.equals(redisUtil.get("emailVerifyCode_" + receiveAddress));
+        if (verifyCode.equals(redisUtil.get("emailVerifyCode_" + receiveAddress))) {
+            log.info("校验邮箱 {} 验证码正确", receiveAddress);
+            return true;
+        } else {
+            log.info("校验邮箱 {} 验证码错误", receiveAddress);
+            return false;
+        }
     }
 
     public void deleteVerifyCode(String receiveAddress) {
+        log.info("删除邮箱 {} 验证码（使用结束）", receiveAddress);
         redisUtil.deleteKeys("emailVerifyCode_" + receiveAddress);
     }
 
-    private String getEmailText(String project, String verifyCode) {
+    private static String getEmailText(String project, String verifyCode) {
         return """
                 <!DOCTYPE html>
                 <html lang="en">

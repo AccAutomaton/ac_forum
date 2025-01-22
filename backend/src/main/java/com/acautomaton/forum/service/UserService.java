@@ -6,6 +6,7 @@ import com.acautomaton.forum.enumerate.UserType;
 import com.acautomaton.forum.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,15 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
-    public User getUserByUid(String uid) {
+    private User getUserByUid(String uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         return this.getOne(queryWrapper);
     }
 
-    public User getUserByUid(Integer uid) {
+    private User getUserByUid(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         return this.getOne(queryWrapper);
@@ -33,7 +35,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return this.getOne(queryWrapper);
     }
 
-    public User getUserByEmail(String email) {
+    private User getUserByEmail(String email) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
         return this.getOne(queryWrapper);
@@ -58,7 +60,13 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         User user = new User(null, username, passwordEncoder.encode(password), email,
                 UserStatus.NORMAL, "", UserType.USER, "", now, now, 0);
         addUser(user);
-        return user.getUid() != null && user.getUid() > 10000000;
+        if (user.getUid() != null && user.getUid() > 10000000) {
+            log.info("用户 {} 注册成功", user.getUsername());
+            return true;
+        } else {
+            log.warn("用户 {} 注册失败", user.getUsername());
+            return false;
+        }
     }
 
     private void addUser(User user) {
