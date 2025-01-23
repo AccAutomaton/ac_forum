@@ -40,4 +40,10 @@ public class ExceptionHandler {
     public Response SpeedException(Exception e) {
         return Response.tooFrequentError(e.getMessage());
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = ForumEmailException.class)
+    public Response EmailServiceException(Exception e) {
+        log.warn("邮件服务异常: {}", e.getMessage());
+        return Response.error("服务器错误，请稍后再试");
+    }
 }

@@ -1,5 +1,7 @@
 package com.acautomaton.forum.service;
 
+import com.acautomaton.forum.exception.ForumEmailException;
+import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumRequestTooFrequentException;
 import com.acautomaton.forum.util.FrequencyCheckUtil;
 import com.acautomaton.forum.util.RedisUtil;
@@ -31,7 +33,7 @@ public class EmailService {
         this.redisUtil = redisUtil;
     }
 
-    public void sendVerifycode(String project, String receiveAddress) throws MessagingException, UnsupportedEncodingException {
+    public void sendVerifycode(String project, String receiveAddress) {
         log.info("邮箱 {} 正试图请求一个验证码", receiveAddress);
 
         if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerMinute_" + receiveAddress,
@@ -49,12 +51,17 @@ public class EmailService {
         redisUtil.set("emailVerifyCode_" + receiveAddress, verifyCode, 15 * 60L);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
-        helper.setFrom("ac_forum@mail.acautomaton.com", "AC论坛");
-        helper.setTo(receiveAddress);
-        helper.setSubject("AC论坛 - 验证码");
-        helper.setText(getEmailText(project, verifyCode), true);
-
+        MimeMessageHelper helper;
+        try {
+            helper = new MimeMessageHelper(mimeMessage, false);
+            helper.setFrom("ac_forum@mail.acautomaton.com", "AC论坛");
+            helper.setTo(receiveAddress);
+            helper.setSubject("AC论坛 - 验证码");
+            helper.setText(getEmailText(project, verifyCode), true);
+        }
+        catch (MessagingException | UnsupportedEncodingException e) {
+            throw new ForumEmailException(e.getMessage());
+        }
         if ("dev".equals(env)) {
             log.debug("[dev] 成功向 {} 发送 {} 验证码 {}", receiveAddress, project, verifyCode);
         }
@@ -68,7 +75,8 @@ public class EmailService {
         if (verifyCode.equals(redisUtil.get("emailVerifyCode_" + receiveAddress))) {
             log.info("校验邮箱 {} 验证码正确", receiveAddress);
             return true;
-        } else {
+        }
+        else {
             log.info("校验邮箱 {} 验证码错误", receiveAddress);
             return false;
         }

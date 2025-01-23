@@ -29,7 +29,7 @@ public class CaptchaService {
     public CaptchaImageVO getCaptcha() {
         lineCaptcha.createCode();
         String captchaUUID = UUID.randomUUID().toString();
-        redisUtil.set("captcha_" + captchaUUID, lineCaptcha.getCode().toLowerCase(), 5 * 60L);
+        redisUtil.set("captcha_" + captchaUUID, lineCaptcha.getCode(), 5 * 60L);
         if ("dev".equals(env)) {
             log.debug("[dev] 生成图形验证码 {}: {}", captchaUUID, lineCaptcha.getCode());
         }
@@ -45,7 +45,7 @@ public class CaptchaService {
             throw new ForumObjectExpireException("图形验证码已过期，请重试");
         }
         redisUtil.deleteKeys("captcha_" + captchaUUID);
-        if (correctCode.equals(code)) {
+        if (correctCode.equalsIgnoreCase(code)) {
             log.info("校验图形验证码 {} 正确", captchaUUID);
             return true;
         } else {
