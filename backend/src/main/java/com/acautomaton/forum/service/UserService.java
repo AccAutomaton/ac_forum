@@ -3,7 +3,10 @@ package com.acautomaton.forum.service;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.enumerate.UserStatus;
 import com.acautomaton.forum.enumerate.UserType;
+import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.mapper.UserMapper;
+import com.acautomaton.forum.util.JwtUtil;
+import com.acautomaton.forum.vo.login.LoginAuthorizationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -67,6 +71,22 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             log.warn("用户 {} 注册失败", user.getUsername());
             return false;
         }
+    }
+
+    public LoginAuthorizationVO login(String username, String password) {
+        User user = getUserByUsername(username);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            throw new ForumVerifyException("用户名或密码错误");
+        }
+        String authorization = "Bearer " + JwtUtil.getToken(
+                Map.ofEntries(
+                        Map.entry("uid", user.getUid().toString()),
+                        Map.entry("username", user.getUsername())
+                )
+        );
+        log.info("用户 {} 登陆成功", user.getUsername());
+        return new LoginAuthorizationVO(authorization);
     }
 
     private void addUser(User user) {

@@ -86,7 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String username = JwtUtil.decode(jwtToken, "username");
             if (!username.trim().isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-                log.debug("解析出JWT username: {}", username);
+                log.debug("解析出 JWT 用户名: {}", username);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (!userDetails.isAccountNonLocked()) {
                     throw new ForumIllegalAccountException("账户被锁定");

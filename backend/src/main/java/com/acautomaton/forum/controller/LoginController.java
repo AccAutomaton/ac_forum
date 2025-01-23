@@ -96,4 +96,20 @@ public class LoginController {
     public Response getCaptcha() {
         return Response.success(captchaService.getCaptcha());
     }
+
+    @Data
+    public static class loginRB {
+        @NotBlank(message = "用户名不能为空")
+        String username;
+        @NotBlank(message = "密码不能为空")
+        String password;
+    }
+
+    @PostMapping("/login")
+    public Response login(@Validated @RequestBody loginRB requestBody) {
+        if (!userService.usernameExists(requestBody.getUsername())) {
+            throw new ForumVerifyException("用户名或密码错误");
+        }
+        return Response.success(userService.login(requestBody.getUsername(), requestBody.getPassword())) ;
+    }
 }
