@@ -1,7 +1,6 @@
 package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.exception.ForumEmailException;
-import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumRequestTooFrequentException;
 import com.acautomaton.forum.util.FrequencyCheckUtil;
 import com.acautomaton.forum.util.RedisUtil;

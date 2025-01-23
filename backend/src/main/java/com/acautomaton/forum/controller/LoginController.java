@@ -30,14 +30,14 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public Response register(@Validated @RequestBody RegisterDTO registerDTO) {
-        loginService.register(registerDTO);
+    public Response register(@Validated @RequestBody RegisterDTO dto) {
+        loginService.register(dto);
         return Response.success();
     }
 
     @PostMapping("/getEmailVerifyCode/register")
-    public Response getEmailVerifyCodeForRegister(@Validated @RequestBody GetEmailVerifyCodeForRegisterDTO getEmailVerifyCodeForRegisterDTO) {
-        loginService.getEmailVerifyCodeForRegister(getEmailVerifyCodeForRegisterDTO);
+    public Response getEmailVerifyCodeForRegister(@Validated @RequestBody GetEmailVerifyCodeForRegisterDTO dto) {
+        loginService.getEmailVerifyCodeForRegister(dto);
         return Response.success();
     }
 
@@ -47,13 +47,13 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public Response login(@Validated @RequestBody LoginDTO loginDTO) {
-        return Response.success(loginService.login(loginDTO));
+    public Response login(@Validated @RequestBody LoginDTO dto) {
+        return Response.success(loginService.login(dto));
     }
 
     @PostMapping("/getEmailVerifyCode/resetPassword")
-    public Response getEmailVerifyCodeForResettingPassword(@Validated @RequestBody GetEmailVerifyCodeForResettingPasswordDTO getEmailVerifyCodeForSettingPasswordDTO) {
-        loginService.getEmailVerifyCodeForResettingPassword(getEmailVerifyCodeForSettingPasswordDTO);
+    public Response getEmailVerifyCodeForResettingPassword(@Validated @RequestBody GetEmailVerifyCodeForResettingPasswordDTO dto) {
+        loginService.getEmailVerifyCodeForResettingPassword(dto);
         return Response.success();
     }
 }
