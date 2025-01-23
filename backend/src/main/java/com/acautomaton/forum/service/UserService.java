@@ -89,6 +89,11 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return new LoginAuthorizationVO(authorization);
     }
 
+    public boolean verifyUserEmail(String username, String email) {
+        User user = getUserByUsername(username);
+        return user != null && user.getEmail().equals(email);
+    }
+
     private void addUser(User user) {
         this.save(user);
     }

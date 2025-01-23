@@ -1,5 +1,6 @@
 package com.acautomaton.forum.controller;
 
+import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.response.Response;
@@ -107,9 +108,24 @@ public class LoginController {
 
     @PostMapping("/login")
     public Response login(@Validated @RequestBody loginRB requestBody) {
-        if (!userService.usernameExists(requestBody.getUsername())) {
-            throw new ForumVerifyException("用户名或密码错误");
-        }
         return Response.success(userService.login(requestBody.getUsername(), requestBody.getPassword())) ;
+    }
+
+    @Data
+    public static class GetEmailVerifyCodeForSettingPasswordRB {
+        @NotBlank(message = "用户名不能为空")
+        String username;
+        @NotBlank(message = "邮箱不能为空")
+        @Email(message = "邮箱格式不正确")
+        String email;
+    }
+
+    @PostMapping("/getEmailVerifyCode/resetPassword")
+    public Response getEmailVerifyCodeForResettingPassword(@Validated @RequestBody GetEmailVerifyCodeForSettingPasswordRB requestBody) throws MessagingException, UnsupportedEncodingException {
+        if (!userService.verifyUserEmail(requestBody.username, requestBody.email)) {
+            throw new ForumVerifyException("用户名或邮箱错误");
+        }
+        emailService.sendVerifycode("重置密码", requestBody.email);
+        return Response.success();
     }
 }

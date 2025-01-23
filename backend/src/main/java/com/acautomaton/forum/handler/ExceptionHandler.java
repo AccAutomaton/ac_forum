@@ -21,7 +21,8 @@ public class ExceptionHandler {
                 UsernameNotFoundException.class,
                 ForumVerifyException.class,
                 ForumException.class,
-                ForumObjectExpireException.class
+                ForumObjectExpireException.class,
+                ForumExistentialityException.class
             }
     )
     public Response Exception(Exception e) {
