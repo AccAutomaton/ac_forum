@@ -6,7 +6,7 @@ import com.acautomaton.forum.dto.login.LoginDTO;
 import com.acautomaton.forum.dto.login.RegisterDTO;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.CaptchaService;
-import com.acautomaton.forum.service.EmailService;
+import com.acautomaton.forum.service.util.EmailService;
 import com.acautomaton.forum.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

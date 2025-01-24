@@ -1,9 +1,7 @@
-package com.acautomaton.forum.service;
+package com.acautomaton.forum.service.util;
 
 import com.acautomaton.forum.exception.ForumEmailException;
 import com.acautomaton.forum.exception.ForumRequestTooFrequentException;
-import com.acautomaton.forum.util.FrequencyCheckUtil;
-import com.acautomaton.forum.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -22,24 +20,24 @@ public class EmailService {
     @Value("${spring.profiles.active}")
     private String env;
     JavaMailSender javaMailSender;
-    FrequencyCheckUtil frequencyCheckUtil;
-    RedisUtil redisUtil;
+    RateLimitService rateLimitService;
+    RedisService redisService;
 
     @Autowired
-    public EmailService(JavaMailSender javaMailSender, FrequencyCheckUtil frequencyCheckUtil, RedisUtil redisUtil) {
+    public EmailService(JavaMailSender javaMailSender, RateLimitService rateLimitService, RedisService redisService) {
         this.javaMailSender = javaMailSender;
-        this.frequencyCheckUtil = frequencyCheckUtil;
-        this.redisUtil = redisUtil;
+        this.rateLimitService = rateLimitService;
+        this.redisService = redisService;
     }
 
     public void sendVerifycode(String project, String receiveAddress) {
         log.info("邮箱 {} 正试图请求一个验证码", receiveAddress);
 
-        if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerMinute_" + receiveAddress,
+        if (!rateLimitService.publicProjectFrequencyAccess("EmailVerifyCodePerMinute_" + receiveAddress,
                 60L, 1, 60L)) {
             throw new ForumRequestTooFrequentException("一分钟内只能请求一次邮箱验证码，请稍后再试");
         }
-        if (!frequencyCheckUtil.publicProjectFrequencyAccess("EmailVerifyCodePerHour_" + receiveAddress,
+        if (!rateLimitService.publicProjectFrequencyAccess("EmailVerifyCodePerHour_" + receiveAddress,
                 60 * 60L, 5, 60 * 60L)) {
             log.warn("邮箱 {} 请求验证码频率过高已被封禁 1 小时", receiveAddress);
             throw new ForumRequestTooFrequentException("请求邮箱验证码的频率过高，请稍后再试");
@@ -47,7 +45,7 @@ public class EmailService {
 
         Random random = new Random(System.currentTimeMillis() + 114514L);
         String verifyCode = Integer.toString(random.nextInt(899999) + 100000);
-        redisUtil.set("emailVerifyCode_" + receiveAddress, verifyCode, 15 * 60L);
+        redisService.set("emailVerifyCode_" + receiveAddress, verifyCode, 15 * 60L);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper;
@@ -71,7 +69,7 @@ public class EmailService {
     }
 
     public boolean judgeVerifyCode(String receiveAddress, String verifyCode) {
-        if (verifyCode.equals(redisUtil.get("emailVerifyCode_" + receiveAddress))) {
+        if (verifyCode.equals(redisService.get("emailVerifyCode_" + receiveAddress))) {
             log.info("校验邮箱 {} 验证码正确", receiveAddress);
             return true;
         }
@@ -83,7 +81,7 @@ public class EmailService {
 
     public void deleteVerifyCode(String receiveAddress) {
         log.info("删除邮箱 {} 验证码（使用结束）", receiveAddress);
-        redisUtil.deleteKeys("emailVerifyCode_" + receiveAddress);
+        redisService.deleteKeys("emailVerifyCode_" + receiveAddress);
     }
 
     private static String getEmailText(String project, String verifyCode) {

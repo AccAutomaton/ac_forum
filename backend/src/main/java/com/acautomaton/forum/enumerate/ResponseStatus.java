@@ -11,7 +11,7 @@ public enum ResponseStatus {
     SUCCESS(200, "success"),
     ERROR(403, "error"),
     JWT_ERROR(401, "jwt_error"),
-    TOO_FREQUENT_ERROR(503, "to_frequent_Error");
+    TOO_FREQUENT_ERROR(503, "too_frequent_Error");
 
     private final Integer code;
     private final String status;

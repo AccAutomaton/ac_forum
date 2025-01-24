@@ -1,8 +1,8 @@
-package com.acautomaton.forum.util;
+package com.acautomaton.forum.service.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Component
-public final class RedisUtil {
+@Service
+public final class RedisService {
     RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
+    public RedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

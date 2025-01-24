@@ -1,7 +1,7 @@
 package com.acautomaton.forum.filter;
 
 import com.acautomaton.forum.response.Response;
-import com.acautomaton.forum.util.JwtUtil;
+import com.acautomaton.forum.service.util.JwtService;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
@@ -31,10 +31,12 @@ import java.util.Map;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     UserDetailsService userDetailsService;
+    JwtService jwtService;
 
     @Autowired
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtService jwtService) {
         this.userDetailsService = userDetailsService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwtToken = authorization.substring(7);
         try {
-            JwtUtil.verify(jwtToken);
+            jwtService.verify(jwtToken);
         }
         catch (TokenExpiredException e) {
             String result = new ObjectMapper().writeValueAsString(Response.jwtError("Token超时,请重新登录"));
@@ -84,7 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            String username = JwtUtil.decode(jwtToken, "username");
+            String username = jwtService.decode(jwtToken, "username");
             if (!username.trim().isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
                 log.debug("解析出 JWT 用户名: {}", username);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);

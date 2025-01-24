@@ -1,17 +1,17 @@
-package com.acautomaton.forum.util;
+package com.acautomaton.forum.service.util;
 
 import com.acautomaton.forum.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@Component
-public class FrequencyCheckUtil {
-    RedisUtil redisUtil;
+@Service
+public class RateLimitService {
+    RedisService redisService;
     @Autowired
-    public FrequencyCheckUtil(RedisUtil redisUtil) {
-        this.redisUtil = redisUtil;
+    public RateLimitService(RedisService redisService) {
+        this.redisService = redisService;
     }
 
     public boolean privateProjectFrequencyAccess(String checkProjectName, User user, Long expire, Integer timesPerExpire, Long expireOfBan) {
@@ -27,25 +27,25 @@ public class FrequencyCheckUtil {
     }
 
     private boolean check(Long expire, Integer timesPerExpire, Long expireOfBan, String keyOfBan, String keyOfRequestTimes) {
-        if (redisUtil.hasKey(keyOfBan)) {
+        if (redisService.hasKey(keyOfBan)) {
             return false;
         }
-        if (redisUtil.hasKey(keyOfRequestTimes)) {
-            Integer times = (Integer) redisUtil.get(keyOfRequestTimes);
+        if (redisService.hasKey(keyOfRequestTimes)) {
+            Integer times = (Integer) redisService.get(keyOfRequestTimes);
             if (times >= timesPerExpire) {
-                redisUtil.set(keyOfBan, expireOfBan);
+                redisService.set(keyOfBan, expireOfBan);
                 log.warn("{} 访问次数过于频繁，已被临时停止访问", keyOfRequestTimes);
-                redisUtil.deleteKeys(keyOfRequestTimes);
+                redisService.deleteKeys(keyOfRequestTimes);
                 return false;
             }
-            long nowExpire = redisUtil.getExpire(keyOfRequestTimes);
+            long nowExpire = redisService.getExpire(keyOfRequestTimes);
             if (nowExpire <= 1L) {
                 nowExpire = 1L;
             }
-            redisUtil.set(keyOfRequestTimes, times + 1, nowExpire);
+            redisService.set(keyOfRequestTimes, times + 1, nowExpire);
         }
         else {
-            redisUtil.set(keyOfRequestTimes, 1, expire);
+            redisService.set(keyOfRequestTimes, 1, expire);
         }
         return true;
     }

@@ -11,7 +11,8 @@ import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.mapper.UserMapper;
-import com.acautomaton.forum.util.JwtUtil;
+import com.acautomaton.forum.service.util.EmailService;
+import com.acautomaton.forum.service.util.JwtService;
 import com.acautomaton.forum.vo.login.LoginAuthorizationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +31,14 @@ public class LoginService {
     UserMapper userMapper;
     EmailService emailService;
     CaptchaService captchaService;
+    JwtService jwtService;
 
     @Autowired
-    public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService) {
+    public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService, JwtService jwtService) {
         this.userMapper = userMapper;
         this.emailService = emailService;
         this.captchaService = captchaService;
+        this.jwtService = jwtService;
     }
 
     public void getEmailVerifyCodeForRegister(GetEmailVerifyCodeForRegisterDTO dto) {
@@ -80,7 +83,7 @@ public class LoginService {
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new ForumVerifyException("用户名或密码错误");
         }
-        String authorization = "Bearer " + JwtUtil.getToken(
+        String authorization = "Bearer " + jwtService.getToken(
                 Map.ofEntries(
                         Map.entry("uid", user.getUid().toString()),
                         Map.entry("username", user.getUsername())
