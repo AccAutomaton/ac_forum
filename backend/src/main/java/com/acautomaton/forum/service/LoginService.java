@@ -1,13 +1,11 @@
 package com.acautomaton.forum.service;
 
-import com.acautomaton.forum.dto.login.GetEmailVerifyCodeForRegisterDTO;
-import com.acautomaton.forum.dto.login.GetEmailVerifyCodeForResettingPasswordDTO;
-import com.acautomaton.forum.dto.login.LoginDTO;
-import com.acautomaton.forum.dto.login.RegisterDTO;
+import com.acautomaton.forum.dto.login.*;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.enumerate.UserStatus;
 import com.acautomaton.forum.enumerate.UserType;
 import com.acautomaton.forum.exception.ForumException;
+import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.mapper.UserMapper;
@@ -28,17 +26,19 @@ import java.util.Map;
 @Slf4j
 @Service
 public class LoginService {
+    private final PasswordEncoder passwordEncoder;
     UserMapper userMapper;
     EmailService emailService;
     CaptchaService captchaService;
     JwtService jwtService;
 
     @Autowired
-    public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService, JwtService jwtService) {
+    public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.emailService = emailService;
         this.captchaService = captchaService;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void getEmailVerifyCodeForRegister(GetEmailVerifyCodeForRegisterDTO dto) {
@@ -93,7 +93,7 @@ public class LoginService {
         return new LoginAuthorizationVO(authorization);
     }
 
-    public void getEmailVerifyCodeForResettingPassword(GetEmailVerifyCodeForResettingPasswordDTO dto) {
+    public void getEmailVerifyCodeForFindingBackPassword(GetEmailVerifyCodeForFindingBackPasswordDTO dto) {
         if (!captchaService.checkCaptcha(dto.getCaptchaUUID(), dto.getCaptchaCode())) {
             throw new ForumVerifyException("图形验证码错误");
         }
@@ -101,6 +101,25 @@ public class LoginService {
             throw new ForumVerifyException("用户名或邮箱错误");
         }
         emailService.sendVerifycode("重置密码", dto.getEmail());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void findBackPassword(FindBackPasswordDTO dto) {
+        if (!usernameExists(dto.getUsername())) {
+            throw new ForumExistentialityException("用户名或验证码错误");
+        }
+        User user = getUserByUsername(dto.getUsername());
+        if (!emailService.judgeVerifyCode(user.getEmail(), dto.getVerifyCode())) {
+            throw new ForumExistentialityException("用户名或验证码错误");
+        }
+        if (passwordEncoder.matches(dto.getNewPassword(), user.getPassword())) {
+            throw new ForumVerifyException("新密码不得与原密码一致");
+        }
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        user.setUpdateTime(new Date());
+        userMapper.updateById(user);
+        emailService.deleteVerifyCode(user.getEmail());
+        log.info("用户 {} 成功找回了密码", user.getUsername());
     }
 
     private User getUserByUsername(String username) {
