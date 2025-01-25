@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.acautomaton.forum</groupId>
-    <artifactId>forum_backend</artifactId>
+    <artifactId>ac_forum</artifactId>
     <version>1.0.0</version>
-    <name>forum_backend</name>
-    <description>forum_backend</description>
+    <name>ac_forum</name>
+    <description>ac_forum</description>
     <url/>
     <properties>
         <java.version>21</java.version>
