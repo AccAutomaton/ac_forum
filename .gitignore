@@ -54,5 +54,5 @@
 /frontend/*.njsproj
 /frontend/*.sln
 /frontend/*.sw?
-/frontend/.env.devlopment
+/frontend/.env.development
 /frontend/.env.production

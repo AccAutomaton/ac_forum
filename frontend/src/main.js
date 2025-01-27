@@ -7,7 +7,7 @@ import router from './router'
 
 const app = createApp(App)
 
-app.use(router).use(store).mount('#app')
+app.use(router).use(store)
 
 // --- element-plus --- //
 import ElementPlus from 'element-plus'
@@ -19,3 +19,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 app.use(ElementPlus, {locale: zhCn})
+
+app.mount('#app')

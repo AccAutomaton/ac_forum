@@ -7,9 +7,14 @@ const indexRoutes = [
         redirect: '/home',
     },
     {
+        path: '/login',
+        name: 'login',
+        component: () => import('@/views/login/LoginPage.vue'),
+    },
+    {
         path: '/home',
         name: 'home',
-        component: () => import('@/views/Home.vue')
+        component: () => import('@/views/HomePage.vue')
     }
 ]
 

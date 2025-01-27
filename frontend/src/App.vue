@@ -1,16 +1,16 @@
 <script>
-// import NavBar from "@/components/NavBar.vue";
+import NavigationBar from "@/components/NavigationBar.vue";
 
 export default {
   name: "App",
-  // components: {NavBar}
+  components: {NavigationBar},
 }
 </script>
 
 <template>
-<!--  <NavBar>-->
+  <NavigationBar>
     <router-view/>
-<!--  </NavBar>-->
+  </NavigationBar>
 </template>
 
 <style>
@@ -18,7 +18,27 @@ export default {
   font-family: 小米兰亭;
   src: url('assets/css/MI_LanTing_Regular.ttf');
 }
+
 body {
   font-family: 小米兰亭, 微软雅黑, system-ui;
+}
+
+.x-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.y-center {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.x-y-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
