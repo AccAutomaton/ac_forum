@@ -41,4 +41,9 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.el-menu--collapse .el-menu .el-submenu, .el-menu--popup{
+  min-width: 120px!important;
+}
+
 </style>

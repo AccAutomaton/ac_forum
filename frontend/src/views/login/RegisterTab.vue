@@ -152,7 +152,7 @@ const clickRegisterButton = async () => {
     <h1>注册</h1>
     <el-row style="text-align: center; margin-bottom: 10px;" align="middle">
       <el-input v-model="username" placeholder=" 4 ~ 16 位字母 / 数字 / 下划线 / 连接符" clearable size="large"
-                :prefix-icon="User">
+                :prefix-icon="User" minlength="4" maxlength="16">
         <template #prepend>
           <span style="width: 50px">用户名</span>
         </template>
@@ -160,7 +160,7 @@ const clickRegisterButton = async () => {
     </el-row>
     <el-row style="text-align: center; margin-bottom: 10px;" align="middle">
       <el-input v-model="password" placeholder=" 8 位及以上字母和数字的组合" clearable show-password size="large"
-                :prefix-icon="Lock">
+                :prefix-icon="Lock" minlength="8">
         <template #prepend>
           <span style="width: 50px">密码</span>
         </template>
@@ -168,7 +168,7 @@ const clickRegisterButton = async () => {
     </el-row>
     <el-row style="text-align: center; margin-bottom: 10px;" align="middle">
       <el-input v-model="confirmPassword" placeholder="请确认密码" clearable show-password size="large"
-                :prefix-icon="Lock">
+                :prefix-icon="Lock" minlength="8">
         <template #prepend>
           <span style="width: 50px">确认密码</span>
         </template>
@@ -182,7 +182,7 @@ const clickRegisterButton = async () => {
       </el-input>
     </el-row>
     <el-row style="text-align: center; margin-bottom: 5px;" align="middle">
-      <el-input v-model="verifyCode" placeholder="请输入验证码" clearable size="large" :prefix-icon="ChatDotRound">
+      <el-input v-model="verifyCode" placeholder="请输入验证码" clearable size="large" :prefix-icon="ChatDotRound" minlength="6" maxlength="6">
         <template #prepend>
           <span style="width: 50px">验证码</span>
         </template>
@@ -219,7 +219,7 @@ const clickRegisterButton = async () => {
   <el-dialog v-model="graphicCaptchaDialogVisible" width="300" title="发送邮件验证码" align-center destroy-on-close
              :modal="false">
     <el-input v-model="graphicCaptchaCode" placeholder="请输入图形验证码" clearable size="large"
-              :prefix-icon="ChatDotRound">
+              :prefix-icon="ChatDotRound" minlength="5" maxlength="5">
       <template #append>
         <el-button style="padding: 0" @click="clickRefreshGraphicCaptchaButton">
           <el-image :src="graphicCaptchaImage" style="height: 30px"/>

@@ -1,6 +1,34 @@
 <script setup>
 
-import {Promotion} from "@element-plus/icons-vue";
+import {Discount, Promotion, SwitchButton} from "@element-plus/icons-vue";
+import store from "@/store/index.js";
+import {useStorage} from "@vueuse/core";
+import {getNavigationBarUserInformation} from "@/request/user.js";
+import router from "@/router/index.js";
+
+const authorization = useStorage("Authorization", "");
+
+const refreshNavigationBarUserInformation = async () => {
+  if (authorization.value === "" && store.getters.getAuthorizationCode === "") {
+    return;
+  }
+  const data = await getNavigationBarUserInformation();
+  if (data !== null) {
+    store.commit("setUsername", data["username"]);
+    store.commit("setUserType", data["userType"]);
+    store.commit("setAvatar", data["avatar"]);
+    store.commit("setIsLogin", true);
+  }
+}
+
+const logout = () => {
+  authorization.value = "";
+  store.commit('clearLoginInformation');
+  store.commit('clearUserInformation');
+  router.push("/login");
+}
+
+refreshNavigationBarUserInformation();
 </script>
 
 <template>
@@ -22,7 +50,25 @@ import {Promotion} from "@element-plus/icons-vue";
           </el-container>
         </el-menu-item>
         <div style="flex-grow: 1"/>
-        <el-menu-item index="/login">
+        <el-sub-menu index="" v-if="store.getters.getIsLogin">
+          <template #title>
+            <el-avatar style="margin-right: 10px" :size="25" :src="store.getters.getAvatar"/>
+            {{ store.getters.getUsername }}
+          </template>
+          <el-menu-item index="/user/home">
+            <el-icon>
+              <Discount/>
+            </el-icon>
+            <span style="margin: 0 auto">个人中心</span>
+          </el-menu-item>
+          <el-menu-item index="" @click="logout">
+            <el-icon>
+              <SwitchButton/>
+            </el-icon>
+            <span style="margin: 0 auto">退出登录</span>
+          </el-menu-item>
+        </el-sub-menu>
+        <el-menu-item index="/login" v-else>
           <el-icon>
             <Promotion/>
           </el-icon>
@@ -44,7 +90,8 @@ import {Promotion} from "@element-plus/icons-vue";
       <el-divider border-style="dashed">
         <el-link href="https://beian.miit.gov.cn/" target="_blank" style="color: darkgray">赣ICP备2022006483号</el-link>
         <span style="color: darkgray"> | </span>
-        <el-link href="https://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" style="color: darkgray">赣公网安备36011102000604号
+        <el-link href="https://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" style="color: darkgray">
+          赣公网安备36011102000604号
         </el-link>
       </el-divider>
     </el-footer>

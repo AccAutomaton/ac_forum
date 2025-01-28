@@ -8,6 +8,10 @@ const loginInformation = {
         getAuthorizationCode: (state) => state.authorizationCode,
     },
     mutations: {
+        clearLoginInformation: (state) => {
+            state.isLogin = false;
+            state.authorizationCode = '';
+        },
         setIsLogin: (state, isLogin) => {
             state.isLogin = isLogin;
         },
