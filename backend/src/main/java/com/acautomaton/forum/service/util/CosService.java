@@ -12,6 +12,7 @@ import com.qcloud.cos.region.Region;
 import com.tencent.cloud.*;
 import com.tencent.cloud.cos.util.Jackson;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 @Slf4j
+@Getter
 @Service
 public class CosService {
     @Value("${project.tencent.cos.secretId}")
@@ -33,6 +35,8 @@ public class CosService {
     String region;
     @Value("${project.tencent.cos.bucketResourcePrepend}")
     String bucketResourcePrepend;
+    @Value("${project.tencent.cos.objectUrlPrepend}")
+    String objectUrlPrepend;
     @Value("${spring.profiles.active}")
     String env;
 
