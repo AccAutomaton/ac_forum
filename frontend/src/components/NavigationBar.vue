@@ -61,7 +61,7 @@ refreshNavigationBarUserInformation();
             </el-icon>
             <span style="margin: 0 auto">个人中心</span>
           </el-menu-item>
-          <el-menu-item index="" @click="logout">
+          <el-menu-item index="" @click="logout" style="color: red">
             <el-icon>
               <SwitchButton/>
             </el-icon>

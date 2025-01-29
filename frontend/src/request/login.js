@@ -48,3 +48,30 @@ export const login = (username, password) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getEmailVerifyCodeForFindingBackPassword = (username, email, captchaUUID, captchaCode) =>
+    request({
+        url: '/getEmailVerifyCode/findBackPassword',
+        method: 'POST',
+        data: {
+            username: username,
+            email: email,
+            captchaUUID: captchaUUID,
+            captchaCode: captchaCode,
+        }
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const findBackPassword = (username, verifyCode, newPassword) =>
+    request({
+        url: '/findBackPassword',
+        method: 'PATCH',
+        data: {
+            username: username,
+            verifyCode: verifyCode,
+            newPassword: newPassword,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

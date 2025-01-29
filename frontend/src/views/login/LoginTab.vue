@@ -61,7 +61,7 @@ const Login = async () => {
     </el-row>
     <el-row style="text-align: center; margin-bottom: 10px;" align="middle">
       <el-col :span="12">
-        <el-button type="primary" text>忘记密码?</el-button>
+        <el-button type="primary" text @click="router.push('/findBackPassword')">忘记密码?</el-button>
       </el-col>
       <el-col :span="12">
         <el-button type="warning" text @click="emit('setEnabledTab', 'register')">还没有账号?</el-button>

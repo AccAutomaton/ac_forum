@@ -3,6 +3,7 @@ import {ChatDotRound, Check, Lock, Message, User} from "@element-plus/icons-vue"
 import {ref} from "vue";
 import {getEmailVerifyCodeForRegister, getGraphicCaptchaImage, register} from "@/request/login.js";
 import {ElMessageBox, ElNotification} from "element-plus";
+import router from "@/router/index.js";
 
 const emit = defineEmits(["setEnabledTab"]);
 const username = ref(""), password = ref(""), confirmPassword = ref("");
@@ -203,7 +204,7 @@ const clickRegisterButton = async () => {
     </el-row>
     <el-row style="text-align: center; margin-bottom: 5px;" align="middle">
       <el-col :span="12">
-        <el-button type="primary" text>忘记密码?</el-button>
+        <el-button type="primary" text @click="router.push('/findBackPassword')">忘记密码?</el-button>
       </el-col>
       <el-col :span="12">
         <el-button type="success" text @click="emit('setEnabledTab', 'login')">已有账号?</el-button>
