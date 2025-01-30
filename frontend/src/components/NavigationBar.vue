@@ -18,6 +18,7 @@ const refreshNavigationBarUserInformation = async () => {
   if (data !== null) {
     store.commit("setUsername", data["username"]);
     store.commit("setUserType", data["userType"]);
+    store.commit("setIsLogin", true);
     cos(data["avatar"]).getObjectUrl(
         {
           Bucket: data["avatar"]["bucket"],
@@ -32,7 +33,6 @@ const refreshNavigationBarUserInformation = async () => {
           }
         }
     )
-    store.commit("setIsLogin", true);
   }
 }
 
@@ -67,7 +67,8 @@ refreshNavigationBarUserInformation();
         <div style="flex-grow: 1"/>
         <el-sub-menu index="" v-if="store.getters.getIsLogin">
           <template #title>
-            <el-avatar style="margin-right: 10px; background-color: transparent" :size="25" :src="store.getters.getAvatar"/>
+            <el-avatar style="margin-right: 10px; background-color: transparent" :size="25"
+                       :src="store.getters.getAvatar"/>
             {{ store.getters.getUsername }}
           </template>
           <el-menu-item index="/user/home">

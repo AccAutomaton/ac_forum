@@ -7,6 +7,7 @@ import store from "@/store/index.js";
 import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {getNavigationBarUserInformation} from "@/request/user.js";
+import {cos} from "@/request/cos.js";
 
 const emit = defineEmits(["setEnabledTab"]);
 const username = ref(""), password = ref("");
@@ -31,9 +32,23 @@ const Login = async () => {
     if (userData !== null) {
       store.commit("setUsername", userData["username"]);
       store.commit("setUserType", userData["userType"]);
-      store.commit("setAvatar", userData["avatar"]);
-      store.commit("setIsLogin", true);
-      router.push("/home").catch(() => {});
+      cos(userData["avatar"]).getObjectUrl(
+          {
+            Bucket: userData["avatar"]["bucket"],
+            Region: userData["avatar"]["region"],
+            Key: userData["avatar"]["key"],
+          },
+          (err, data) => {
+            if (err !== null) {
+              ElNotification({title: "服务器错误", type: "error", message: "存储服务发生错误"});
+            } else {
+              store.commit("setAvatar", data["Url"]);
+              store.commit("setIsLogin", true);
+              router.push("/home").catch(() => {
+              });
+            }
+          }
+      )
     }
   }
 }
