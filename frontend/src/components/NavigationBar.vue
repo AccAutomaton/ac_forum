@@ -5,6 +5,8 @@ import store from "@/store/index.js";
 import {useStorage} from "@vueuse/core";
 import {getNavigationBarUserInformation} from "@/request/user.js";
 import router from "@/router/index.js";
+import {cos} from "@/request/cos.js";
+import {ElNotification} from "element-plus";
 
 const authorization = useStorage("Authorization", "");
 
@@ -16,7 +18,20 @@ const refreshNavigationBarUserInformation = async () => {
   if (data !== null) {
     store.commit("setUsername", data["username"]);
     store.commit("setUserType", data["userType"]);
-    store.commit("setAvatar", data["avatar"]);
+    cos(data["avatar"]).getObjectUrl(
+        {
+          Bucket: data["avatar"]["bucket"],
+          Region: data["avatar"]["region"],
+          Key: data["avatar"]["key"],
+        },
+        (err, data) => {
+          if (err !== null) {
+            ElNotification({title: "服务器错误", type: "error", message: "存储服务发生错误"});
+          } else {
+            store.commit("setAvatar", data["Url"]);
+          }
+        }
+    )
     store.commit("setIsLogin", true);
   }
 }
@@ -52,7 +67,7 @@ refreshNavigationBarUserInformation();
         <div style="flex-grow: 1"/>
         <el-sub-menu index="" v-if="store.getters.getIsLogin">
           <template #title>
-            <el-avatar style="margin-right: 10px" :size="25" :src="store.getters.getAvatar"/>
+            <el-avatar style="margin-right: 10px; background-color: transparent" :size="25" :src="store.getters.getAvatar"/>
             {{ store.getters.getUsername }}
           </template>
           <el-menu-item index="/user/home">

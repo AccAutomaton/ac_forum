@@ -18,7 +18,6 @@ export const getEmailVerifyCodeForRegister = (email, captchaUUID, captchaCode) =
             captchaCode: captchaCode,
         }
     }).then((response) => {
-        console.log(response);
         return response["data"];
     })
 
