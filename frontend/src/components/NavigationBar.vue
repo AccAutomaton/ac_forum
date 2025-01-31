@@ -1,6 +1,6 @@
 <script setup>
 
-import {Discount, Promotion, SwitchButton} from "@element-plus/icons-vue";
+import {Discount, HomeFilled, Promotion, SwitchButton} from "@element-plus/icons-vue";
 import store from "@/store/index.js";
 import {useStorage} from "@vueuse/core";
 import {getNavigationBarUserInformation} from "@/request/user.js";
@@ -56,13 +56,16 @@ refreshNavigationBarUserInformation();
           router
           popper-effect="light"
           close-on-click-outside
-
       >
         <el-menu-item style="pointer-events: none">
           <el-container>
             <img src="@/assets/favicon.png" alt="" style="height: 3.5rem"/>
             <div style="font-size: x-large; font-weight: bolder; margin-left: 5px">AC论坛</div>
           </el-container>
+        </el-menu-item>
+        <el-menu-item index="/home">
+          <el-icon><HomeFilled /></el-icon>
+          <span>首页</span>
         </el-menu-item>
         <div style="flex-grow: 1"/>
         <el-sub-menu index="" v-if="store.getters.getIsLogin">
@@ -71,7 +74,7 @@ refreshNavigationBarUserInformation();
                        :src="store.getters.getAvatar"/>
             {{ store.getters.getUsername }}
           </template>
-          <el-menu-item index="/user/home">
+          <el-menu-item index="/userCenter">
             <el-icon>
               <Discount/>
             </el-icon>

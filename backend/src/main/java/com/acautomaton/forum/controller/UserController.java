@@ -1,16 +1,16 @@
 package com.acautomaton.forum.controller;
 
-import com.acautomaton.forum.entity.SecurityUser;
-import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
+import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @Validated
 @RestController
@@ -24,13 +24,14 @@ public class UserController {
     }
 
     @GetMapping("/navigationBarInformation")
-    public Response navigationBarInformation() {
-        GetNavigationBarInformationVO vo = userService.getNavigationBarInformation(getCurrentUser().getUid());
+    public Response getNavigationBarInformation() {
+        GetNavigationBarInformationVO vo = userService.getNavigationBarInformation(userService.getCurrentUser().getUid());
         return Response.success(vo);
     }
 
-    public User getCurrentUser() {
-        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return securityUser.getUser();
+    @GetMapping("/avatar")
+    public Response getAvatar() {
+        CosAuthorizationVO vo = userService.getAvatar(userService.getCurrentUser().getUid());
+        return Response.success(Map.of("avatar", vo));
     }
 }

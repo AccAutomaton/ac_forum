@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import store from "@/store/index.js";
 import {GetAuthorizationCode} from "@/request/index.js";
+import userCenterRoutes from "@/router/userCenter.js";
 
 const indexRoutes = [
     {
@@ -29,11 +30,14 @@ const indexRoutes = [
             require_authentication: true,
         }
     }
-]
+];
+
+// noinspection JSCheckFunctionSignatures
+const routes = indexRoutes.concat(userCenterRoutes)
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: indexRoutes,
+    routes: routes,
 })
 
 router.beforeEach((to, from, next) => {

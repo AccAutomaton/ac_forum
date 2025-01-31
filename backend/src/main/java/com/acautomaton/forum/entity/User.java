@@ -10,11 +10,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "user", schema = "ac_forum", autoResultMap = true)
 public class User implements Serializable {

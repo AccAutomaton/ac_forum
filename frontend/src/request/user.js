@@ -7,3 +7,11 @@ export const getNavigationBarUserInformation = () =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getAvatar = () =>
+    request({
+        url: 'user/avatar',
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })

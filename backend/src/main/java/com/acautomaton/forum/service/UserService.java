@@ -1,14 +1,17 @@
 package com.acautomaton.forum.service;
 
+import com.acautomaton.forum.entity.SecurityUser;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.enumerate.CosActions;
 import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.mapper.UserMapper;
 import com.acautomaton.forum.service.util.CosService;
+import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tencent.cloud.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,11 @@ public class UserService {
         this.cosService = cosService;
     }
 
+    public User getCurrentUser() {
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return securityUser.getUser();
+    }
+
     public GetNavigationBarInformationVO getNavigationBarInformation(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
@@ -36,5 +44,18 @@ public class UserService {
         return new GetNavigationBarInformationVO(
                 user, avatarKey, credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion()
         );
+    }
+
+    public CosAuthorizationVO getAvatar(Integer uid) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", uid);
+        queryWrapper.select("avatar");
+        String avatar = userMapper.selectOne(queryWrapper).getAvatar();
+        Integer expireSeconds = 60;
+        String avatarKey = CosFolderPath.AVATAR + avatar;
+        Credentials credentials = cosService.getCosAccessAuthorization(
+                expireSeconds, CosActions.GET_OBJECT, List.of(avatarKey)
+        );
+        return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
     }
 }
