@@ -30,7 +30,7 @@ const Login = async () => {
     });
     const userData = await getNavigationBarUserInformation();
     if (userData !== null) {
-      store.commit("setUsername", userData["username"]);
+      store.commit("setNickname", userData["nickname"]);
       store.commit("setUserType", userData["userType"]);
       cos(userData["avatar"]).getObjectUrl(
           {

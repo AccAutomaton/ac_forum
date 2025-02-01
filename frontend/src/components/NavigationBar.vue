@@ -16,7 +16,7 @@ const refreshNavigationBarUserInformation = async () => {
   }
   const data = await getNavigationBarUserInformation();
   if (data !== null) {
-    store.commit("setUsername", data["username"]);
+    store.commit("setNickname", data["nickname"]);
     store.commit("setUserType", data["userType"]);
     store.commit("setIsLogin", true);
     cos(data["avatar"]).getObjectUrl(
@@ -72,7 +72,7 @@ refreshNavigationBarUserInformation();
           <template #title>
             <el-avatar style="margin-right: 10px; background-color: transparent" :size="25"
                        :src="store.getters.getAvatar"/>
-            {{ store.getters.getUsername }}
+            {{ store.getters.getNickname }}
           </template>
           <el-menu-item index="/userCenter">
             <el-icon>

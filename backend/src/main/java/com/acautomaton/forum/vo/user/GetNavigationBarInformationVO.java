@@ -12,12 +12,12 @@ import lombok.Data;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetNavigationBarInformationVO {
-    String username;
+    String nickname;
     UserType userType;
     CosAuthorizationVO avatar;
 
     public GetNavigationBarInformationVO(User user, String avatarKey, Credentials credentials, Integer expiredSeconds, String bucket, String region) {
-        this.username = user.getUsername();
+        this.nickname = user.getNickname();
         this.userType = user.getUserType();
         this.avatar = CosAuthorizationVO.keyAuthorization(
                 credentials, expiredSeconds, bucket, region, avatarKey

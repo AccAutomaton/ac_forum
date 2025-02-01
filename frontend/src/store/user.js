@@ -2,6 +2,7 @@ const userInformation = {
     state: () => ({
         uid: '',
         username: '',
+        nickname: '',
         avatar: '',
         userType: {
             index: 3,
@@ -11,6 +12,7 @@ const userInformation = {
     getters: {
         getUid: (state) => state.uid,
         getUsername: (state) => state.username,
+        getNickname: (state) => state.nickname,
         getAvatar: (state) => state.avatar,
         getUserType: (state) => state.userType,
     },
@@ -18,6 +20,7 @@ const userInformation = {
         clearUserInformation: (state) => {
             state.uid = '';
             state.username = '';
+            state.nickname = '';
             state.avatar = '';
             state.userType = {
                 index: 3,
@@ -29,6 +32,9 @@ const userInformation = {
         },
         setUsername: (state, username) => {
             state.username = username;
+        },
+        setNickname: (state, nickname) => {
+            state.nickname = nickname;
         },
         setAvatar: (state, avatar) => {
             state.avatar = avatar;
