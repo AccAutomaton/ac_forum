@@ -1,8 +1,10 @@
 package com.acautomaton.forum.controller;
 
+import com.acautomaton.forum.dto.user.SetNicknameDTO;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
+import com.acautomaton.forum.vo.user.GetDetailsVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -49,5 +51,11 @@ public class UserController {
     public Response getDetails() {
         GetDetailsVO vo = userService.getDetails(userService.getCurrentUser().getUid());
         return Response.success(vo);
+    }
+
+    @PatchMapping("/set/nickname")
+    public Response setNickname(@Validated @RequestBody SetNicknameDTO dto) {
+        userService.setNickname(userService.getCurrentUser().getUid(), dto.getNewNickname());
+        return Response.success();
     }
 }

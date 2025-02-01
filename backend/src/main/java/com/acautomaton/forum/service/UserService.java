@@ -92,4 +92,13 @@ public class UserService {
         User user = userMapper.selectOne(queryWrapper);
         return new GetDetailsVO(user);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void setNickname(Integer uid, String newNickname) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("uid", uid);
+        updateWrapper.set("nickname", newNickname);
+        updateWrapper.set("update_time", new Date());
+        userMapper.update(updateWrapper);
+    }
 }
