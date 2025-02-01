@@ -31,3 +31,11 @@ export const setAvatarCustomization = () =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getUserDetails = () =>
+    request({
+        url: 'user/get/details',
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })

@@ -7,6 +7,7 @@ import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.mapper.UserMapper;
 import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
+import com.acautomaton.forum.vo.user.GetDetailsVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -61,7 +63,12 @@ public class UserService {
         return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public CosAuthorizationVO getAvatarUpdateAuthorization(Integer uid) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("uid", uid);
+        updateWrapper.set("updateTime", new Date());
+        userMapper.update(updateWrapper);
         Integer expireSeconds = 60;
         String avatarKey = CosFolderPath.AVATAR + "uid_" + uid + "_avatar.png";
         Credentials credentials = cosService.getCosAccessAuthorization(
@@ -74,8 +81,15 @@ public class UserService {
     public void setAvatarCustomization(Integer uid) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("uid", uid);
-        User updateUser = new User();
-        updateUser.setAvatar("uid_" + uid + "_avatar.png");
-        userMapper.update(updateUser, updateWrapper);
+        updateWrapper.set("avatar", "uid_" + uid + "_avatar.png");
+        updateWrapper.set("updateTime", new Date());
+        userMapper.update(updateWrapper);
+    }
+
+    public GetDetailsVO getDetails(Integer uid) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", uid);
+        User user = userMapper.selectOne(queryWrapper);
+        return new GetDetailsVO(user);
     }
 }

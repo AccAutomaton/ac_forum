@@ -97,8 +97,10 @@ refreshNavigationBarUserInformation();
         </el-menu-item>
       </el-menu>
     </el-header>
-    <el-main style="height: 83vh">
-      <slot/>
+    <el-main style="padding-bottom: 0">
+      <el-scrollbar height="81vh">
+        <slot/>
+      </el-scrollbar>
     </el-main>
     <el-footer>
       <el-divider border-style="dashed">
