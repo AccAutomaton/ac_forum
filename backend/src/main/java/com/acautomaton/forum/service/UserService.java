@@ -9,10 +9,12 @@ import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.tencent.cloud.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class UserService {
         );
     }
 
-    public CosAuthorizationVO getAvatar(Integer uid) {
+    public CosAuthorizationVO getAvatarGetAuthorization(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         queryWrapper.select("avatar");
@@ -57,5 +59,23 @@ public class UserService {
                 expireSeconds, CosActions.GET_OBJECT, List.of(avatarKey)
         );
         return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
+    }
+
+    public CosAuthorizationVO getAvatarUpdateAuthorization(Integer uid) {
+        Integer expireSeconds = 60;
+        String avatarKey = CosFolderPath.AVATAR + "uid_" + uid + "_avatar.png";
+        Credentials credentials = cosService.getCosAccessAuthorization(
+                expireSeconds, CosActions.PUT_OBJECT, List.of(avatarKey)
+        );
+        return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void setAvatarCustomization(Integer uid) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("uid", uid);
+        User updateUser = new User();
+        updateUser.setAvatar("uid_" + uid + "_avatar.png");
+        userMapper.update(updateUser, updateWrapper);
     }
 }

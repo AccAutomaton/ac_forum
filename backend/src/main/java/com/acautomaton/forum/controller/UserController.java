@@ -7,6 +7,7 @@ import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,15 +24,27 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/navigationBarInformation")
+    @GetMapping("/get/navigationBarInformation")
     public Response getNavigationBarInformation() {
         GetNavigationBarInformationVO vo = userService.getNavigationBarInformation(userService.getCurrentUser().getUid());
         return Response.success(vo);
     }
 
-    @GetMapping("/avatar")
-    public Response getAvatar() {
-        CosAuthorizationVO vo = userService.getAvatar(userService.getCurrentUser().getUid());
+    @GetMapping("/get/avatar/getAuthorization")
+    public Response getAvatarGetAuthorization() {
+        CosAuthorizationVO vo = userService.getAvatarGetAuthorization(userService.getCurrentUser().getUid());
         return Response.success(Map.of("avatar", vo));
+    }
+
+    @GetMapping("/get/avatar/updateAuthorization")
+    public Response getAvatarUpdateAuthorization() {
+        CosAuthorizationVO vo = userService.getAvatarUpdateAuthorization(userService.getCurrentUser().getUid());
+        return Response.success(Map.of("targetAvatar", vo));
+    }
+
+    @PatchMapping("/set/avatar/customization")
+    public Response setAvatarCustomization() {
+        userService.setAvatarCustomization(userService.getCurrentUser().getUid());
+        return Response.success();
     }
 }
