@@ -58,4 +58,9 @@ public class UserController {
         userService.setNickname(userService.getCurrentUser().getUid(), dto.getNewNickname());
         return Response.success();
     }
+
+    @PatchMapping("/set/email")
+    public Response setEmail() {
+        return Response.success();
+    }
 }

@@ -39,3 +39,14 @@ export const getUserDetails = () =>
     }).then((response) => {
         return response["data"];
     })
+
+export const setNickname = (newNickname) =>
+    request({
+        url: 'user/set/nickname',
+        method: 'PATCH',
+        data: {
+            newNickname: newNickname
+        },
+    }).then((response) => {
+        return response["data"];
+    })

@@ -8,14 +8,15 @@ import {
   getAvatarGetAuthorization,
   getAvatarUpdateAuthorization,
   getUserDetails,
-  setAvatarCustomization
+  setAvatarCustomization, setNickname
 } from "@/request/user.js";
-import {Edit, Upload} from "@element-plus/icons-vue";
+import {ChatDotRound, Edit, Upload} from "@element-plus/icons-vue";
 
 const avatar = ref(""), isDefaultAvatar = ref(false);
 const uid = ref(""), username = ref(""), email = ref("");
 const status = ref({}), userType = ref({});
 const nickname = ref(""), createTime = ref(""), updateTime = ref("");
+const newNickname = ref(""), reviseNicknameDialogVisible = ref(false);
 
 const refreshAvatarUrl = async (needRefreshGlobalAvatar = false) => {
   const data = await getAvatarGetAuthorization();
@@ -56,6 +57,7 @@ const refreshUserDetails = async () => {
     userType.value = data["userType"];
     store.commit("setUserType", data["userType"]);
     nickname.value = data["nickname"];
+    newNickname.value = data["nickname"];
     store.commit("setNickname", data["nickname"]);
     createTime.value = data["createTime"];
     updateTime.value = data["updateTime"];
@@ -92,11 +94,11 @@ const doUpdateAvatar = () => {
             } else {
               if (isDefaultAvatar.value) {
                 const data = await setAvatarCustomization();
-                if (data["result"] !== "success") {
-                  ElNotification({title: "服务器错误", type: "error", message: "请稍后再试"})
-                } else {
+                if (data !== null) {
                   await refreshAvatarUrl(true);
                   ElNotification({title: "修改成功", type: "success", message: "新头像将稍后生效"});
+                } else {
+                  ElNotification({title: "服务器错误", type: "error", message: "请稍后再试"})
                 }
               } else {
                 await refreshAvatarUrl(true);
@@ -109,6 +111,19 @@ const doUpdateAvatar = () => {
   }).catch(() => {
     ElNotification({title: "操作取消", type: "info"});
   });
+}
+
+const clickConfirmReviseNicknameButton = async () => {
+  if (newNickname.value === "") {
+    ElNotification({title: "昵称不能为空", type: "error"})
+  } else {
+    const data = await setNickname(newNickname.value);
+    if (data !== null) {
+      await refreshUserDetails();
+      ElNotification({title: "修改成功", type: "success"});
+      reviseNicknameDialogVisible.value = false;
+    }
+  }
 }
 </script>
 
@@ -150,13 +165,14 @@ const doUpdateAvatar = () => {
         <el-row>
           <el-text size="large" class="title-text">昵称</el-text>
           <el-text>{{ nickname }}</el-text>
-          <el-button style="margin-left: 25px" :icon="Edit" circle plain/>
+          <el-button style="margin-left: 25px" :icon="Edit" circle plain @click="reviseNicknameDialogVisible = true"/>
         </el-row>
         <el-divider :border-style="'dotted'"/>
         <el-row>
           <el-text size="large" class="title-text">邮箱</el-text>
           <el-text>{{ email }}</el-text>
           <el-button style="margin-left: 25px" :icon="Edit" circle plain/>
+          <!--TODO: Edit-->
         </el-row>
         <el-divider :border-style="'dotted'"/>
         <el-row>
@@ -202,6 +218,18 @@ const doUpdateAvatar = () => {
       </el-scrollbar>
     </el-main>
   </el-container>
+
+  <el-dialog v-model="reviseNicknameDialogVisible" width="400" title="修改昵称" align-center destroy-on-close>
+    <el-input v-model="newNickname" placeholder="请输入新昵称" clearable size="large"
+              :prefix-icon="ChatDotRound" maxlength="16" show-word-limit>
+    </el-input>
+    <template #footer>
+      <el-button @click="reviseNicknameDialogVisible = false; newNickname = nickname">取消</el-button>
+      <el-button type="primary" @click="clickConfirmReviseNicknameButton">
+        确认
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
