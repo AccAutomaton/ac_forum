@@ -16,13 +16,13 @@ public class RateLimitService {
 
     public boolean privateProjectFrequencyAccess(String checkProjectName, User user, Long expire, Integer timesPerExpire, Long expireOfBan) {
         String keyOfBan = "Ban_" + checkProjectName + "_" + user.getUid();
-        String keyOfRequestTimes = "RequestTimes_ " + checkProjectName + "_" + user.getUid();
+        String keyOfRequestTimes = "RequestTimes_" + checkProjectName + "_" + user.getUid();
         return check(expire, timesPerExpire, expireOfBan, keyOfBan, keyOfRequestTimes);
     }
 
     public boolean publicProjectFrequencyAccess(String checkProjectName, Long expire, Integer timesPerExpire, Long expireOfBan) {
         String keyOfBan = "Ban_" + checkProjectName;
-        String keyOfRequestTimes = "RequestTimes_ " + checkProjectName;
+        String keyOfRequestTimes = "RequestTimes_" + checkProjectName;
         return check(expire, timesPerExpire, expireOfBan, keyOfBan, keyOfRequestTimes);
     }
 
@@ -33,7 +33,7 @@ public class RateLimitService {
         if (redisService.hasKey(keyOfRequestTimes)) {
             Integer times = (Integer) redisService.get(keyOfRequestTimes);
             if (times >= timesPerExpire) {
-                redisService.set(keyOfBan, expireOfBan);
+                redisService.set(keyOfBan, true, expireOfBan);
                 log.warn("{} 访问次数过于频繁，已被临时停止访问", keyOfRequestTimes);
                 redisService.deleteKeys(keyOfRequestTimes);
                 return false;
