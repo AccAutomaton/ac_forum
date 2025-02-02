@@ -18,5 +18,5 @@ public class RegisterDTO {
     String email;
     @NotBlank(message = "验证码不能为空")
     @Pattern(regexp = "^\\d{6}$", message = "验证码不合法")
-    String verifycode;
+    String verifyCode;
 }

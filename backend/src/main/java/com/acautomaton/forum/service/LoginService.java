@@ -59,7 +59,7 @@ public class LoginService {
         if (userEmailExists(dto.getEmail())) {
             throw new ForumIllegalArgumentException("该邮箱已注册");
         }
-        if (!emailService.judgeVerifyCode(dto.getEmail(), dto.getVerifycode())) {
+        if (!emailService.judgeVerifyCode(dto.getEmail(), dto.getVerifyCode())) {
             throw new ForumVerifyException("邮箱验证码错误");
         }
 

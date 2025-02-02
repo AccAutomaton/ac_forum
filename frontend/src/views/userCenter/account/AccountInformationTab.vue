@@ -6,17 +6,25 @@ import store from "@/store/index.js";
 import {ref} from "vue";
 import {
   getAvatarGetAuthorization,
-  getAvatarUpdateAuthorization,
+  getAvatarUpdateAuthorization, getEmailVerifyCodeForSettingEmail,
   getUserDetails,
-  setAvatarCustomization, setNickname
+  setAvatarCustomization, setEmail,
+  setNickname
 } from "@/request/user.js";
-import {ChatDotRound, Edit, Upload} from "@element-plus/icons-vue";
+import {ChatDotRound, Coordinate, Edit, Message, Upload} from "@element-plus/icons-vue";
+import {getGraphicCaptchaImage} from "@/request/login.js";
 
 const avatar = ref(""), isDefaultAvatar = ref(false);
 const uid = ref(""), username = ref(""), email = ref("");
 const status = ref({}), userType = ref({});
 const nickname = ref(""), createTime = ref(""), updateTime = ref("");
+
 const newNickname = ref(""), reviseNicknameDialogVisible = ref(false);
+
+const newEmail = ref(""), verifyCode = ref(""), reviseEmailDialogVisible = ref(false);
+const graphicCaptchaUuid = ref(""), graphicCaptchaCode = ref(""), graphicCaptchaImage = ref("");
+const isSendingEmailVerifyCodeStatus = ref(false);
+const emailCountdownValue = ref(Date.now());
 
 const refreshAvatarUrl = async (needRefreshGlobalAvatar = false) => {
   const data = await getAvatarGetAuthorization();
@@ -125,6 +133,86 @@ const clickConfirmReviseNicknameButton = async () => {
     }
   }
 }
+
+const checkNewEmail = () => {
+  if (newEmail.value === "") {
+    ElNotification({title: "邮箱不能为空", type: "error"});
+    return false;
+  }
+  if (!newEmail.value.match(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/)) {
+    ElNotification({title: "邮箱不合法", type: "error"})
+    return false;
+  }
+  return true;
+}
+
+const resetEmailVerifyCodeCountdown = () => {
+  isSendingEmailVerifyCodeStatus.value = true;
+  emailCountdownValue.value = Date.now() + 1000 * 60;
+}
+
+const checkVerifyCode = () => {
+  if (verifyCode.value === "") {
+    ElNotification({title: "验证码不能为空", type: "error"});
+    return false;
+  }
+  if (!verifyCode.value.match(/^\d{6}$/)) {
+    ElNotification({title: "验证码不合法", type: "error"})
+    return false;
+  }
+  return true;
+}
+
+const checkGraphicCaptchaCode = () => {
+  if (graphicCaptchaCode.value === "") {
+    ElNotification({title: "图形验证码不能为空", type: "error"});
+    return false;
+  }
+  return true;
+}
+
+const getNewGraphicCaptcha = async () => {
+  const data = await getGraphicCaptchaImage();
+  if (data !== null) {
+    graphicCaptchaUuid.value = data["captchaUUID"];
+    graphicCaptchaImage.value = data["base64Image"];
+  }
+}
+
+const clickRefreshGraphicCaptchaButton = () => {
+  getNewGraphicCaptcha();
+}
+
+const clickSendVerifyCodeButton = async () => {
+  if (checkNewEmail() && checkGraphicCaptchaCode()) {
+    const data = await getEmailVerifyCodeForSettingEmail(newEmail.value, graphicCaptchaUuid.value, graphicCaptchaCode.value);
+    if (data !== null) {
+      resetEmailVerifyCodeCountdown();
+      ElNotification({
+        title: '发送成功',
+        message: '请到邮箱 ' + newEmail.value + ' 查收验证码',
+        type: 'success'
+      })
+    } else {
+      graphicCaptchaCode.value = "";
+      await getNewGraphicCaptcha();
+    }
+  }
+}
+
+const clickConfirmReviseEmailButton = async () => {
+  if (checkNewEmail() && checkVerifyCode()) {
+    const data = await setEmail(newEmail.value, verifyCode.value);
+    if (data !== null) {
+      await refreshUserDetails();
+      ElNotification({title: "修改成功", type: "success"});
+      newEmail.value = "";
+      graphicCaptchaCode.value = "";
+      verifyCode.value = "";
+      reviseEmailDialogVisible.value = false;
+    }
+  }
+}
 </script>
 
 <template>
@@ -171,8 +259,7 @@ const clickConfirmReviseNicknameButton = async () => {
         <el-row>
           <el-text size="large" class="title-text">邮箱</el-text>
           <el-text>{{ email }}</el-text>
-          <el-button style="margin-left: 25px" :icon="Edit" circle plain/>
-          <!--TODO: Edit-->
+          <el-button style="margin-left: 25px" :icon="Edit" circle plain @click="reviseEmailDialogVisible = true; getNewGraphicCaptcha()"/>
         </el-row>
         <el-divider :border-style="'dotted'"/>
         <el-row>
@@ -220,12 +307,67 @@ const clickConfirmReviseNicknameButton = async () => {
   </el-container>
 
   <el-dialog v-model="reviseNicknameDialogVisible" width="400" title="修改昵称" align-center destroy-on-close>
-    <el-input v-model="newNickname" placeholder="请输入新昵称" clearable size="large"
-              :prefix-icon="ChatDotRound" maxlength="16" show-word-limit>
-    </el-input>
+    <el-row style="text-align: center" align="middle">
+      <el-input v-model="newNickname" placeholder="请输入新昵称" clearable size="large"
+                :prefix-icon="Coordinate" maxlength="16" show-word-limit>
+        <template #prepend>
+          <span style="width: 40px">新昵称</span>
+        </template>
+      </el-input>
+    </el-row>
     <template #footer>
       <el-button @click="reviseNicknameDialogVisible = false; newNickname = nickname">取消</el-button>
       <el-button type="primary" @click="clickConfirmReviseNicknameButton">
+        确认
+      </el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="reviseEmailDialogVisible" width="500" title="修改邮箱" align-center destroy-on-close>
+    <el-row style="text-align: center; margin-bottom: 10px;" align="middle">
+      <el-input v-model="newEmail" placeholder="请输入邮箱" clearable size="large" :prefix-icon="Message">
+        <template #prepend>
+          <span style="width: 70px">新邮箱</span>
+        </template>
+      </el-input>
+    </el-row>
+    <el-row style="text-align: center; margin-bottom: 10px;" align="middle" v-if="!isSendingEmailVerifyCodeStatus">
+      <el-input v-model="graphicCaptchaCode" placeholder="请输入图形验证码" clearable size="large"
+                :prefix-icon="ChatDotRound" minlength="5" maxlength="5" show-word-limit>
+        <template #prepend>
+          <span style="width: 70px">图形验证码</span>
+        </template>
+        <template #append>
+          <el-button style="padding: 0" @click="clickRefreshGraphicCaptchaButton">
+            <el-image :src="graphicCaptchaImage" style="height: 30px"/>
+          </el-button>
+        </template>
+      </el-input>
+    </el-row>
+    <el-row style="text-align: center" align="middle">
+      <el-input v-model="verifyCode" placeholder="请输入验证码" clearable size="large" :prefix-icon="ChatDotRound"
+                minlength="6" maxlength="6" show-word-limit>
+        <template #prepend>
+          <span style="width: 70px">邮箱验证码</span>
+        </template>
+        <template #append>
+          <el-text v-if="isSendingEmailVerifyCodeStatus">
+            <el-countdown :value="emailCountdownValue" format="ss" value-style="font-size: medium; color: darkgray"
+                          @finish="isSendingEmailVerifyCodeStatus = false">
+              <template #suffix>
+                <span style="font-size: medium; color: darkgray">秒</span>
+              </template>
+            </el-countdown>
+          </el-text>
+          <el-button v-else @click="clickSendVerifyCodeButton" style="width: 100px">
+            发送验证码
+          </el-button>
+        </template>
+      </el-input>
+    </el-row>
+    <template #footer>
+      <el-button @click="reviseEmailDialogVisible = false; newEmail = ''">取消</el-button>
+      <el-button type="primary" @click="clickConfirmReviseEmailButton">
         确认
       </el-button>
     </template>

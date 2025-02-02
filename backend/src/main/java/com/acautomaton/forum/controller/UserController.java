@@ -1,5 +1,7 @@
 package com.acautomaton.forum.controller;
 
+import com.acautomaton.forum.dto.user.GetEmailVerifyCodeForSettingEmailDTO;
+import com.acautomaton.forum.dto.user.SetEmailDTO;
 import com.acautomaton.forum.dto.user.SetNicknameDTO;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
@@ -59,8 +61,15 @@ public class UserController {
         return Response.success();
     }
 
+    @PostMapping("/getEmailVerifyCode/setEmail")
+    public Response getEmailVerifyCodeForSettingEmail(@Validated @RequestBody GetEmailVerifyCodeForSettingEmailDTO dto) {
+        userService.getEmailVerifyCodeForSettingEmail(dto.getNewEmail(), dto.getCaptchaUUID(), dto.getCaptchaCode());
+        return Response.success();
+    }
+
     @PatchMapping("/set/email")
-    public Response setEmail() {
+    public Response setEmail(@Validated @RequestBody SetEmailDTO dto) {
+        userService.setEmail(userService.getCurrentUser().getUid(), dto.getNewEmail(), dto.getVerifyCode());
         return Response.success();
     }
 }

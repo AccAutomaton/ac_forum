@@ -220,7 +220,7 @@ const clickRegisterButton = async () => {
   <el-dialog v-model="graphicCaptchaDialogVisible" width="300" title="发送邮件验证码" align-center destroy-on-close
              :modal="false">
     <el-input v-model="graphicCaptchaCode" placeholder="请输入图形验证码" clearable size="large"
-              :prefix-icon="ChatDotRound" minlength="5" maxlength="5">
+              :prefix-icon="ChatDotRound" minlength="5" maxlength="5" show-word-limit>
       <template #append>
         <el-button style="padding: 0" @click="clickRefreshGraphicCaptchaButton">
           <el-image :src="graphicCaptchaImage" style="height: 30px"/>
