@@ -1,14 +1,10 @@
 #file: noinspection YAMLDuplicatedKeys
 spring:
+  threads:
+    virtual:
+      enabled: true
   profiles:
     active: dev
-  mail:
-    host: SMTP_HOST_DOMAIN
-    username: SMTP_USERNAME
-    password: SMTP_PASSWORD
-    port: 465
-    default-encoding: UTF-8
-    protocol: smtps
 
 mybatis-plus:
   mapper-locations: classpath:com/acautomaton/forum/mapper/*.xml, classpath:com/acautomaton/forum/mapper/**/*.xml
@@ -55,10 +51,25 @@ spring:
           max-idle: 10
           min-idle: 5
           max-wait: 5000ms
+  mail:
+    host: SMTP_HOST_DOMAIN
+    username: SMTP_USERNAME
+    password: SMTP_PASSWORD
+    port: 465
+    default-encoding: UTF-8
+    protocol: smtps
 
 project:
   jwt:
     secretkey: JWT_SECRETKEY
     timeoutDays: 7
+  tencent:
+    cos:
+      secretId: SECRET_ID
+      secretKey: SECRET_KEY
+      bucketName: BUCKET_NAME
+      bucketResourcePrepend: BUCKET_RESOURCE_PREPEND
+      region: REGION
+      objectUrlPrepend: OBJECT_URL_PREPEND
   cors:
     allow-origin: http://localhost:9001
