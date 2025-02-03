@@ -15,6 +15,7 @@ import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.tencent.cloud.Credentials;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserService {
     EmailService emailService;
@@ -67,6 +69,7 @@ public class UserService {
         Credentials credentials = cosService.getCosAccessAuthorization(
                 expireSeconds, CosActions.GET_OBJECT, List.of(avatarKey)
         );
+        log.info("用户 {} 请求了头像访问权限", uid);
         return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
     }
 
@@ -81,6 +84,7 @@ public class UserService {
         Credentials credentials = cosService.getCosAccessAuthorization(
                 expireSeconds, CosActions.PUT_OBJECT, List.of(avatarKey)
         );
+        log.info("用户 {} 请求了头像修改权限", uid);
         return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
     }
 
@@ -91,6 +95,7 @@ public class UserService {
         updateWrapper.set("avatar", "uid_" + uid + "_avatar.png");
         updateWrapper.set("updateTime", new Date());
         userMapper.update(updateWrapper);
+        log.info("用户 {} 不再使用默认头像", uid);
     }
 
     public GetDetailsVO getDetails(Integer uid) {
@@ -107,6 +112,7 @@ public class UserService {
         updateWrapper.set("nickname", newNickname);
         updateWrapper.set("update_time", new Date());
         userMapper.update(updateWrapper);
+        log.info("用户 {} 修改了昵称: {}", uid, newNickname);
     }
 
     public void getEmailVerifyCodeForSettingEmail(String newEmail, String captchaUUID, String captchaCode) {
@@ -119,6 +125,7 @@ public class UserService {
             throw new ForumIllegalArgumentException("该邮箱已绑定其它账号");
         }
         emailService.sendVerifycode("更换绑定邮箱", newEmail);
+        log.info("用户 {} 请求了邮箱验证码以修改邮箱: {}", getCurrentUser().getUid(), newEmail);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -131,5 +138,6 @@ public class UserService {
         updateWrapper.set("email", newEmail);
         updateWrapper.set("update_time", new Date());
         userMapper.update(updateWrapper);
+        log.info("用户 {} 修改了邮箱: {}", uid, newEmail);
     }
 }
