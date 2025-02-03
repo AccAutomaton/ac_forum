@@ -85,11 +85,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        String uid, username;
         try {
-            String username = jwtService.decode(jwtToken, "username");
+            uid = jwtService.decode(jwtToken, "uid");
+            username = jwtService.decode(jwtToken, "username");
             if (!username.trim().isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-                log.debug("解析出 JWT 用户名: {}", username);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                log.info("收到用户 {} (用户名: {}) 访问 {} 的请求", uid, username, request.getRequestURI());
                 if (!userDetails.isAccountNonLocked()) {
                     throw new ForumIllegalAccountException("账户被锁定");
                 }
@@ -112,7 +114,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter().println(result);
             return;
         }
-
         filterChain.doFilter(request, response);
     }
 
