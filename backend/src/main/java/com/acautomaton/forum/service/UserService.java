@@ -18,6 +18,7 @@ import com.tencent.cloud.Credentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,13 +32,15 @@ public class UserService {
     UserMapper userMapper;
     CosService cosService;
     CaptchaService captchaService;
+    PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserMapper userMapper, CosService cosService, CaptchaService captchaService, EmailService emailService) {
+    public UserService(UserMapper userMapper, CosService cosService, CaptchaService captchaService, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.cosService = cosService;
         this.captchaService = captchaService;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getCurrentUser() {
@@ -139,5 +142,24 @@ public class UserService {
         updateWrapper.set("update_time", new Date());
         userMapper.update(updateWrapper);
         log.info("用户 {} 修改了邮箱: {}", uid, newEmail);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void setPassword(Integer uid, String oldPassword, String newPassword) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", uid);
+        User user = userMapper.selectOne(queryWrapper);
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new ForumVerifyException("旧密码错误");
+        }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new ForumVerifyException("新密码不得与旧密码一致");
+        }
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("uid", uid);
+        updateWrapper.set("password", passwordEncoder.encode(newPassword));
+        updateWrapper.set("update_time", new Date());
+        userMapper.update(updateWrapper);
+        log.info("用户 {} 修改了密码", uid);
     }
 }

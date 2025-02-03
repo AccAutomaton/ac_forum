@@ -3,6 +3,7 @@ package com.acautomaton.forum.controller;
 import com.acautomaton.forum.dto.user.GetEmailVerifyCodeForSettingEmailDTO;
 import com.acautomaton.forum.dto.user.SetEmailDTO;
 import com.acautomaton.forum.dto.user.SetNicknameDTO;
+import com.acautomaton.forum.dto.user.SetPasswordDTO;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
@@ -70,6 +71,12 @@ public class UserController {
     @PatchMapping("/set/email")
     public Response setEmail(@Validated @RequestBody SetEmailDTO dto) {
         userService.setEmail(userService.getCurrentUser().getUid(), dto.getNewEmail(), dto.getVerifyCode());
+        return Response.success();
+    }
+
+    @PatchMapping("/set/password")
+    public Response setPassword(@Validated @RequestBody SetPasswordDTO dto) {
+        userService.setPassword(userService.getCurrentUser().getUid(), dto.getOldPassword(), dto.getNewPassword());
         return Response.success();
     }
 }

@@ -75,3 +75,15 @@ export const setEmail = (newEmail, verifyCode) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const setPassword = (oldPassword, newPassword) =>
+    request({
+        url: '/user/set/password',
+        method: 'PATCH',
+        data: {
+            oldPassword: oldPassword,
+            newPassword: newPassword,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

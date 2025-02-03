@@ -15,7 +15,6 @@ import com.acautomaton.forum.vo.login.LoginAuthorizationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class LoginService {
-    private final PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
     UserMapper userMapper;
     EmailService emailService;
     CaptchaService captchaService;
@@ -63,7 +62,6 @@ public class LoginService {
             throw new ForumVerifyException("邮箱验证码错误");
         }
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Date now = new Date();
         User user = new User(null, dto.getUsername(), passwordEncoder.encode(dto.getPassword()),
                 dto.getEmail(), UserStatus.NORMAL, UserType.USER, dto.getUsername(), "default-avatar.png", now, now, 0);
@@ -79,7 +77,6 @@ public class LoginService {
 
     public LoginAuthorizationVO login(LoginDTO dto) {
         User user = getUserByUsername(dto.getUsername());
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new ForumVerifyException("用户名或密码错误");
         }
