@@ -162,4 +162,10 @@ public class UserService {
         userMapper.update(updateWrapper);
         log.info("用户 {} 修改了密码", uid);
     }
+
+    public User getUserByUid(Integer uid) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", uid);
+        return userMapper.selectOne(queryWrapper);
+    }
 }
