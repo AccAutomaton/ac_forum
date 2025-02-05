@@ -3,10 +3,15 @@ package com.acautomaton.forum.server;
 import com.acautomaton.forum.config.WebSocketConfiguration;
 import com.acautomaton.forum.entity.Message;
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.service.MessageService;
 import com.acautomaton.forum.service.UserService;
+import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.websocket.*;
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnError;
+import jakarta.websocket.OnOpen;
+import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -33,8 +38,7 @@ public class MessageWebSocketServer implements ApplicationContextAware {
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
         try {
             MessageWebSocketServer.applicationContext = applicationContext;
-        }
-        catch (BeansException e) {
+        } catch (BeansException e) {
             log.error("初始化 WebSocket-Message 上下文时出现异常: {}", e.getMessage());
         }
     }
@@ -47,11 +51,16 @@ public class MessageWebSocketServer implements ApplicationContextAware {
         if (webSocketMap.containsKey(this.user.getUid())) {
             webSocketMap.remove(this.user.getUid());
             webSocketMap.put(this.user.getUid(), this);
-        }
-        else {
+        } else {
             webSocketMap.put(this.user.getUid(), this);
         }
-        // send some messages ...
+        ObjectMapper objectMapper = new ObjectMapper();
+        PageHelperVO<Message> messagePageHelperVO = getBean(MessageService.class).getMessages(uid, null, 1, 10);
+        try {
+            Send(objectMapper.writeValueAsString(messagePageHelperVO));
+        } catch (JsonProcessingException e) {
+            log.error("发送 Message WebSocket (step: on Open) 给用户 {} 时序列化异常: {}", uid, e.getMessage());
+        }
         log.info("用户 {} 连接到 WebSocket: {} 成功, 当前在线数 {}", this.user.getUid(), session.getRequestURI().getPath(), getOnlineCount());
     }
 
@@ -69,8 +78,7 @@ public class MessageWebSocketServer implements ApplicationContextAware {
     public void Send(String message) {
         try {
             this.session.getBasicRemote().sendText(message);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             log.error("发送 WebSocket: {} 消息给 {} 时发生错误: {}", this.session.getRequestURI().getPath(), this.user.getUid(), e.getMessage());
         }
     }
@@ -81,15 +89,13 @@ public class MessageWebSocketServer implements ApplicationContextAware {
             String msg;
             try {
                 msg = objectMapper.writeValueAsString(messages);
-            }
-            catch (JsonProcessingException e) {
+            } catch (JsonProcessingException e) {
                 msg = "error";
-                log.error("发送 Message WebSocket 给用户 {} 时序列化异常: {}", uid, e.getMessage());
+                log.error("发送 Message WebSocket (step: on Message) 给用户 {} 时序列化异常: {}", uid, e.getMessage());
             }
             webSocketMap.get(uid).Send(msg);
             return true;
-        }
-        else {
+        } else {
             log.info("发送 WebSocket 消息给用户 {} 失败(用户不在线)", uid);
             return false;
         }
@@ -101,8 +107,7 @@ public class MessageWebSocketServer implements ApplicationContextAware {
             try {
                 session.close();
                 log.warn("session header 为空, WebSocket-Chat 已断开 (session: {})", session);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 log.warn("session header 为空, 尝试断开 WebSocket-Chat 失败 (session: {})", session);
             }
         }
@@ -116,8 +121,7 @@ public class MessageWebSocketServer implements ApplicationContextAware {
     public static <T> T getBean(Class<T> type) {
         try {
             return applicationContext.getBean(type);
-        }
-        catch (NoUniqueBeanDefinitionException e) {
+        } catch (NoUniqueBeanDefinitionException e) {
             String beanName = applicationContext.getBeanNamesForType(type)[0];
             return applicationContext.getBean(beanName, type);
         }

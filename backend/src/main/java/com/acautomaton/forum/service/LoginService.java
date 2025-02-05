@@ -2,6 +2,7 @@ package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.dto.login.*;
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.enumerate.MessageType;
 import com.acautomaton.forum.enumerate.UserStatus;
 import com.acautomaton.forum.enumerate.UserType;
 import com.acautomaton.forum.exception.ForumException;
@@ -31,14 +32,17 @@ public class LoginService {
     EmailService emailService;
     CaptchaService captchaService;
     JwtService jwtService;
+    MessageService messageService;
 
     @Autowired
-    public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService, JwtService jwtService, PasswordEncoder passwordEncoder) {
+    public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService,
+                        JwtService jwtService, PasswordEncoder passwordEncoder, MessageService messageService) {
         this.userMapper = userMapper;
         this.emailService = emailService;
         this.captchaService = captchaService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+        this.messageService = messageService;
     }
 
     public void getEmailVerifyCodeForRegister(GetEmailVerifyCodeForRegisterDTO dto) {
@@ -70,6 +74,8 @@ public class LoginService {
         if (user.getUid() != null && user.getUid() > 10000000) {
             log.info("用户 {} 注册成功", user.getUsername());
             emailService.deleteVerifyCode(dto.getEmail());
+            messageService.createMessage(user.getUid(), "欢迎您注册AC论坛!", MessageType.NORMAL,
+                    "感谢您的支持", "");
         } else {
             log.warn("用户 {} 注册失败", user.getUsername());
             throw new ForumException("注册失败，请稍后再试");
