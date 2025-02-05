@@ -7,6 +7,7 @@ import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.mapper.UserMapper;
+import com.acautomaton.forum.service.util.CaptchaService;
 import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.EmailService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;

@@ -1,9 +1,8 @@
-package com.acautomaton.forum.service;
+package com.acautomaton.forum.service.util;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import com.acautomaton.forum.exception.ForumObjectExpireException;
-import com.acautomaton.forum.service.util.RedisService;
 import com.acautomaton.forum.vo.captcha.CaptchaImageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

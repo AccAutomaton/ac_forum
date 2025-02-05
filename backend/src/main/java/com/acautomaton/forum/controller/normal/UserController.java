@@ -1,4 +1,4 @@
-package com.acautomaton.forum.controller;
+package com.acautomaton.forum.controller.normal;
 
 import com.acautomaton.forum.dto.user.GetEmailVerifyCodeForSettingEmailDTO;
 import com.acautomaton.forum.dto.user.SetEmailDTO;

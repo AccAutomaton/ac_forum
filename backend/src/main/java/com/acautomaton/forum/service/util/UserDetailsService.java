@@ -1,4 +1,4 @@
-package com.acautomaton.forum.service;
+package com.acautomaton.forum.service.util;
 
 import com.acautomaton.forum.entity.SecurityUser;
 import com.acautomaton.forum.entity.User;

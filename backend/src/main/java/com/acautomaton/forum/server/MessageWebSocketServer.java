@@ -1,11 +1,11 @@
-package com.acautomaton.forum.controller;
+package com.acautomaton.forum.server;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.acautomaton.forum.config.WebSocketConfiguration;
+import com.acautomaton.forum.entity.Message;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +17,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@ServerEndpoint(value = "/webSocket/chat", configurator = WebSocketConfiguration.class)
-public class ChatWebSocketController implements ApplicationContextAware {
-    private static final ConcurrentHashMap<Integer, ChatWebSocketController> webSocketMap = new ConcurrentHashMap<>();
+@ServerEndpoint(value = "/webSocket/message", configurator = WebSocketConfiguration.class)
+public class MessageWebSocketServer implements ApplicationContextAware {
+    private static final ConcurrentHashMap<Integer, MessageWebSocketServer> webSocketMap = new ConcurrentHashMap<>();
     private static ApplicationContext applicationContext;
     private Session session;
     private User user;
@@ -31,10 +32,10 @@ public class ChatWebSocketController implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
         try {
-            ChatWebSocketController.applicationContext = applicationContext;
+            MessageWebSocketServer.applicationContext = applicationContext;
         }
         catch (BeansException e) {
-            log.error("初始化 WebSocket-Chat 上下文时出现异常: {}", e.getMessage());
+            log.error("初始化 WebSocket-Message 上下文时出现异常: {}", e.getMessage());
         }
     }
 
@@ -60,17 +61,6 @@ public class ChatWebSocketController implements ApplicationContextAware {
         log.info("用户 {} 断开与 WebSocket: {} 的连接, 当前在线数 {}", this.user.getUid(), this.session.getRequestURI().getPath(), getOnlineCount());
     }
 
-    @OnMessage
-    public void onMessage(String message, Session session) {
-        log.debug("收到用户 {} 发送给 {} 的 WebSocket 消息", this.user.getUid(), session.getRequestURI().getPath());
-        if (StrUtil.isNotBlank(message)) {
-            JSONObject jsonObject = JSONUtil.parseObj(message);
-            jsonObject.append("user", this.user);
-            // do something then ...
-            // remember to handle exception (if is not json)
-        }
-    }
-
     @OnError
     public void onError(Throwable error) {
         log.warn("用户 {} 与 WebSocket: {} 通信时发生错误: {}", this.user.getUid(), this.session.getRequestURI().getPath(), error.getMessage());
@@ -85,9 +75,18 @@ public class ChatWebSocketController implements ApplicationContextAware {
         }
     }
 
-    public static boolean sendMessage(String message, Integer uid) {
+    public static boolean sendMessage(Integer uid, List<Message> messages) {
         if (webSocketMap.containsKey(uid)) {
-            webSocketMap.get(uid).Send(message);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String msg;
+            try {
+                msg = objectMapper.writeValueAsString(messages);
+            }
+            catch (JsonProcessingException e) {
+                msg = "error";
+                log.error("发送 Message WebSocket 给用户 {} 时序列化异常: {}", uid, e.getMessage());
+            }
+            webSocketMap.get(uid).Send(msg);
             return true;
         }
         else {
