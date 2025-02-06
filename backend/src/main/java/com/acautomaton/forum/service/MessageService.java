@@ -54,6 +54,13 @@ public class MessageService {
         );
     }
 
+    public Long getNotSeenMessagesCount(Integer uid) {
+        QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", uid);
+        queryWrapper.eq("seen", 0);
+        return messageMapper.selectCount(queryWrapper);
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     private List<Message> getMessages(Integer uid, Boolean seen) {
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();

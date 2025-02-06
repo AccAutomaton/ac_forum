@@ -20,4 +20,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 app.use(ElementPlus, {locale: zhCn})
 
+// --- moment.js --- //
+import moment from "moment"
+import 'moment/dist/locale/zh-cn'
+moment.locale("zh-cn")
+
 app.mount('#app')

@@ -1,13 +1,11 @@
 package com.acautomaton.forum.controller.normal;
 
+import com.acautomaton.forum.dto.message.DoReadMessageDTO;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.MessageService;
 import com.acautomaton.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/message")
@@ -21,12 +19,23 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping("/getList")
+    @GetMapping("/get/list")
     public Response getList(@RequestParam Integer pageNumber,
                             @RequestParam Integer pageSize,
                             @RequestParam(required = false) Boolean seen) {
         return Response.success(messageService.getMessages(
             userService.getCurrentUser().getUid(), seen, pageNumber, pageSize
         ));
+    }
+
+    @GetMapping("/get/count/notSeen")
+    public Response getNotSeenMessagesCount() {
+        return Response.success(messageService.getNotSeenMessagesCount(userService.getCurrentUser().getUid()));
+    }
+
+    @PatchMapping("/read")
+    public Response doReadMessage(@RequestBody DoReadMessageDTO dto) {
+        messageService.readMessage(dto.getMessageId(), userService.getCurrentUser().getUid());
+        return Response.success();
     }
 }

@@ -1,0 +1,33 @@
+import request from "@/request/index.js";
+
+export const getNotSeenMessageCount = () =>
+    request({
+        url: '/message/get/count/notSeen',
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const getMessageList = (pageNumber, pageSize, seen) =>
+    request({
+        url: '/message/get/list',
+        method: 'GET',
+        params: {
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            seen: seen,
+        }
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const doReadMessage = (messageId) =>
+    request({
+        url: 'message/read',
+        method: 'PATCH',
+        data: {
+            messageId: messageId,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

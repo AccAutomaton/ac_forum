@@ -3,9 +3,7 @@ package com.acautomaton.forum.server;
 import com.acautomaton.forum.config.WebSocketConfiguration;
 import com.acautomaton.forum.entity.Message;
 import com.acautomaton.forum.entity.User;
-import com.acautomaton.forum.service.MessageService;
 import com.acautomaton.forum.service.UserService;
-import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.OnClose;
@@ -53,13 +51,6 @@ public class MessageWebSocketServer implements ApplicationContextAware {
             webSocketMap.put(this.user.getUid(), this);
         } else {
             webSocketMap.put(this.user.getUid(), this);
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        PageHelperVO<Message> messagePageHelperVO = getBean(MessageService.class).getMessages(uid, null, 1, 10);
-        try {
-            Send(objectMapper.writeValueAsString(messagePageHelperVO));
-        } catch (JsonProcessingException e) {
-            log.error("发送 Message WebSocket (step: on Open) 给用户 {} 时序列化异常: {}", uid, e.getMessage());
         }
         log.info("用户 {} 连接到 WebSocket: {} 成功, 当前在线数 {}", this.user.getUid(), session.getRequestURI().getPath(), getOnlineCount());
     }

@@ -40,7 +40,7 @@ request.interceptors.response.use(
         if (response.status === 403) {
             ElNotification({
                 title: '错误',
-                message: '非法操作',
+                message: '请求被拒绝',
                 type: 'error'
             })
             return null;
@@ -83,8 +83,8 @@ request.interceptors.response.use(
     },
     function (error) {
         ElNotification({
-            title: '服务器错误',
-            message: '服务器发生内部错误',
+            title: '网络',
+            message: '请检查您的网络连接',
             type: 'error'
         });
         return Promise.reject(error)

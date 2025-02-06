@@ -22,7 +22,8 @@ public class ExceptionHandler {
                 ForumVerifyException.class,
                 ForumException.class,
                 ForumObjectExpireException.class,
-                ForumExistentialityException.class
+                ForumExistentialityException.class,
+                ForumIllegalAccountException.class
             }
     )
     public Response Exception(Exception e) {

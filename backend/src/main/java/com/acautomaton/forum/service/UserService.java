@@ -81,7 +81,7 @@ public class UserService {
     public CosAuthorizationVO getAvatarUpdateAuthorization(Integer uid) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("uid", uid);
-        updateWrapper.set("updateTime", new Date());
+        updateWrapper.set("update_time", new Date());
         userMapper.update(updateWrapper);
         Integer expireSeconds = 60;
         String avatarKey = CosFolderPath.AVATAR + "uid_" + uid + "_avatar.png";
@@ -97,7 +97,7 @@ public class UserService {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("uid", uid);
         updateWrapper.set("avatar", "uid_" + uid + "_avatar.png");
-        updateWrapper.set("updateTime", new Date());
+        updateWrapper.set("update_time", new Date());
         userMapper.update(updateWrapper);
         log.info("用户 {} 不再使用默认头像", uid);
     }
