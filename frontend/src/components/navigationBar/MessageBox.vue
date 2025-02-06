@@ -1,9 +1,10 @@
 <script setup>
 import {Message} from "@element-plus/icons-vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {doReadMessage, getMessageList, getNotSeenMessageCount} from "@/request/message.js";
 import moment from "moment";
 import router from "@/router/index.js";
+import store from "@/store/index.js";
 
 const segmentedValue = ref("notSeen")
 const segmentedOptions = [
@@ -24,7 +25,6 @@ const refreshNotSeenMessageCount = async () => {
     notSeenMessageCount.value = data;
   }
 }
-refreshNotSeenMessageCount();
 
 let nextPageNumber = 1, pageSize = 5;
 const records = ref([]), isLoading = ref(false), isLastPage = ref(false);
@@ -43,7 +43,6 @@ const getMoreMessage = async () => {
     isLoading.value = false;
   }
 }
-getMoreMessage();
 
 const onChangeSegmentedValue = async () => {
   isLastPage.value = false;
@@ -62,6 +61,23 @@ const readMessage = async (messageId, targetUrl, index) => {
     }
   }
 }
+
+if (store.getters.getIsLogin) {
+  refreshNotSeenMessageCount();
+  getMoreMessage();
+}
+watch(() => store.getters.getIsLogin, (newValue) => {
+  if (newValue) {
+    refreshNotSeenMessageCount();
+    getMoreMessage();
+  } else {
+    notSeenMessageCount.value = 0;
+    isLastPage.value = false;
+    isLoading.value = false;
+    nextPageNumber = 1;
+    records.value = [];
+  }
+})
 </script>
 
 <template>
@@ -83,7 +99,8 @@ const readMessage = async (messageId, targetUrl, index) => {
           v-infinite-scroll="getMoreMessage"
           infinite-scroll-immediate="false">
         <li v-for="(record, index) in records" :key="record['id']" style="list-style: none;">
-          <el-card shadow="hover" style="margin-bottom: 10px; cursor: pointer" @click="readMessage(record['id'], index)">
+          <el-card shadow="hover" style="margin-bottom: 10px; cursor: pointer"
+                   @click="readMessage(record['id'], index)">
             <div style="font-weight: bold">{{ record["title"] }}</div>
             <div>{{ record["content"] }}</div>
             <div style="float: right; color: #a19b9b; margin-bottom: 5px">

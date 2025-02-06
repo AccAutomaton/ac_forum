@@ -2,6 +2,7 @@
 import {HomeFilled} from "@element-plus/icons-vue";
 import UserSubMenu from "@/components/navigationBar/UserSubMenu.vue";
 import MessageBox from "@/components/navigationBar/MessageBox.vue";
+import store from "@/store/index.js";
 </script>
 
 <template>
@@ -26,7 +27,7 @@ import MessageBox from "@/components/navigationBar/MessageBox.vue";
           <span>首页</span>
         </el-menu-item>
         <div style="flex-grow: 1"/>
-        <MessageBox/>
+        <MessageBox v-if="store.getters.getIsLogin"/>
         <UserSubMenu/>
       </el-menu>
     </el-header>

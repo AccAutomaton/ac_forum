@@ -83,7 +83,7 @@ request.interceptors.response.use(
     },
     function (error) {
         ElNotification({
-            title: '网络',
+            title: '网络错误',
             message: '请检查您的网络连接',
             type: 'error'
         });
