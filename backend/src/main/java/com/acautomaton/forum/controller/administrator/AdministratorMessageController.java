@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,10 +37,10 @@ public class AdministratorMessageController {
 
     @PostMapping("/send/temporary")
     public Response sendTemporaryMessage(@RequestBody SendMessageDTO dto) {
-        MessageWebSocketServer.sendMessage(dto.getUid(), List.of(new Message(
+        MessageWebSocketServer.sendMessage(dto.getUid(), new Message(
                 null, dto.getUid(), dto.getTitle(), MessageType.getById(dto.getType()), dto.getContent(),
                 dto.getTargetUrl(), new Date(), null, null
-        )));
+        ));
         log.info("管理员 {} 发送临时消息给用户 {} 成功", userService.getCurrentUser().getUid(), dto.getUid());
         return Response.success();
     }
@@ -49,7 +48,7 @@ public class AdministratorMessageController {
     @PutMapping("/send/perpetual")
     public Response sendPerpetualMessage(@RequestBody SendMessageDTO dto) {
         messageService.createMessage(
-            dto.getUid(), dto.getTitle(), MessageType.getById(dto.getType()), dto.getContent(), dto.getTargetUrl()
+                dto.getUid(), dto.getTitle(), MessageType.getById(dto.getType()), dto.getContent(), dto.getTargetUrl()
         );
         log.info("管理员 {} 发送永久消息给用户 {} 成功", userService.getCurrentUser().getUid(), dto.getUid());
         return Response.success();

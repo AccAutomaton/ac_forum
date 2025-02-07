@@ -5,6 +5,8 @@ import {doReadMessage, getMessageList, getNotSeenMessageCount} from "@/request/m
 import moment from "moment";
 import router from "@/router/index.js";
 import store from "@/store/index.js";
+import {GetAuthorizationCode} from "@/request/index.js";
+import {ElNotification} from "element-plus";
 
 const segmentedValue = ref("notSeen")
 const segmentedOptions = [
@@ -57,19 +59,42 @@ const readMessage = async (messageId, targetUrl, index) => {
     records.value.splice(index, 1);
     notSeenMessageCount.value--;
     if (targetUrl !== "") {
-      router.push(targetUrl).then(() => {});
+      router.push(targetUrl).then(() => {
+      });
     }
   }
+}
+
+let webSocket;
+const initWebSocket = () => {
+  webSocket = new WebSocket(
+      import.meta.env.VITE_WEBSOCKET_API_HOST + "/webSocket/message?Authorization=" + GetAuthorizationCode()
+  );
+  webSocket.onopen = () => {
+  }
+  webSocket.onmessage = (event) => {
+    let data = JSON.parse(event.data);
+    records.value.unshift(data);
+    notSeenMessageCount.value++;
+  }
+  webSocket.onerror = () => {
+    ElNotification({type: "error", title: "与消息推送服务器的连接发生错误", message: "请刷新后重试"});
+  }
+  webSocket.onclose = () => {
+    ElNotification({type: "warning", title: "与消息推送服务器的连接已断开", message: "请刷新后重试"});
+  };
 }
 
 if (store.getters.getIsLogin) {
   refreshNotSeenMessageCount();
   getMoreMessage();
+  initWebSocket();
 }
 watch(() => store.getters.getIsLogin, (newValue) => {
   if (newValue) {
     refreshNotSeenMessageCount();
     getMoreMessage();
+    initWebSocket();
   } else {
     notSeenMessageCount.value = 0;
     isLastPage.value = false;
@@ -110,7 +135,7 @@ watch(() => store.getters.getIsLogin, (newValue) => {
         </li>
       </ul>
       <el-empty v-if="records.length === 0" description="暂无消息" :image-size="125"/>
-      <div v-if="isLastPage" style="text-align: center; color: #a19b9b;">- - - 已经到底了 - - -</div>
+      <div v-if="isLastPage" style="text-align: center; color: #a19b9b;">- - - 我也是有底线的 - - -</div>
       <div v-if="isLoading" style="text-align: center; color: #a19b9b;">- - - 加载中 - - -</div>
     </el-scrollbar>
   </el-popover>

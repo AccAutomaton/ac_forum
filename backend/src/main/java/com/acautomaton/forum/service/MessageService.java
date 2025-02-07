@@ -36,15 +36,15 @@ public class MessageService {
         Message message = new Message(null, uid, title, type, content, targetUrl, new Date(), 0, 0);
         messageMapper.insert(message);
         log.info("成功创建消息 (id: {}, uid: {})", message.getId(), message.getUid());
-        CompletableFuture<Boolean> result = sendMessage(uid, List.of(message));
+        CompletableFuture<Boolean> result = sendMessage(uid, message);
         if (result.get()) {
             log.info("成功发送消息 (id: {}, uid: {})", message.getId(), message.getUid());
         }
     }
 
     @Async
-    public CompletableFuture<Boolean> sendMessage(Integer uid, List<Message> messages) {
-        Boolean result = MessageWebSocketServer.sendMessage(uid, messages);
+    public CompletableFuture<Boolean> sendMessage(Integer uid, Message message) {
+        Boolean result = MessageWebSocketServer.sendMessage(uid, message);
         return CompletableFuture.completedFuture(result);
     }
 

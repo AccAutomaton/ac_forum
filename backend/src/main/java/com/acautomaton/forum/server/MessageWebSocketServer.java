@@ -20,7 +20,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -74,12 +73,12 @@ public class MessageWebSocketServer implements ApplicationContextAware {
         }
     }
 
-    public static boolean sendMessage(Integer uid, List<Message> messages) {
+    public static boolean sendMessage(Integer uid, Message message) {
         if (webSocketMap.containsKey(uid)) {
             ObjectMapper objectMapper = new ObjectMapper();
             String msg;
             try {
-                msg = objectMapper.writeValueAsString(messages);
+                msg = objectMapper.writeValueAsString(message);
             } catch (JsonProcessingException e) {
                 msg = "error";
                 log.error("发送 Message WebSocket (step: on Message) 给用户 {} 时序列化异常: {}", uid, e.getMessage());
