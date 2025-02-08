@@ -49,7 +49,7 @@ public class UserService {
         return securityUser.getUser();
     }
 
-    public GetNavigationBarInformationVO getNavigationBarInformation(Integer uid) {
+    public GetNavigationBarInformationVO getNavigationBarInformationByUid(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         User user = userMapper.selectOne(queryWrapper);
@@ -63,7 +63,7 @@ public class UserService {
         );
     }
 
-    public CosAuthorizationVO getAvatarGetAuthorization(Integer uid) {
+    public CosAuthorizationVO getAvatarGetAuthorizationByUid(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         queryWrapper.select("avatar");
@@ -78,7 +78,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CosAuthorizationVO getAvatarUpdateAuthorization(Integer uid) {
+    public CosAuthorizationVO getAvatarUpdateAuthorizationByUid(Integer uid) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("uid", uid);
         updateWrapper.set("update_time", new Date());
@@ -102,7 +102,7 @@ public class UserService {
         log.info("用户 {} 不再使用默认头像", uid);
     }
 
-    public GetDetailsVO getDetails(Integer uid) {
+    public GetDetailsVO getDetailsByUid(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         User user = userMapper.selectOne(queryWrapper);

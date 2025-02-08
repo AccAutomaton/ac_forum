@@ -1,5 +1,5 @@
 <script setup>
-import {HomeFilled} from "@element-plus/icons-vue";
+import {ChatLineSquare, Discount} from "@element-plus/icons-vue";
 import UserSubMenu from "@/components/navigationBar/UserSubMenu.vue";
 import MessageBox from "@/components/navigationBar/MessageBox.vue";
 import store from "@/store/index.js";
@@ -23,8 +23,12 @@ import store from "@/store/index.js";
           </el-container>
         </el-menu-item>
         <el-menu-item index="/home">
-          <el-icon><HomeFilled /></el-icon>
+          <el-icon><Discount /></el-icon>
           <span>首页</span>
+        </el-menu-item>
+        <el-menu-item index="/topic">
+          <el-icon><ChatLineSquare /></el-icon>
+          <span>话题</span>
         </el-menu-item>
         <div style="flex-grow: 1"/>
         <MessageBox v-if="store.getters.getIsLogin"/>

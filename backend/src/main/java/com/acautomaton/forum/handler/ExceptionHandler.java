@@ -2,6 +2,7 @@ package com.acautomaton.forum.handler;
 
 import com.acautomaton.forum.exception.*;
 import com.acautomaton.forum.response.Response;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,17 +16,15 @@ import java.util.stream.Stream;
 @Slf4j
 @RestControllerAdvice
 public class ExceptionHandler {
-    @org.springframework.web.bind.annotation.ExceptionHandler(
-            value = {
-                ForumIllegalArgumentException.class,
-                UsernameNotFoundException.class,
-                ForumVerifyException.class,
-                ForumException.class,
-                ForumObjectExpireException.class,
-                ForumExistentialityException.class,
-                ForumIllegalAccountException.class
-            }
-    )
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = {
+            ForumIllegalArgumentException.class,
+            UsernameNotFoundException.class,
+            ForumVerifyException.class,
+            ForumException.class,
+            ForumObjectExpireException.class,
+            ForumExistentialityException.class,
+            ForumIllegalAccountException.class
+    })
     public Response Exception(Exception e) {
         return Response.error(e.getMessage());
     }
@@ -36,6 +35,11 @@ public class ExceptionHandler {
         Stream<String> errorStream = allErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage);
         String message = errorStream.toList().getLast();
         return Response.error(message);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = ConstraintViolationException.class)
+    public Response ConstraintViolationException(ConstraintViolationException e) {
+        return Response.error(e.getMessage().substring(e.getMessage().indexOf(":") + 2));
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(value = ForumRequestTooFrequentException.class)

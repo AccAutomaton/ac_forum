@@ -17,6 +17,9 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+mybatis-plus-join:
+  banner: false
+
 pagehelper:
   reasonable: true
   auto-dialect: true

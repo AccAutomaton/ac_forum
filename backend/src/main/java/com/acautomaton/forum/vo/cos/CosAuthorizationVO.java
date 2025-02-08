@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class CosAuthorizationVO {
+
     String secretId;
     String secretKey;
     String securityToken;

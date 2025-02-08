@@ -28,19 +28,19 @@ public class UserController {
 
     @GetMapping("/get/navigationBarInformation")
     public Response getNavigationBarInformation() {
-        GetNavigationBarInformationVO vo = userService.getNavigationBarInformation(userService.getCurrentUser().getUid());
+        GetNavigationBarInformationVO vo = userService.getNavigationBarInformationByUid(userService.getCurrentUser().getUid());
         return Response.success(vo);
     }
 
     @GetMapping("/get/avatar/getAuthorization")
     public Response getAvatarGetAuthorization() {
-        CosAuthorizationVO vo = userService.getAvatarGetAuthorization(userService.getCurrentUser().getUid());
+        CosAuthorizationVO vo = userService.getAvatarGetAuthorizationByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("avatar", vo));
     }
 
     @GetMapping("/get/avatar/updateAuthorization")
     public Response getAvatarUpdateAuthorization() {
-        CosAuthorizationVO vo = userService.getAvatarUpdateAuthorization(userService.getCurrentUser().getUid());
+        CosAuthorizationVO vo = userService.getAvatarUpdateAuthorizationByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("targetAvatar", vo));
     }
 
@@ -52,7 +52,7 @@ public class UserController {
 
     @GetMapping("/get/details")
     public Response getDetails() {
-        GetDetailsVO vo = userService.getDetails(userService.getCurrentUser().getUid());
+        GetDetailsVO vo = userService.getDetailsByUid(userService.getCurrentUser().getUid());
         return Response.success(vo);
     }
 

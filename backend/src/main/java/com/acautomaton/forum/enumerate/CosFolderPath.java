@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CosFolderPath {
-    AVATAR("avatar/");
+    AVATAR("avatar/"),
+    TOPIC_AVATAR("topic/avatar/");
 
     private final String path;
 

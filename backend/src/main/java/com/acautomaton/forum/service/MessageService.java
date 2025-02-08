@@ -48,13 +48,13 @@ public class MessageService {
         return CompletableFuture.completedFuture(result);
     }
 
-    public PageHelperVO<Message> getMessages(Integer uid, Boolean seen, Integer pageNumber, Integer pageSize) {
+    public PageHelperVO<Message> getMessagesByUid(Integer uid, Boolean seen, Integer pageNumber, Integer pageSize) {
         return new PageHelperVO<>(
-                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getMessages(uid, seen))
+                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getMessagesByUid(uid, seen))
         );
     }
 
-    public Long getNotSeenMessagesCount(Integer uid) {
+    public Long getNotSeenMessagesCountByuid(Integer uid) {
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         queryWrapper.eq("seen", 0);
@@ -62,7 +62,7 @@ public class MessageService {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    private List<Message> getMessages(Integer uid, Boolean seen) {
+    private List<Message> getMessagesByUid(Integer uid, Boolean seen) {
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         queryWrapper.eq(seen != null, "seen", Boolean.TRUE.equals(seen) ? 1 : 0);
