@@ -1,14 +1,16 @@
 <script setup>
 
-import {cos} from "@/request/cos.js";
+import {getObjectUrl, uploadObject} from "@/request/cos.js";
 import {ElNotification} from "element-plus";
 import store from "@/store/index.js";
 import {ref} from "vue";
 import {
   getAvatarGetAuthorization,
-  getAvatarUpdateAuthorization, getEmailVerifyCodeForSettingEmail,
+  getAvatarUpdateAuthorization,
+  getEmailVerifyCodeForSettingEmail,
   getUserDetails,
-  setAvatarCustomization, setEmail,
+  setAvatarCustomization,
+  setEmail,
   setNickname
 } from "@/request/user.js";
 import {ChatDotRound, Coordinate, Edit, Message, Upload} from "@element-plus/icons-vue";
@@ -32,23 +34,12 @@ const refreshAvatarUrl = async (needRefreshGlobalAvatar = false) => {
     if (data["avatar"]["key"].includes("default-avatar")) {
       isDefaultAvatar.value = true;
     }
-    cos(data["avatar"]).getObjectUrl(
-        {
-          Bucket: data["avatar"]["bucket"],
-          Region: data["avatar"]["region"],
-          Key: data["avatar"]["key"],
-        },
-        (err, data) => {
-          if (err !== null) {
-            ElNotification({title: "服务器错误", type: "error", message: "存储服务发生错误"});
-          } else {
-            avatar.value = data["Url"];
-            if (needRefreshGlobalAvatar) {
-              store.commit("setAvatar", data["Url"]);
-            }
-          }
-        }
-    )
+    getObjectUrl(data["avatar"], (url) => {
+      avatar.value = url;
+      if (needRefreshGlobalAvatar) {
+        store.commit("setAvatar", url);
+      }
+    });
   }
 }
 refreshAvatarUrl();
@@ -89,32 +80,20 @@ const doUpdateAvatar = () => {
     const file = await res[0].getFile();
     const data = await getAvatarUpdateAuthorization();
     if (data !== null) {
-      cos(data["targetAvatar"]).uploadFile(
-          {
-            Bucket: data["targetAvatar"]["bucket"],
-            Region: data["targetAvatar"]["region"],
-            Key: data["targetAvatar"]["key"],
-            Body: file,
-          },
-          async (err) => {
-            if (err !== null) {
-              ElNotification({title: "服务器错误", type: "error", message: "存储服务发生错误"});
-            } else {
-              if (isDefaultAvatar.value) {
-                const data = await setAvatarCustomization();
-                if (data !== null) {
-                  await refreshAvatarUrl(true);
-                  ElNotification({title: "修改成功", type: "success", message: "新头像将稍后生效"});
-                } else {
-                  ElNotification({title: "服务器错误", type: "error", message: "请稍后再试"})
-                }
-              } else {
-                await refreshAvatarUrl(true);
-                ElNotification({title: "修改成功", type: "success", message: "新头像将稍后生效"});
-              }
-            }
+      uploadObject(data["targetAvatar"], file, async () => {
+        if (isDefaultAvatar.value) {
+          const data = await setAvatarCustomization();
+          if (data !== null) {
+            await refreshAvatarUrl(true);
+            ElNotification({title: "修改成功", type: "success", message: "新头像将稍后生效"});
+          } else {
+            ElNotification({title: "服务器错误", type: "error", message: "请稍后再试"})
           }
-      );
+        } else {
+          await refreshAvatarUrl(true);
+          ElNotification({title: "修改成功", type: "success", message: "新头像将稍后生效"});
+        }
+      })
     }
   }).catch(() => {
     ElNotification({title: "操作取消", type: "info"});
@@ -259,7 +238,8 @@ const clickConfirmReviseEmailButton = async () => {
         <el-row>
           <el-text size="large" class="title-text">邮箱</el-text>
           <el-text>{{ email }}</el-text>
-          <el-button style="margin-left: 25px" :icon="Edit" circle plain @click="reviseEmailDialogVisible = true; getNewGraphicCaptcha()"/>
+          <el-button style="margin-left: 25px" :icon="Edit" circle plain
+                     @click="reviseEmailDialogVisible = true; getNewGraphicCaptcha()"/>
         </el-row>
         <el-divider :border-style="'dotted'"/>
         <el-row>

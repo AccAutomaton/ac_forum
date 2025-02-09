@@ -3,8 +3,7 @@ import store from "@/store/index.js";
 import {Discount, Promotion, SwitchButton} from "@element-plus/icons-vue";
 import {useStorage} from "@vueuse/core";
 import {getNavigationBarUserInformation} from "@/request/user.js";
-import {cos} from "@/request/cos.js";
-import {ElNotification} from "element-plus";
+import {getObjectUrl} from "@/request/cos.js";
 import router from "@/router/index.js";
 
 const authorization = useStorage("Authorization", "");
@@ -18,20 +17,9 @@ const refreshNavigationBarUserInformation = async () => {
     store.commit("setNickname", data["nickname"]);
     store.commit("setUserType", data["userType"]);
     store.commit("setIsLogin", true);
-    cos(data["avatar"]).getObjectUrl(
-        {
-          Bucket: data["avatar"]["bucket"],
-          Region: data["avatar"]["region"],
-          Key: data["avatar"]["key"],
-        },
-        (err, data) => {
-          if (err !== null) {
-            ElNotification({title: "服务器错误", type: "error", message: "存储服务发生错误"});
-          } else {
-            store.commit("setAvatar", data["Url"]);
-          }
-        }
-    )
+    getObjectUrl(data["avatar"], (url) => {
+      store.commit("setAvatar", url);
+    })
   }
 }
 

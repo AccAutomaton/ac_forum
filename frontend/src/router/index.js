@@ -2,29 +2,23 @@ import {createRouter, createWebHistory} from "vue-router";
 import store from "@/store/index.js";
 import {GetAuthorizationCode} from "@/request/index.js";
 import userCenterRoutes from "@/router/userCenter.js";
+import topicRoutes from "@/router/topic.js";
 
 const indexRoutes = [
     {
         path: '/',
-        name: 'index',
         redirect: '/home',
     },
     {
         path: '/login',
-        name: 'login',
         component: () => import('@/views/login/LoginPage.vue'),
-        meta: {
-            require_no_authentication: true,
-        }
     },
     {
         path: '/findBackPassword',
-        name: 'findBackPassword',
         component: () => import('@/views/login/FindBackPasswordPage.vue')
     },
     {
         path: '/home',
-        name: 'home',
         component: () => import('@/views/HomePage.vue'),
         meta: {
             require_authentication: true,
@@ -33,7 +27,7 @@ const indexRoutes = [
 ];
 
 // noinspection JSCheckFunctionSignatures
-const routes = indexRoutes.concat(userCenterRoutes)
+const routes = indexRoutes.concat(userCenterRoutes, topicRoutes)
 
 const router = createRouter({
     history: createWebHistory(),
@@ -49,16 +43,7 @@ router.beforeEach((to, from, next) => {
                 path: '/login',
             })
         }
-    } else if (to.meta["require_no_authentication"]) {
-        if (store.getters.getIsLogin || GetAuthorizationCode()) {
-            next({
-                path: from.path,
-            })
-        } else {
-            next();
-        }
-    }
-    else {
+    } else {
         next();
     }
 })

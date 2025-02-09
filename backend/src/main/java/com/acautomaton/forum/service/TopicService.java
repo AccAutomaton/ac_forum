@@ -14,7 +14,6 @@ import com.acautomaton.forum.vo.topic.GetTopicVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.tencent.cloud.Credentials;
@@ -102,9 +101,9 @@ public class TopicService {
         return vo;
     }
 
-    public <R> GetTopicListVO getTopicList(Integer pageNumber, Integer pageSize, SFunction<R, ?> ascBy, SFunction<R, ?> descBy) {
+    public GetTopicListVO getTopicList(Integer pageNumber, Integer pageSize, String queryType) {
         PageHelperVO<GetTopicVO> pageHelperVO = new PageHelperVO<>(
-                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getTopicList(ascBy, descBy))
+                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getTopicList(queryType))
         );
         Integer expiredSeconds = 60;
         List<String> allowResources = new ArrayList<>();
@@ -119,15 +118,30 @@ public class TopicService {
         ));
     }
 
-    private <R> List<GetTopicVO> getTopicList(SFunction<R, ?> ascBy, SFunction<R, ?> descBy) {
+    private List<GetTopicVO> getTopicList(String queryType) {
         MPJLambdaWrapper<Topic> mpjLambdaWrapper = new MPJLambdaWrapper<>();
         mpjLambdaWrapper
                 .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
                 .selectAs(Topic::getAdministrator, GetTopicVO::getAdministratorId)
                 .selectAs(User::getNickname, GetTopicVO::getAdministratorNickname)
-                .innerJoin(User.class, User::getUid, Topic::getAdministrator)
-                .orderByAsc(ascBy != null, ascBy)
-                .orderByDesc(descBy != null, descBy);
+                .innerJoin(User.class, User::getUid, Topic::getAdministrator);
+        switch (queryType) {
+            case "visitsByDesc":
+                mpjLambdaWrapper.orderByDesc(Topic::getVisits);
+                break;
+            case "visitsByAsc":
+                mpjLambdaWrapper.orderByAsc(Topic::getVisits);
+                break;
+            case "createTimeByDesc":
+                mpjLambdaWrapper.orderByDesc(Topic::getCreateTime);
+                break;
+            case "createTimeByAsc":
+                mpjLambdaWrapper.orderByAsc(Topic::getCreateTime);
+                break;
+            case "synthesize":
+            default:
+                mpjLambdaWrapper.orderByDesc(Topic::getVisits, Topic::getCreateTime);
+        }
         return topicMapper.selectJoinList(GetTopicVO.class, mpjLambdaWrapper);
     }
 }
