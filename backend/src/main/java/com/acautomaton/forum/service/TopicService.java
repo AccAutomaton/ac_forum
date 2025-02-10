@@ -45,7 +45,7 @@ public class TopicService {
         if (topicMapper.exists(queryWrapper)) {
             throw new ForumExistentialityException("话题已存在，请更换话题名称");
         }
-        Topic topic = new Topic(null, title, description, administrator, 0, new Date(), "", 0);
+        Topic topic = new Topic(null, title, description, administrator, 0, 0, new Date(), "", 0);
         topicMapper.insert(topic);
         log.info("用户 {} 创建了话题 {}", administrator, topic.getId());
     }
@@ -83,7 +83,7 @@ public class TopicService {
             throw new ForumExistentialityException("话题不存在");
         }
         mpjLambdaWrapper
-                .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
+                .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getArticles, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
                 .selectAs(Topic::getAdministrator, GetTopicVO::getAdministratorId)
                 .selectAs(User::getNickname, GetTopicVO::getAdministratorNickname)
                 .innerJoin(User.class, User::getUid, Topic::getAdministrator);
@@ -103,7 +103,7 @@ public class TopicService {
 
     public GetTopicListVO getTopicList(Integer pageNumber, Integer pageSize, String queryType) {
         PageHelperVO<GetTopicVO> pageHelperVO = new PageHelperVO<>(
-                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getTopicList(queryType))
+                PageHelper.startPage(pageNumber, pageSize < 20 ? pageSize : 20).doSelectPageInfo(() -> getTopicList(queryType))
         );
         Integer expiredSeconds = 60;
         List<String> allowResources = new ArrayList<>();
@@ -121,7 +121,7 @@ public class TopicService {
     private List<GetTopicVO> getTopicList(String queryType) {
         MPJLambdaWrapper<Topic> mpjLambdaWrapper = new MPJLambdaWrapper<>();
         mpjLambdaWrapper
-                .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
+                .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getArticles, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
                 .selectAs(Topic::getAdministrator, GetTopicVO::getAdministratorId)
                 .selectAs(User::getNickname, GetTopicVO::getAdministratorNickname)
                 .innerJoin(User.class, User::getUid, Topic::getAdministrator);
@@ -138,9 +138,15 @@ public class TopicService {
             case "createTimeByAsc":
                 mpjLambdaWrapper.orderByAsc(Topic::getCreateTime);
                 break;
+            case "articlesByDesc":
+                mpjLambdaWrapper.orderByDesc(Topic::getArticles);
+                break;
+            case "articlesByAsc":
+                mpjLambdaWrapper.orderByAsc(Topic::getArticles);
+                break;
             case "synthesize":
             default:
-                mpjLambdaWrapper.orderByDesc(Topic::getVisits, Topic::getCreateTime);
+                mpjLambdaWrapper.orderByDesc(Topic::getVisits, Topic::getCreateTime, Topic::getArticles);
         }
         return topicMapper.selectJoinList(GetTopicVO.class, mpjLambdaWrapper);
     }

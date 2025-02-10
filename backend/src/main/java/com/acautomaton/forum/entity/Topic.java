@@ -22,6 +22,7 @@ public class Topic {
     private String title;
     private String description;
     private Integer administrator;
+    private Integer articles;
     private Integer visits;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;

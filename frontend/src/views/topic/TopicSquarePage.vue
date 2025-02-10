@@ -2,6 +2,7 @@
 import {Plus, Search} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import TopicVisitsRankingList from "@/views/topic/TopicVisitsRankingList.vue";
+import TopicSearchResultList from "@/views/topic/TopicSearchResultList.vue";
 
 const searchInput = ref("");
 const selectSearchType = ref("synthesize");
@@ -11,6 +12,8 @@ const selectOptions = [
   {value: "visitsByAsc", label: "热度由低到高"},
   {value: "createTimeByDesc", label: "时间从近到远"},
   {value: "createTimeByAsc", label: "时间从远到近"},
+  {value: "articlesByDesc", label: "帖子从多到少"},
+  {value: "articlesByAsc", label: "帖子从少到多"},
 ]
 </script>
 
@@ -45,11 +48,7 @@ const selectOptions = [
           </template>
         </el-input>
       </el-card>
-      <el-card shadow="never"
-               style="border-radius: 25px; border-color: rgba(211,211,211,0.5); border-width: thin; margin-top: 30px">
-        <el-scrollbar height="72vh">
-        </el-scrollbar>
-      </el-card>
+      <TopicSearchResultList/>
     </el-main>
   </el-container>
 </template>

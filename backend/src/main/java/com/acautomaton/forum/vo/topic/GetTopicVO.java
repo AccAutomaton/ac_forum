@@ -22,6 +22,7 @@ public class GetTopicVO {
     String description;
     Integer administratorId;
     String administratorNickname;
+    Integer articles;
     Integer visits;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     Date createTime;
