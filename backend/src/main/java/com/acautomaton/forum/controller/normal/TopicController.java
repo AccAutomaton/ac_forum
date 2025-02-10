@@ -48,8 +48,9 @@ public class TopicController {
 
     @GetMapping("/get/list")
     public Response getTopicList(@RequestParam Integer pageNumber,
-                                     @RequestParam Integer pageSize,
-                                     @RequestParam String queryType) {
-        return Response.success(topicService.getTopicList(pageNumber, pageSize, queryType));
+                                 @RequestParam Integer pageSize,
+                                 @RequestParam String queryType,
+                                 @RequestParam String keyword) {
+        return Response.success(topicService.getTopicList(pageNumber, pageSize, queryType, keyword));
     }
 }

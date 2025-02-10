@@ -1,5 +1,5 @@
 <script setup>
-import {defineComponent, ref} from "vue";
+import {ref} from "vue";
 import {queryTopicList} from "@/request/topic.js";
 import {getObjectUrl} from "@/request/cos.js";
 import router from "@/router/index.js";
@@ -19,10 +19,10 @@ const getCardCss = (index) => {
 }
 
 const topicList = ref([]);
-const currentPageNumber = ref(1), currentPageSize = ref(12), currentQueryType = ref("synthesize");
+const currentPageNumber = ref(1), currentPageSize = ref(12), currentQueryType = ref("synthesize"), currentKeyWord = ref("");
 const pages = ref(0);
 const refrushTopicList = async () => {
-  const data = await queryTopicList(currentPageNumber.value, currentPageSize.value, currentQueryType.value);
+  const data = await queryTopicList(currentPageNumber.value, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
   if (data !== null) {
     topicList.value = data["topicList"]["records"];
     pages.value = data["topicList"]["pages"];
@@ -36,13 +36,16 @@ const refrushTopicList = async () => {
     }
   }
 }
-refrushTopicList();
+refrushTopicList("");
 
 const onPaginationParametersChanged = () => {
   refrushTopicList();
 }
 
 const search = (keyword, queryType) => {
+  currentKeyWord.value = keyword;
+  currentQueryType.value = queryType;
+  currentPageNumber.value = 1;
   refrushTopicList();
 }
 
@@ -53,7 +56,7 @@ const getTopicAvatarUrl = (topicAvatarsCosAuthorization, avatar) => {
   })
 }
 
-defineComponent({
+defineExpose({
   search,
 })
 </script>
@@ -63,7 +66,7 @@ defineComponent({
            style="border-radius: 25px; border-color: rgba(211,211,211,0.5); border-width: thin; margin-top: 30px">
     <el-scrollbar height="66vh">
       <div style="width: 100%; padding-bottom: 10px; display: grid; grid-template-columns: 33.3% 33.3% 33.3%;">
-        <el-card v-for="(record, index) in topicList" :key="topicList" shadow="hover" :style="getCardCss(index)"
+        <el-card v-for="(record, index) in topicList" :key="record['id']" shadow="hover" :style="getCardCss(index)"
                  @click="router.push('/topic/' + record['id'])">
           <div style="height: 100px; margin: 10px; display: flex">
             <el-row align="middle" justify="center" style="width: 100%" :gutter="5">

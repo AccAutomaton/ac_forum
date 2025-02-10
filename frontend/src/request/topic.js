@@ -1,6 +1,6 @@
 import request from "@/request/index.js";
 
-export const queryTopicList = (pageNumber, pageSize, queryType) =>
+export const queryTopicList = (pageNumber, pageSize, queryType, keyword) =>
     request({
         url: '/topic/get/list',
         method: 'GET',
@@ -8,6 +8,7 @@ export const queryTopicList = (pageNumber, pageSize, queryType) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
             queryType: queryType,
+            keyword: keyword,
         }
     }).then((response) => {
         return response["data"];

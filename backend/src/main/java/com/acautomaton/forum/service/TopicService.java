@@ -101,9 +101,9 @@ public class TopicService {
         return vo;
     }
 
-    public GetTopicListVO getTopicList(Integer pageNumber, Integer pageSize, String queryType) {
+    public GetTopicListVO getTopicList(Integer pageNumber, Integer pageSize, String queryType, String keyword) {
         PageHelperVO<GetTopicVO> pageHelperVO = new PageHelperVO<>(
-                PageHelper.startPage(pageNumber, pageSize < 20 ? pageSize : 20).doSelectPageInfo(() -> getTopicList(queryType))
+                PageHelper.startPage(pageNumber, pageSize < 20 ? pageSize : 20).doSelectPageInfo(() -> getTopicList(queryType, keyword))
         );
         Integer expiredSeconds = 60;
         List<String> allowResources = new ArrayList<>();
@@ -118,13 +118,14 @@ public class TopicService {
         ));
     }
 
-    private List<GetTopicVO> getTopicList(String queryType) {
+    private List<GetTopicVO> getTopicList(String queryType, String keyword) {
         MPJLambdaWrapper<Topic> mpjLambdaWrapper = new MPJLambdaWrapper<>();
         mpjLambdaWrapper
                 .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getArticles, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
                 .selectAs(Topic::getAdministrator, GetTopicVO::getAdministratorId)
                 .selectAs(User::getNickname, GetTopicVO::getAdministratorNickname)
-                .innerJoin(User.class, User::getUid, Topic::getAdministrator);
+                .innerJoin(User.class, User::getUid, Topic::getAdministrator)
+                .likeIfExists(Topic::getTitle, keyword).or().likeIfExists(Topic::getDescription, keyword);
         switch (queryType) {
             case "visitsByDesc":
                 mpjLambdaWrapper.orderByDesc(Topic::getVisits);

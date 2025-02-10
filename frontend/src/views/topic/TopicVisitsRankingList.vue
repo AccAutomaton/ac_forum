@@ -7,7 +7,7 @@ import router from "@/router/index.js";
 
 const rankingList = ref([]);
 const refreshRankingList = async () => {
-  const data = await queryTopicList(1, 10, "visitsByDesc");
+  const data = await queryTopicList(1, 10, "visitsByDesc", "");
   if (data !== null) {
     rankingList.value = data["topicList"]["records"];
     for (let i = 0; i < rankingList.value.length; i++) {

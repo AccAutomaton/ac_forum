@@ -15,6 +15,11 @@ const selectOptions = [
   {value: "articlesByDesc", label: "帖子从多到少"},
   {value: "articlesByAsc", label: "帖子从少到多"},
 ]
+
+const searchResultList = ref();
+const search = () => {
+  searchResultList.value.search(searchInput.value, selectSearchType.value);
+}
 </script>
 
 <template>
@@ -34,13 +39,16 @@ const selectOptions = [
     <el-main style="padding-top: 0; padding-bottom: 0;">
       <el-card shadow="never" style="height: 40px; border: none; text-align: center">
         <el-input v-model="searchInput" size="large" placeholder="请输入你想搜索的话题"
-                  style="border-radius: 25px; width: 75%">
+                  style="border-radius: 25px; width: 75%"
+                  clearable maxlength="32" show-word-limit autofocus>
           <template #prepend>搜索话题</template>
           <template #append>
-            <el-select v-model="selectSearchType" placeholder="请选择排序方式" style="margin-right: 20px; height: 40px" size="large">
-              <el-option v-for="option in selectOptions" :key="option.value" :label="option.label" :value="option.value"/>
+            <el-select v-model="selectSearchType" placeholder="请选择排序方式" style="margin-right: 20px; height: 40px"
+                       size="large" @change="search">
+              <el-option v-for="option in selectOptions" :key="option.value" :label="option.label"
+                         :value="option.value"/>
             </el-select>
-            <el-button style="padding: 0 25px;">
+            <el-button style="padding: 0 25px;" @click="search">
               <el-icon size="20">
                 <Search/>
               </el-icon>
@@ -48,7 +56,7 @@ const selectOptions = [
           </template>
         </el-input>
       </el-card>
-      <TopicSearchResultList/>
+      <TopicSearchResultList ref="searchResultList"/>
     </el-main>
   </el-container>
 </template>
