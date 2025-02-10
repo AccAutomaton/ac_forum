@@ -53,15 +53,17 @@ const onChangeSegmentedValue = async () => {
   await getMoreMessage();
 }
 
-const readMessage = async (messageId, targetUrl, index) => {
-  const data = await doReadMessage(messageId);
-  if (data !== null) {
-    records.value.splice(index, 1);
-    notSeenMessageCount.value--;
-    if (targetUrl !== "") {
-      router.push(targetUrl).then(() => {
-      });
+const readMessage = async (messageId, targetUrl, seen, index) => {
+  if (seen === 0) {
+    const data = await doReadMessage(messageId);
+    if (data !== null) {
+      records.value.splice(index, 1);
+      notSeenMessageCount.value--;
     }
+  }
+  if (targetUrl !== "") {
+    router.push(targetUrl).then(() => {
+    });
   }
 }
 
@@ -125,7 +127,7 @@ watch(() => store.getters.getIsLogin, (newValue) => {
           infinite-scroll-immediate="false">
         <li v-for="(record, index) in records" :key="record['id']" style="list-style: none;">
           <el-card shadow="hover" style="margin-bottom: 10px; cursor: pointer"
-                   @click="readMessage(record['id'], index)">
+                   @click="readMessage(record['id'], record['targetUrl'], record['seen'], index)">
             <div style="font-weight: bold">{{ record["title"] }}</div>
             <div>{{ record["content"] }}</div>
             <div style="float: right; color: #a19b9b; margin-bottom: 5px">
