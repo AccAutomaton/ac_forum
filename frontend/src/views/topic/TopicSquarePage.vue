@@ -40,7 +40,7 @@ const search = () => {
       <el-card shadow="never" style="height: 40px; border: none; text-align: center">
         <el-input v-model="searchInput" size="large" placeholder="请输入你想搜索的话题"
                   style="border-radius: 25px; width: 75%"
-                  clearable maxlength="32" show-word-limit autofocus>
+                  clearable maxlength="32" show-word-limit autofocus @keyup.enter="search">
           <template #prepend>搜索话题</template>
           <template #append>
             <el-select v-model="selectSearchType" placeholder="请选择排序方式" style="margin-right: 20px; height: 40px"
