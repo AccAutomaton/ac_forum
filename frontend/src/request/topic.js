@@ -13,3 +13,15 @@ export const queryTopicList = (pageNumber, pageSize, queryType, keyword) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const createTopic = (title, description) =>
+    request({
+        url: '/topic/create',
+        method: 'PUT',
+        data: {
+            title: title,
+            description: description,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

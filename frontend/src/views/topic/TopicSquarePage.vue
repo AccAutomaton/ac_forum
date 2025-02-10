@@ -3,6 +3,9 @@ import {Plus, Search} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import TopicVisitsRankingList from "@/views/topic/TopicVisitsRankingList.vue";
 import TopicSearchResultList from "@/views/topic/TopicSearchResultList.vue";
+import {createTopic} from "@/request/topic.js";
+import {ElNotification} from "element-plus";
+import router from "@/router/index.js";
 
 const searchInput = ref("");
 const selectSearchType = ref("synthesize");
@@ -15,10 +18,31 @@ const selectOptions = [
   {value: "articlesByDesc", label: "帖子从多到少"},
   {value: "articlesByAsc", label: "帖子从少到多"},
 ]
+const createTopicDialogVisible = ref(false);
+const newTopicTitle = ref(""), newTopicDescription = ref("");
 
 const searchResultList = ref();
 const search = () => {
   searchResultList.value.search(searchInput.value, selectSearchType.value);
+}
+
+const onClickCreateTopicButton = () => {
+  newTopicTitle.value = "";
+  newTopicDescription.value = "";
+  createTopicDialogVisible.value = true;
+}
+
+const onClickConfirmCreateTopicButton = async () => {
+  if (newTopicTitle.value === "") {
+    ElNotification({title: "话题名称不能为空", type: "error"});
+    return;
+  }
+  const data = await createTopic(newTopicTitle.value, newTopicDescription.value);
+  if (data !== null) {
+    ElNotification({title: "创建成功", type: "success"});
+    createTopicDialogVisible.value = false;
+    router.push("/topic/" + data["topicId"]).then(() => {});
+  }
 }
 </script>
 
@@ -27,7 +51,8 @@ const search = () => {
     <el-aside width="325px">
       <el-card shadow="never" style="height: 40px; border: none; text-align: center">
         <el-button :icon="Plus" plain type="info"
-                   style="font-size: 16px; font-weight: bolder; padding-left: 30px; padding-right: 30px; height: 40px; width: 70%; border-radius: 25px">
+                   style="font-size: 16px; font-weight: bolder; padding-left: 30px; padding-right: 30px; height: 40px; width: 70%; border-radius: 25px"
+                   @click="onClickCreateTopicButton">
           <span>发起新话题</span>
         </el-button>
       </el-card>
@@ -59,6 +84,34 @@ const search = () => {
       <TopicSearchResultList ref="searchResultList"/>
     </el-main>
   </el-container>
+
+  <el-dialog
+      v-model="createTopicDialogVisible"
+      title="发起新话题"
+      width="400"
+      align-center
+      destroy-on-close
+  >
+    <el-row style="margin-bottom: 5px">
+      <el-text>话题名称</el-text>
+    </el-row>
+    <el-row style="margin-bottom: 10px">
+      <el-input v-model="newTopicTitle" placeholder="请输入话题名称" clearable maxlength="32" show-word-limit/>
+    </el-row>
+    <el-row style="margin-bottom: 5px">
+      <el-text>话题简介</el-text>
+    </el-row>
+    <el-row>
+      <el-input v-model="newTopicDescription" placeholder="请输入话题简介" clearable
+                type="textarea" rows="5" resize="none" maxlength="1024" show-word-limit/>
+    </el-row>
+    <template #footer>
+      <el-button @click="createTopicDialogVisible = false">取消</el-button>
+      <el-button type="primary" @click="onClickConfirmCreateTopicButton">
+        确认
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

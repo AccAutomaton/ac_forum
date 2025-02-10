@@ -33,6 +33,9 @@ const refrushTopicList = async () => {
         topicList.value[i]["avatar"] =
             getTopicAvatarUrl(data["topicAvatarsCosAuthorization"], topicList.value[i]["avatar"]);
       }
+      if (topicList.value[i]["description"] === "") {
+        topicList.value[i]["description"] = "该话题没有简介";
+      }
     }
   }
 }

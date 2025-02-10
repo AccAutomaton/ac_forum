@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/topic")
 public class TopicController {
@@ -24,8 +26,8 @@ public class TopicController {
 
     @PutMapping("/create")
     public Response createTopic(@Validated @RequestBody CreateTopicDTO dto) {
-        topicService.createTopic(dto.getTitle(), dto.getDescription(), userService.getCurrentUser().getUid());
-        return Response.success();
+        Integer topicId = topicService.createTopic(dto.getTitle(), dto.getDescription(), userService.getCurrentUser().getUid());
+        return Response.success(Map.of("topicId", topicId));
     }
 
     @DeleteMapping("/delete")

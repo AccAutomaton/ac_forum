@@ -39,7 +39,7 @@ public class TopicService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTopic(String title, String description, Integer administrator) {
+    public Integer createTopic(String title, String description, Integer administrator) {
         QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("title", title);
         if (topicMapper.exists(queryWrapper)) {
@@ -48,6 +48,7 @@ public class TopicService {
         Topic topic = new Topic(null, title, description, administrator, 0, 0, new Date(), "", 0);
         topicMapper.insert(topic);
         log.info("用户 {} 创建了话题 {}", administrator, topic.getId());
+        return topic.getId();
     }
 
     @Transactional(rollbackFor = Exception.class)
