@@ -1,0 +1,27 @@
+package com.acautomaton.forum.entity;
+
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName(value = "artist", schema = "ac_forum", autoResultMap = true)
+public class Artist {
+    private Integer uid;
+    private Integer collections;
+    private Integer follows;
+    private Integer fans;
+    private Integer receiveVisits;
+    private Integer receiveThumbsUp;
+    private Integer receiveCollections;
+    private Integer receiveTipping;
+    private Integer receiveForwards;
+    @JsonIgnore
+    @TableLogic
+    private Integer deleteFlag;
+}

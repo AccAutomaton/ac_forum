@@ -1,0 +1,38 @@
+package com.acautomaton.forum.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName(value = "article", schema = "ac_forum", autoResultMap = true)
+public class Article {
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+    private Integer owner;
+    private Integer topic;
+    private String title;
+    private String content;
+    private Integer visits;
+    private Integer thumbsUp;
+    private Integer collections;
+    private Integer tipping;
+    private Integer forwards;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
+    @JsonIgnore
+    @TableLogic
+    private Integer deleteFlag;
+}

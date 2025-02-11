@@ -1,5 +1,5 @@
 <script setup>
-import {Message} from "@element-plus/icons-vue";
+import {MessageBox} from "@element-plus/icons-vue";
 import {ref, watch} from "vue";
 import {doReadMessage, getMessageList, getNotSeenMessageCount} from "@/request/message.js";
 import moment from "moment";
@@ -114,9 +114,7 @@ watch(() => store.getters.getIsLogin, (newValue) => {
                 :offset="[0, 15]"
                 :show-zero="false">
         <el-button>
-          <el-icon>
-            <Message/>
-          </el-icon>
+          <el-icon size="large"><MessageBox /></el-icon>
         </el-button>
       </el-badge>
     </template>
