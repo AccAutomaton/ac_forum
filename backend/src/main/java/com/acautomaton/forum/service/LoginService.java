@@ -69,7 +69,8 @@ public class LoginService {
 
         Date now = new Date();
         User user = new User(null, dto.getUsername(), passwordEncoder.encode(dto.getPassword()),
-                dto.getEmail(), UserStatus.NORMAL, UserType.USER, dto.getUsername(), "default-avatar.png", now, now, 0);
+                dto.getEmail(), UserStatus.NORMAL, UserType.USER, dto.getUsername(), "default-avatar.png",
+                0, 0, now, now, 0);
         userMapper.insert(user);
         if (user.getUid() != null && user.getUid() > 10000000) {
             log.info("用户 {} 注册成功", user.getUsername());

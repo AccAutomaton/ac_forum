@@ -1,6 +1,8 @@
 package com.acautomaton.forum.entity;
 
 import com.acautomaton.forum.enumerate.VipType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,12 +18,11 @@ import java.util.Date;
 @AllArgsConstructor
 @TableName(value = "vip", schema = "ac_forum", autoResultMap = true)
 public class Vip {
+    @TableId(type = IdType.INPUT)
     private Integer uid;
     private VipType type;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expirationTime;
-    private Integer coins;
-    private Integer points;
     @JsonIgnore
     @TableLogic
     private Integer deleteFlag;

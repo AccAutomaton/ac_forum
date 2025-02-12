@@ -29,6 +29,8 @@ public class User implements Serializable {
     private UserType userType;
     private String nickname;
     private String avatar;
+    private Integer points;
+    private Integer coins;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
