@@ -2,6 +2,7 @@ package com.acautomaton.forum.handler;
 
 import com.acautomaton.forum.exception.*;
 import com.acautomaton.forum.response.Response;
+import com.alipay.api.AlipayApiException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -51,5 +52,11 @@ public class ExceptionHandler {
     public Response EmailServiceException(Exception e) {
         log.warn("邮件服务异常: {}", e.getMessage());
         return Response.error("服务器错误，请稍后再试");
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = AlipayApiException.class)
+    public Response AlipayApiException(AlipayApiException e) {
+        log.warn("支付宝服务异常: {}", e.getMessage());
+        return Response.error("服务器错误，请稍后重试");
     }
 }

@@ -1,15 +1,20 @@
 package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.dto.login.*;
+import com.acautomaton.forum.entity.Artist;
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.entity.Vip;
 import com.acautomaton.forum.enumerate.MessageType;
 import com.acautomaton.forum.enumerate.UserStatus;
 import com.acautomaton.forum.enumerate.UserType;
+import com.acautomaton.forum.enumerate.VipType;
 import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
+import com.acautomaton.forum.mapper.ArtistMapper;
 import com.acautomaton.forum.mapper.UserMapper;
+import com.acautomaton.forum.mapper.VipMapper;
 import com.acautomaton.forum.service.util.CaptchaService;
 import com.acautomaton.forum.service.util.EmailService;
 import com.acautomaton.forum.service.util.JwtService;
@@ -33,16 +38,21 @@ public class LoginService {
     CaptchaService captchaService;
     JwtService jwtService;
     MessageService messageService;
+    ArtistMapper artistMapper;
+    VipMapper vipMapper;
 
     @Autowired
     public LoginService(UserMapper userMapper, EmailService emailService, CaptchaService captchaService,
-                        JwtService jwtService, PasswordEncoder passwordEncoder, MessageService messageService) {
+                        JwtService jwtService, PasswordEncoder passwordEncoder, MessageService messageService,
+                        ArtistMapper artistMapper, VipMapper vipMapper) {
         this.userMapper = userMapper;
         this.emailService = emailService;
         this.captchaService = captchaService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.messageService = messageService;
+        this.artistMapper = artistMapper;
+        this.vipMapper = vipMapper;
     }
 
     public void getEmailVerifyCodeForRegister(GetEmailVerifyCodeForRegisterDTO dto) {
@@ -77,6 +87,8 @@ public class LoginService {
             emailService.deleteVerifyCode(dto.getEmail());
             messageService.createMessage(user.getUid(), "欢迎您注册AC论坛!", MessageType.NORMAL,
                     "感谢您的支持", "");
+            artistMapper.insert(new Artist(user.getUid(), 0, 0, 0, 0, 0, 0, 0,0 , 0));
+            vipMapper.insert(new Vip(user.getUid(), VipType.NONE, null, 0));
         } else {
             log.warn("用户 {} 注册失败", user.getUsername());
             throw new ForumException("注册失败，请稍后再试");

@@ -50,7 +50,7 @@ public class CosService {
         clientConfig.setRegion(new Region(region));
         clientConfig.setHttpProtocol(HttpProtocol.https);
         cosClient = new COSClient(cred, clientConfig);
-        log.info("COS连接初始化成功");
+        log.info("Tencent.COS -- 连接初始化成功");
     }
 
     public Credentials getCosAccessAuthorization(Integer expireTime, CosActions allowActions, List<String> allowResources) {

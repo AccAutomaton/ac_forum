@@ -34,21 +34,21 @@ import store from "@/store/index.js";
           <el-icon><Document /></el-icon>
           <span>贴子</span>
         </el-menu-item>
-        <el-menu-item index="/chat">
-          <el-icon><Message /></el-icon>
-          <span>私信</span>
-        </el-menu-item>
-        <el-menu-item index="/vip">
-          <el-icon><CreditCard /></el-icon>
-          <span>会员</span>
-        </el-menu-item>
         <el-menu-item index="/creation">
           <el-icon><EditPen /></el-icon>
           <span>创作</span>
         </el-menu-item>
+        <el-menu-item index="/chat">
+          <el-icon><Message /></el-icon>
+          <span>私信</span>
+        </el-menu-item>
         <div style="flex-grow: 1"/>
+        <el-menu-item index="/vip" style="margin-right: 20px">
+          <el-icon><CreditCard /></el-icon>
+          <span>会员</span>
+        </el-menu-item>
         <MessageBox v-if="store.getters.getIsLogin"/>
-        <UserSubMenu/>
+        <UserSubMenu style="margin-left: 5px"/>
       </el-menu>
     </el-header>
     <el-main style="padding-bottom: 0">

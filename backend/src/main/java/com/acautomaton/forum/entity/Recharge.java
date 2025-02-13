@@ -30,6 +30,8 @@ public class Recharge {
     private Integer amount;
     private String project;
     private String comment;
+    @JsonIgnore
+    private String privateComment;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

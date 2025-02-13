@@ -20,8 +20,8 @@ import java.util.Date;
 public class Vip {
     @TableId(type = IdType.INPUT)
     private Integer uid;
-    private VipType type;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private VipType vipType;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date expirationTime;
     @JsonIgnore
     @TableLogic

@@ -74,5 +74,11 @@ project:
       bucketResourcePrepend: BUCKET_RESOURCE_PREPEND
       region: REGION
       objectUrlPrepend: OBJECT_URL_PREPEND
+  alibaba:
+    alipay:
+      appPrivateKey: PRIVATE_KEY
+      alipayPublicKey: PUBLIC_KEY
+      serverUrl: SERVER_URL
+      appId: APP_ID
   cors:
     allow-origin: http://localhost:9001

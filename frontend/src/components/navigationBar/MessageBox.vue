@@ -113,7 +113,7 @@ watch(() => store.getters.getIsLogin, (newValue) => {
       <el-badge :value="notSeenMessageCount" :max="99" class="item" style="display: grid; place-items: center;"
                 :offset="[0, 15]"
                 :show-zero="false">
-        <el-button>
+        <el-button style="width: 40px;">
           <el-icon size="large"><MessageBox /></el-icon>
         </el-button>
       </el-badge>
