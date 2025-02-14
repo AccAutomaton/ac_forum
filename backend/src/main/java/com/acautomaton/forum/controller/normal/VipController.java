@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @Validated
 @RestController
 @RequestMapping("/vip")
@@ -43,8 +41,8 @@ public class VipController {
 
     @PostMapping("/buy")
     public Response buyVip(@RequestBody BuyVipDTO buyVipDTO) throws AlipayApiException {
-        return Response.success(Map.of("pageRedirectionData", vipService.buyVip(
+        return Response.success(vipService.buyVip(
                 userService.getCurrentUser().getUid(), VipType.getById(buyVipDTO.getTargetVipIndex()), buyVipDTO.getMode()
-        )));
+        ));
     }
 }

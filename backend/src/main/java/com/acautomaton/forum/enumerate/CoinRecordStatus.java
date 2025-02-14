@@ -11,6 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum CoinRecordStatus {
+    RUNNING(-1, "预扣"),
     SUCCESS(0, "成功"),
     FAILED(1, "失败"),
     CANCEL(2, "取消"),

@@ -22,16 +22,18 @@ import java.util.Date;
 public class Recharge {
     @TableId(type = IdType.AUTO)
     private Integer id;
+    private Integer uid;
     private String uuid;
     private String trade_id;
     private RechargeChannel channel;
     private RechargeType type;
     private RechargeStatus status;
     private Integer amount;
-    private String project;
+    private String subject;
     private String comment;
+    private Integer coinRecordId;
     @JsonIgnore
-    private String privateComment;
+    private String systemInfo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

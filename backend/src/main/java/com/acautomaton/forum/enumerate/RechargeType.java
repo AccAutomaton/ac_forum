@@ -13,7 +13,8 @@ import lombok.Getter;
 public enum RechargeType {
     REFUND(-1, "退款"),
     OTHER(0, "其它"),
-    INCOME(1, "购买");
+    BUY_VIP(1, "会员购买"),
+    RECHARGE_AC_COIN(2, "AC币充值");
 
     @EnumValue
     private final Integer index;

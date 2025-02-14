@@ -2,6 +2,7 @@
 import {nextTick, ref} from "vue";
 import {ElNotification} from "element-plus";
 import {buyVip} from "@/request/vip.js";
+import router from "@/router/index.js";
 
 const payDialogVisible = ref(false), currentPrice = ref(0), currentMode = ref(0), currentTargetVipIndex = ref(0);
 const alipayForm = ref(""), alipayPage = ref();
@@ -24,12 +25,25 @@ const clickWechatPay = () => {
 
 const clickAlipay = async () => {
   const data = await buyVip(currentTargetVipIndex.value, currentMode.value);
-  alipayForm.value = data["pageRedirectionData"];
-  await nextTick(() => {
-    alipayPage.value.children[0].submit();
-    setTimeout(() => {
-    }, 500)
-  });
+  if (data !== null) {
+    if (data["needPay"]) {
+      alipayForm.value = data["pageRedirectionData"];
+      await nextTick(() => {
+        alipayPage.value.children[0].submit();
+        setTimeout(() => {
+        }, 500)
+      });
+    } else {
+      router.push({
+        path: '/vip',
+        query: {
+          method: "com.acautomaton.forum.directPay",
+        }
+      }).then(() => {
+        window.location.reload();
+      })
+    }
+  }
 }
 </script>
 
@@ -50,7 +64,7 @@ const clickAlipay = async () => {
       </div>
     </div>
   </el-dialog>
-  <div ref="alipayPage" v-html="alipayForm" />
+  <div ref="alipayPage" v-html="alipayForm"/>
 </template>
 
 <style scoped>
