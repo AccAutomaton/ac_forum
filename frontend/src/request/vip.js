@@ -30,3 +30,14 @@ export const buyVip = (targetVipIndex, mode) =>
     }).then(response => {
         return response["data"];
     })
+
+export const afterPaying = (tradeId) =>
+    request({
+        url: 'vip/buy/payed',
+        method: 'POST',
+        params: {
+            tradeId: tradeId,
+        }
+    }).then(response => {
+        return response["data"];
+    })

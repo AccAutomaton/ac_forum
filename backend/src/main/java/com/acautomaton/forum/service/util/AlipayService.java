@@ -1,17 +1,27 @@
 package com.acautomaton.forum.service.util;
 
+import com.acautomaton.forum.entity.Recharge;
+import com.acautomaton.forum.enumerate.RechargeStatus;
+import com.acautomaton.forum.mapper.RechargeMapper;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayConfig;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradePagePayModel;
+import com.alipay.api.domain.AlipayTradeQueryModel;
 import com.alipay.api.domain.GoodsDetail;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -29,6 +39,12 @@ public class AlipayService {
     String returnUrlPrepend;
 
     AlipayClient alipayClient;
+    RechargeMapper rechargeMapper;
+
+    @Autowired
+    public AlipayService(RechargeMapper rechargeMapper) {
+        this.rechargeMapper = rechargeMapper;
+    }
 
     @PostConstruct
     public void initAlipayClient() throws AlipayApiException {
@@ -55,5 +71,47 @@ public class AlipayService {
         request.setBizModel(model);
         request.setReturnUrl(returnUrlPrepend + returnUrlAppend);
         return alipayClient.pageExecute(request).getBody();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public RechargeStatus updateRechargeStatusByRechargeUuid(String rechargeUuid) throws AlipayApiException {
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        AlipayTradeQueryModel model = new AlipayTradeQueryModel();
+        model.setOutTradeNo(rechargeUuid);
+        request.setBizModel(model);
+        AlipayTradeQueryResponse response = alipayClient.execute(request);
+        String tradeId = response.getTradeNo();
+        LambdaUpdateWrapper<Recharge> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(Recharge::getUuid, rechargeUuid);
+        lambdaUpdateWrapper.set(Recharge::getTradeId, tradeId);
+        RechargeStatus rechargeStatus = switch (response.getTradeStatus()) {
+            case "TRADE_SUCCESS", "TRADE_FINISHED" -> RechargeStatus.SUCCESS;
+            default -> RechargeStatus.WAITING;
+        };
+        lambdaUpdateWrapper.set(Recharge::getStatus, rechargeStatus);
+        lambdaUpdateWrapper.set(Recharge::getUpdateTime, new Date());
+        rechargeMapper.update(lambdaUpdateWrapper);
+        return rechargeStatus;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public RechargeStatus updateRechargeStatusByTradeId(String tradeId) throws AlipayApiException {
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        AlipayTradeQueryModel model = new AlipayTradeQueryModel();
+        model.setTradeNo(tradeId);
+        request.setBizModel(model);
+        AlipayTradeQueryResponse response = alipayClient.execute(request);
+        String rechargeUuid = response.getOutTradeNo();
+        LambdaUpdateWrapper<Recharge> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(Recharge::getUuid, rechargeUuid);
+        lambdaUpdateWrapper.set(Recharge::getTradeId, tradeId);
+        RechargeStatus rechargeStatus = switch (response.getTradeStatus()) {
+            case "TRADE_SUCCESS", "TRADE_FINISHED" -> RechargeStatus.SUCCESS;
+            default -> RechargeStatus.WAITING;
+        };
+        lambdaUpdateWrapper.set(Recharge::getStatus, rechargeStatus);
+        lambdaUpdateWrapper.set(Recharge::getUpdateTime, new Date());
+        rechargeMapper.update(lambdaUpdateWrapper);
+        return rechargeStatus;
     }
 }

@@ -24,7 +24,7 @@ public class Recharge {
     private Integer id;
     private Integer uid;
     private String uuid;
-    private String trade_id;
+    private String tradeId;
     private RechargeChannel channel;
     private RechargeType type;
     private RechargeStatus status;

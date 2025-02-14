@@ -45,4 +45,10 @@ public class VipController {
                 userService.getCurrentUser().getUid(), VipType.getById(buyVipDTO.getTargetVipIndex()), buyVipDTO.getMode()
         ));
     }
+
+    @PostMapping("/buy/payed")
+    public Response buyVipAfterPaying(@RequestParam String tradeId) throws AlipayApiException {
+        vipService.afterPaying(userService.getCurrentUser().getUid(), tradeId);
+        return Response.success();
+    }
 }

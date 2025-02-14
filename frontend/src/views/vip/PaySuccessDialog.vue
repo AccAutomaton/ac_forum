@@ -2,15 +2,21 @@
 import {ref} from "vue";
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
+import {afterPaying} from "@/request/vip.js";
 
 const paySuccessDialogVisible = ref(false);
-if (useRoute().query.method === "alipay.trade.page.pay.return" || useRoute().query.method === "com.acautomaton.forum.directPay") {
+if (useRoute().query.method === "alipay.trade.page.pay.return") {
+  afterPaying(useRoute().query.trade_no);
+  paySuccessDialogVisible.value = true;
+} else if (useRoute().query.method === "com.acautomaton.forum.directPay") {
   paySuccessDialogVisible.value = true;
 }
 
 const clickCloseDialogButton = () => {
   paySuccessDialogVisible.value = false;
-  router.push({path: '/vip', query: ''}).then(() => {});
+  router.push({path: '/vip', query: ''}).then(() => {
+    window.location.reload();
+  });
 }
 </script>
 

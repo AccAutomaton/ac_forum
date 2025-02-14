@@ -101,7 +101,7 @@ public class VipService {
         Date now = new Date();
         log.info("用户 {} 发起购买 {} (RMB {}) 的订单请求: {}", uid, vipType.getValue(), price, uuid);
         Integer coinRecordId = null;
-        if (mode == 0) {
+        if (mode == 0 && priceVO.getPayCoins() > 0) {
             comment = "使用 " + priceVO.getPayCoins() + " AC币抵扣 " + priceVO.getPayCoins() * 1.0 / 100 + " RMB";
             LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             lambdaUpdateWrapper.eq(User::getUid, uid);
@@ -135,6 +135,36 @@ public class VipService {
         rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.BUY_VIP, RechargeStatus.WAITING, (int) (Double.parseDouble(price) * 100), vipType.getValue(), comment, coinRecordId, systemInfo, now, now, 0));
         log.info("用户 {} 发起购买 {} (RMB {}) 的订单支付宝跳转请求: {}", uid, vipType.getValue(), price, uuid);
         return new BuyVipVO(true, alipayService.createOrder(uuid, price, subject, "/vip", List.of(goodsDetail)));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void afterPaying(Integer uid, String tradeId) throws AlipayApiException {
+        LambdaQueryWrapper<Recharge> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Recharge::getUid, uid);
+        lambdaQueryWrapper.eq(Recharge::getTradeId, tradeId);
+        if (rechargeMapper.exists(lambdaQueryWrapper)) {
+            return;
+        }
+        if (alipayService.updateRechargeStatusByTradeId(tradeId) == RechargeStatus.SUCCESS) {
+            Recharge recharge = rechargeMapper.selectOne(lambdaQueryWrapper);
+            if (recharge != null) {
+                if (recharge.getCoinRecordId() != null) {
+                    LambdaUpdateWrapper<CoinRecord> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                    lambdaUpdateWrapper.eq(CoinRecord::getId, recharge.getCoinRecordId());
+                    lambdaUpdateWrapper.set(CoinRecord::getStatus, CoinRecordStatus.SUCCESS);
+                    lambdaUpdateWrapper.set(CoinRecord::getUpdateTime, new Date());
+                    coinRecordMapper.update(lambdaUpdateWrapper);
+                }
+                Map<String, Object> systemInfo = JSONUtil.toBean(recharge.getSystemInfo(), Map.class);
+                VipType targetVipType = VipType.getById((Integer) systemInfo.get("vipTypeIndex"));
+                Date targetDate = new Date((Long) systemInfo.get("targetDate"));
+                LambdaUpdateWrapper<Vip> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                lambdaUpdateWrapper.eq(Vip::getUid, uid);
+                lambdaUpdateWrapper.set(Vip::getVipType, targetVipType);
+                lambdaUpdateWrapper.set(Vip::getExpirationTime, targetDate);
+                vipMapper.update(lambdaUpdateWrapper);
+            }
+        }
     }
 
     private boolean alreadyHasBuyingVipOrderNotPay(Integer uid) {

@@ -121,6 +121,7 @@ const pay = (mode) => {
       <el-container>
         <el-header>
           <div style="font-size: xx-large; font-weight: bolder">会员中心</div>
+          <!-- TODO: 用户手动刷新交易结果 -->
           <el-divider/>
         </el-header>
         <el-main style="margin-top: 20px">
@@ -169,13 +170,13 @@ const pay = (mode) => {
               <span>升级到 </span>
               <span style="font-weight: bold">{{ vipType[currentSelectedVipType].vipTypeName }}</span>
               <el-tooltip placement="bottom" effect="light">
-                    <el-icon style="color: gray; margin-left: 1px" size="small">
-                      <Warning/>
-                    </el-icon>
-                    <template #content>
-                      <div style="font-size: small">当前会员的剩余天数将自动折算并抵扣</div>
-                    </template>
-                  </el-tooltip>
+                <el-icon style="color: gray; margin-left: 1px" size="small">
+                  <Warning/>
+                </el-icon>
+                <template #content>
+                  <div style="font-size: small">当前会员的剩余天数将自动折算并抵扣</div>
+                </template>
+              </el-tooltip>
             </div>
           </div>
           <div style="width: 100%; text-align: center; color: gray; font-size: small">
@@ -196,7 +197,7 @@ const pay = (mode) => {
                       <Warning/>
                     </el-icon>
                     <template #content>
-                      <div style="font-size: small">您当前拥有的AC币: {{  ownCoins }}</div>
+                      <div style="font-size: small">您当前拥有的AC币: {{ ownCoins }}</div>
                       <div style="font-size: small">用于抵扣的AC币: {{ payCoins }}</div>
                       <div style="font-size: small">100 AC币可抵扣 1 RMB</div>
                     </template>
@@ -209,7 +210,9 @@ const pay = (mode) => {
                 <div>
                   <span>RMB</span>
                   <span style="font-size: xx-large; margin-left: 5px">{{ parseInt(priceWithoutCoins / 100) }}</span>
-                  <span v-if="priceWithoutCoins % 100 !== 0" style="font-size: large">.{{ priceWithoutCoins % 100 }}</span>
+                  <span v-if="priceWithoutCoins % 100 !== 0" style="font-size: large">.{{
+                      priceWithoutCoins % 100
+                    }}</span>
                 </div>
                 <div style="font-weight: bolder; margin-top: 10px">直接支付</div>
               </div>
