@@ -1,9 +1,10 @@
 <script setup>
 import {ref} from "vue";
-import {CaretTop, Warning} from "@element-plus/icons-vue";
-import {getVip, getVipPrice} from "@/request/vip.js";
+import {CaretTop, QuestionFilled, Warning} from "@element-plus/icons-vue";
+import {getVip, getVipPrice, refreshPayingStatus} from "@/request/vip.js";
 import PayDialog from "@/views/vip/PayDialog.vue";
 import PaySuccessDialog from "@/views/vip/PaySuccessDialog.vue";
+import {ElNotification} from "element-plus";
 
 const vipType = ref([
   {
@@ -112,6 +113,17 @@ const pay = (mode) => {
     payDialog.value.showDialog(priceWithoutCoins.value, 1, currentSelectedVipType.value);
   }
 }
+
+const clickRefreshPayingStatusButton = async () => {
+  const data = await refreshPayingStatus();
+  if (data !== null) {
+    if (data["hasNewStatus"]) {
+      window.location.reload();
+    } else {
+      ElNotification({title: '已是最新状态', type: 'success'})
+    }
+  }
+}
 </script>
 
 <template>
@@ -120,8 +132,13 @@ const pay = (mode) => {
     <el-col :span="18">
       <el-container>
         <el-header>
-          <div style="font-size: xx-large; font-weight: bolder">会员中心</div>
-          <!-- TODO: 用户手动刷新交易结果 -->
+          <div>
+            <span style="font-size: xx-large; font-weight: bolder">会员中心</span>
+            <el-text><el-icon style="font-size: 11px; margin-left: 20px; color: gray"><QuestionFilled /></el-icon></el-text>
+            <el-text style="font-size: small; color: gray">充值没到账? 点击</el-text>
+            <el-button text style="font-size: small; padding: 0" type="primary" @click="clickRefreshPayingStatusButton">此处</el-button>
+            <el-text style="font-size: small; color: gray">刷新</el-text>
+          </div>
           <el-divider/>
         </el-header>
         <el-main style="margin-top: 20px">

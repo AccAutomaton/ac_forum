@@ -41,3 +41,11 @@ export const afterPaying = (tradeId) =>
     }).then(response => {
         return response["data"];
     })
+
+export const refreshPayingStatus = () => 
+    request({
+        url: 'vip/pay/refresh',
+        method: 'POST',
+    }).then(response => {
+        return response["data"];
+    })

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Validated
 @RestController
 @RequestMapping("/vip")
@@ -50,5 +52,11 @@ public class VipController {
     public Response buyVipAfterPaying(@RequestParam String tradeId) throws AlipayApiException {
         vipService.afterPaying(userService.getCurrentUser().getUid(), tradeId);
         return Response.success();
+    }
+
+    @PostMapping("/pay/refresh")
+    public Response refreshPayingStatus() throws AlipayApiException {
+        Boolean result = vipService.refreshPayingStatusByUid(userService.getCurrentUser().getUid());
+        return Response.success(Map.of("hasNewStatus", result));
     }
 }

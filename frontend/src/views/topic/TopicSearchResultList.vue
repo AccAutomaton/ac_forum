@@ -21,7 +21,7 @@ const getCardCss = (index) => {
 const topicList = ref([]);
 const currentPageNumber = ref(1), currentPageSize = ref(12), currentQueryType = ref("synthesize"), currentKeyWord = ref("");
 const pages = ref(0);
-const refrushTopicList = async () => {
+const refreshTopicList = async () => {
   const data = await queryTopicList(currentPageNumber.value, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
   if (data !== null) {
     topicList.value = data["topicList"]["records"];
@@ -39,17 +39,17 @@ const refrushTopicList = async () => {
     }
   }
 }
-refrushTopicList("");
+refreshTopicList("");
 
 const onPaginationParametersChanged = () => {
-  refrushTopicList();
+  refreshTopicList();
 }
 
 const search = (keyword, queryType) => {
   currentKeyWord.value = keyword;
   currentQueryType.value = queryType;
   currentPageNumber.value = 1;
-  refrushTopicList();
+  refreshTopicList();
 }
 
 const getTopicAvatarUrl = (topicAvatarsCosAuthorization, avatar) => {

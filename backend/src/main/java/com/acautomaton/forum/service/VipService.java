@@ -2,7 +2,10 @@ package com.acautomaton.forum.service;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
-import com.acautomaton.forum.entity.*;
+import com.acautomaton.forum.entity.CoinRecord;
+import com.acautomaton.forum.entity.Recharge;
+import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.entity.Vip;
 import com.acautomaton.forum.enumerate.*;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
@@ -166,8 +169,42 @@ public class VipService {
                 lambdaUpdateWrapper.set(Vip::getExpirationTime, targetDate);
                 vipMapper.update(lambdaUpdateWrapper);
                 sendBuyVipSuccessfullyMessage(uid, targetVipType, targetDate);
+                log.info("[同步]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
             }
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean refreshPayingStatusByUid(Integer uid) throws AlipayApiException {
+        LambdaQueryWrapper<Recharge> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Recharge::getUid, uid);
+        lambdaQueryWrapper.eq(Recharge::getStatus, RechargeStatus.WAITING);
+        Recharge recharge = rechargeMapper.selectOne(lambdaQueryWrapper);
+        if (recharge == null) {
+            return false;
+        }
+        String targetUuid = recharge.getUuid();
+        Integer coinRecordId = recharge.getCoinRecordId();
+        Map<String, Object> systemInfo = JSONUtil.toBean(recharge.getSystemInfo(), Map.class);
+        if (alipayService.updateRechargeStatusByRechargeUuid(targetUuid) == RechargeStatus.SUCCESS) {
+            if (coinRecordId != null) {
+                LambdaUpdateWrapper<CoinRecord> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                lambdaUpdateWrapper.eq(CoinRecord::getId, coinRecordId);
+                lambdaUpdateWrapper.set(CoinRecord::getStatus, CoinRecordStatus.SUCCESS);
+                lambdaUpdateWrapper.set(CoinRecord::getUpdateTime, new Date());
+                coinRecordMapper.update(lambdaUpdateWrapper);
+            }
+            VipType targetVipType = VipType.getById((Integer) systemInfo.get("vipTypeIndex"));
+            Date targetDate = DateUtil.date((Long) systemInfo.get("targetDate"));
+            LambdaUpdateWrapper<Vip> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.eq(Vip::getUid, uid);
+            lambdaUpdateWrapper.set(Vip::getVipType, targetVipType);
+            lambdaUpdateWrapper.set(Vip::getExpirationTime, targetDate);
+            vipMapper.update(lambdaUpdateWrapper);
+            sendBuyVipSuccessfullyMessage(uid, targetVipType, targetDate);
+            log.info("[异步]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
+        }
+        return true;
     }
 
     private void sendBuyVipSuccessfullyMessage(Integer uid, VipType vipType, Date targetDate) {
