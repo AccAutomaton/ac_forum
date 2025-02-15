@@ -126,7 +126,8 @@ watch(() => store.getters.getIsLogin, (newValue) => {
         <li v-for="(record, index) in records" :key="record['id']" style="list-style: none;">
           <el-card shadow="hover" style="margin-bottom: 10px; cursor: pointer"
                    @click="readMessage(record['id'], record['targetUrl'], record['seen'], index)">
-            <div style="font-weight: bold">{{ record["title"] }}</div>
+            <div v-if="record['type']['index'] === 0" style="font-weight: bold">{{ record["title"] }}</div>
+            <div v-else-if="record['type']['index'] === 1" style="font-weight: bold; color: rgb(236,41,174)">{{ record["title"] }}</div>
             <div>{{ record["content"] }}</div>
             <div style="float: right; color: #a19b9b; margin-bottom: 5px">
               {{ moment(record["createTime"], "YYYY-MM-DD hh:mm:ss").fromNow() }}

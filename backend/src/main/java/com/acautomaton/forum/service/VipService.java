@@ -1,10 +1,8 @@
 package com.acautomaton.forum.service;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
-import com.acautomaton.forum.entity.CoinRecord;
-import com.acautomaton.forum.entity.Recharge;
-import com.acautomaton.forum.entity.User;
-import com.acautomaton.forum.entity.Vip;
+import com.acautomaton.forum.entity.*;
 import com.acautomaton.forum.enumerate.*;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
@@ -38,15 +36,18 @@ public class VipService {
     CoinRecordMapper coinRecordMapper;
     RedisService redisService;
     AlipayService alipayService;
+    MessageService messageService;
 
     @Autowired
-    public VipService(VipMapper vipMapper, UserMapper userMapper, RedisService redisService, AlipayService alipayService, RechargeMapper rechargeMapper, CoinRecordMapper coinRecordMapper) {
+    public VipService(VipMapper vipMapper, UserMapper userMapper, RedisService redisService, AlipayService alipayService,
+                      MessageService messageService, RechargeMapper rechargeMapper, CoinRecordMapper coinRecordMapper) {
         this.vipMapper = vipMapper;
         this.userMapper = userMapper;
         this.redisService = redisService;
         this.alipayService = alipayService;
         this.rechargeMapper = rechargeMapper;
         this.coinRecordMapper = coinRecordMapper;
+        this.messageService = messageService;
     }
 
     public Vip getVipByUid(int uid) {
@@ -126,6 +127,7 @@ public class VipService {
             lambdaUpdateWrapper.set(Vip::getVipType, vipType);
             lambdaUpdateWrapper.set(Vip::getExpirationTime, priceVO.getTargetExpireDate());
             vipMapper.update(lambdaUpdateWrapper);
+            sendBuyVipSuccessfullyMessage(uid, vipType, priceVO.getTargetExpireDate());
             return new BuyVipVO(false, null);
         }
         String subject = "AC论坛VIP - " + vipType.getValue();
@@ -157,14 +159,21 @@ public class VipService {
                 }
                 Map<String, Object> systemInfo = JSONUtil.toBean(recharge.getSystemInfo(), Map.class);
                 VipType targetVipType = VipType.getById((Integer) systemInfo.get("vipTypeIndex"));
-                Date targetDate = new Date((Long) systemInfo.get("targetDate"));
+                Date targetDate = DateUtil.date((Long) systemInfo.get("targetDate"));
                 LambdaUpdateWrapper<Vip> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
                 lambdaUpdateWrapper.eq(Vip::getUid, uid);
                 lambdaUpdateWrapper.set(Vip::getVipType, targetVipType);
                 lambdaUpdateWrapper.set(Vip::getExpirationTime, targetDate);
                 vipMapper.update(lambdaUpdateWrapper);
+                sendBuyVipSuccessfullyMessage(uid, targetVipType, targetDate);
             }
         }
+    }
+
+    private void sendBuyVipSuccessfullyMessage(Integer uid, VipType vipType, Date targetDate) {
+        String prettyTargetDate = DateUtil.formatDate(targetDate);
+        messageService.createMessage(uid, "感谢您购买" + vipType.getValue() + "!", MessageType.RECHARGE,
+                "会员到期时间: " + prettyTargetDate, "");
     }
 
     private boolean alreadyHasBuyingVipOrderNotPay(Integer uid) {

@@ -11,7 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum MessageType {
-    NORMAL(0, "普通消息");
+    NORMAL(0, "普通消息"),
+    RECHARGE(1, "充值消息");
 
     @EnumValue
     private final Integer index;
