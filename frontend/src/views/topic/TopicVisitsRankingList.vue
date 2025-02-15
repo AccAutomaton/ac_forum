@@ -2,7 +2,7 @@
 import {Histogram} from "@element-plus/icons-vue";
 import {queryTopicList} from "@/request/topic.js";
 import {ref} from "vue";
-import {getObjectUrl} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
 
 const rankingList = ref([]);
@@ -12,20 +12,14 @@ const refreshRankingList = async () => {
     rankingList.value = data["topicList"]["records"];
     for (let i = 0; i < rankingList.value.length; i++) {
       if (rankingList.value[i]["avatar"] !== "") {
-        rankingList.value[i]["avatar"] =
-            getTopicAvatarUrl(data["topicAvatarsCosAuthorization"], rankingList.value[i]["avatar"]);
+        await getObjectUrlOfPublicResources(data["avatarPrefix"] + rankingList.value[i]["avatar"], (url) => {
+          rankingList.value[i]["avatar"] = url;
+        })
       }
     }
   }
 }
 refreshRankingList();
-
-const getTopicAvatarUrl = (topicAvatarsCosAuthorization, avatar) => {
-  topicAvatarsCosAuthorization["key"] = topicAvatarsCosAuthorization["prefix"] + avatar;
-  return getObjectUrl(topicAvatarsCosAuthorization, (url) => {
-    return url;
-  })
-}
 </script>
 
 <template>

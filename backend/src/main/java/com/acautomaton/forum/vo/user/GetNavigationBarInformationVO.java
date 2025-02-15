@@ -1,10 +1,9 @@
 package com.acautomaton.forum.vo.user;
 
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.enumerate.UserType;
-import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tencent.cloud.Credentials;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,13 +13,11 @@ import lombok.Data;
 public class GetNavigationBarInformationVO {
     String nickname;
     UserType userType;
-    CosAuthorizationVO avatar;
+    String avatar;
 
-    public GetNavigationBarInformationVO(User user, String avatarKey, Credentials credentials, Integer expiredSeconds, String bucket, String region) {
+    public GetNavigationBarInformationVO(User user) {
         this.nickname = user.getNickname();
         this.userType = user.getUserType();
-        this.avatar = CosAuthorizationVO.keyAuthorization(
-                credentials, expiredSeconds, bucket, region, avatarKey
-        );
+        this.avatar = CosFolderPath.AVATAR + user.getAvatar();
     }
 }

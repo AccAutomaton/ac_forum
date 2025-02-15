@@ -1,6 +1,6 @@
 <script setup>
 
-import {getObjectUrl, uploadObject} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
 import {ElNotification} from "element-plus";
 import store from "@/store/index.js";
 import {ref} from "vue";
@@ -31,10 +31,10 @@ const emailCountdownValue = ref(Date.now());
 const refreshAvatarUrl = async (needRefreshGlobalAvatar = false) => {
   const data = await getAvatarGetAuthorization();
   if (data !== null) {
-    if (data["avatar"]["key"].includes("default-avatar")) {
+    if (data.includes("default-avatar")) {
       isDefaultAvatar.value = true;
     }
-    getObjectUrl(data["avatar"], (url) => {
+    await getObjectUrlOfPublicResources(data, (url) => {
       avatar.value = url;
       if (needRefreshGlobalAvatar) {
         store.commit("setAvatar", url);

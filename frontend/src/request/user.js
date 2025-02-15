@@ -10,7 +10,7 @@ export const getNavigationBarUserInformation = () =>
 
 export const getAvatarGetAuthorization = () =>
     request({
-        url: '/user/get/avatar/getAuthorization',
+        url: '/user/get/avatar',
         method: 'GET',
     }).then((response) => {
         return response["data"];

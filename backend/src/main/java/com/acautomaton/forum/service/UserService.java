@@ -53,28 +53,14 @@ public class UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         User user = userMapper.selectOne(queryWrapper);
-        Integer expireSeconds = 60;
-        String avatarKey = CosFolderPath.AVATAR + user.getAvatar();
-        Credentials credentials = cosService.getCosAccessAuthorization(
-                expireSeconds, CosActions.GET_OBJECT, List.of(avatarKey)
-        );
-        return new GetNavigationBarInformationVO(
-                user, avatarKey, credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion()
-        );
+        return new GetNavigationBarInformationVO(user);
     }
 
-    public CosAuthorizationVO getAvatarGetAuthorizationByUid(Integer uid) {
+    public String getAvatarByUid(Integer uid) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         queryWrapper.select("avatar");
-        String avatar = userMapper.selectOne(queryWrapper).getAvatar();
-        Integer expireSeconds = 60;
-        String avatarKey = CosFolderPath.AVATAR + avatar;
-        Credentials credentials = cosService.getCosAccessAuthorization(
-                expireSeconds, CosActions.GET_OBJECT, List.of(avatarKey)
-        );
-        log.info("用户 {} 请求了头像访问权限", uid);
-        return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
+        return userMapper.selectOne(queryWrapper).getAvatar();
     }
 
     @Transactional(rollbackFor = Exception.class)

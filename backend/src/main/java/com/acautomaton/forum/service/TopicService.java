@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -106,17 +105,7 @@ public class TopicService {
         PageHelperVO<GetTopicVO> pageHelperVO = new PageHelperVO<>(
                 PageHelper.startPage(pageNumber, pageSize < 20 ? pageSize : 20).doSelectPageInfo(() -> getTopicList(queryType, keyword))
         );
-        Integer expiredSeconds = 60;
-        List<String> allowResources = new ArrayList<>();
-        for (GetTopicVO vo : (List<GetTopicVO>) pageHelperVO.getRecords()) {
-            if (!vo.getAvatar().toString().isEmpty()) {
-                allowResources.add(CosFolderPath.TOPIC_AVATAR + vo.getAvatar().toString());
-            }
-        }
-        Credentials credentials = cosService.getCosAccessAuthorization(expiredSeconds, CosActions.GET_OBJECT, allowResources);
-        return new GetTopicListVO(pageHelperVO, CosAuthorizationVO.prefixAuthorization(
-                credentials, expiredSeconds, cosService.getBucketName(), cosService.getRegion(), CosFolderPath.TOPIC_AVATAR.getPath()
-        ));
+        return new GetTopicListVO(pageHelperVO, CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
     private List<GetTopicVO> getTopicList(String queryType, String keyword) {

@@ -7,7 +7,7 @@ import store from "@/store/index.js";
 import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {getNavigationBarUserInformation} from "@/request/user.js";
-import {getObjectUrl} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 
 const emit = defineEmits(["setEnabledTab"]);
 const username = ref(""), password = ref("");
@@ -32,7 +32,7 @@ const Login = async () => {
     if (userData !== null) {
       store.commit("setNickname", userData["nickname"]);
       store.commit("setUserType", userData["userType"]);
-      getObjectUrl(userData["avatar"], (url) => {
+      await getObjectUrlOfPublicResources(userData["avatar"], (url) => {
         store.commit("setAvatar", url);
         store.commit("setIsLogin", true);
         router.push("/home");

@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import {queryTopicList} from "@/request/topic.js";
-import {getObjectUrl} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
 
 const getCardCss = (index) => {
@@ -30,8 +30,9 @@ const refreshTopicList = async () => {
     currentPageSize.value = data["topicList"]["pageSize"];
     for (let i = 0; i < topicList.value.length; i++) {
       if (topicList.value[i]["avatar"] !== "") {
-        topicList.value[i]["avatar"] =
-            getTopicAvatarUrl(data["topicAvatarsCosAuthorization"], topicList.value[i]["avatar"]);
+        await getObjectUrlOfPublicResources(data["avatarPrefix"] + topicList.value[i]["avatar"], (url) => {
+          topicList.value[i]["avatar"] = url;
+        });
       }
       if (topicList.value[i]["description"] === "") {
         topicList.value[i]["description"] = "该话题没有简介";
@@ -50,13 +51,6 @@ const search = (keyword, queryType) => {
   currentQueryType.value = queryType;
   currentPageNumber.value = 1;
   refreshTopicList();
-}
-
-const getTopicAvatarUrl = (topicAvatarsCosAuthorization, avatar) => {
-  topicAvatarsCosAuthorization["key"] = topicAvatarsCosAuthorization["prefix"] + avatar;
-  return getObjectUrl(topicAvatarsCosAuthorization, (url) => {
-    return url;
-  })
 }
 
 defineExpose({

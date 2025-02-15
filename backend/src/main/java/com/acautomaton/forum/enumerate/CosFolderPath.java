@@ -11,7 +11,6 @@ public enum CosFolderPath {
 
     private final String path;
 
-
     @Override
     public String toString() {
         return this.path;

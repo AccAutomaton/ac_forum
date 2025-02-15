@@ -51,4 +51,19 @@ public class CosAuthorizationVO {
                 key
         );
     }
+
+    public static CosAuthorizationVO publicResourcesAuthorization(Credentials credentials, Integer expiredSeconds, String bucket, String region) {
+        Date date = new Date();
+        return new CosAuthorizationVO(
+                credentials.tmpSecretId,
+                credentials.tmpSecretKey,
+                credentials.sessionToken,
+                date.getTime() / 1000L,
+                date.getTime() / 1000L + expiredSeconds,
+                bucket,
+                region,
+                null,
+                null
+        );
+    }
 }

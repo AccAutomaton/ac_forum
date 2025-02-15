@@ -1,6 +1,5 @@
 package com.acautomaton.forum.vo.topic;
 
-import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -13,5 +12,5 @@ import lombok.NoArgsConstructor;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class GetTopicListVO {
     PageHelperVO<GetTopicVO> topicList;
-    CosAuthorizationVO topicAvatarsCosAuthorization;
+    String avatarPrefix;
 }

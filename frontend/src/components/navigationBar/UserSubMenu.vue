@@ -3,7 +3,7 @@ import store from "@/store/index.js";
 import {Discount, Promotion, SwitchButton} from "@element-plus/icons-vue";
 import {useStorage} from "@vueuse/core";
 import {getNavigationBarUserInformation} from "@/request/user.js";
-import {getObjectUrl} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
 
 const authorization = useStorage("Authorization", "");
@@ -17,7 +17,7 @@ const refreshNavigationBarUserInformation = async () => {
     store.commit("setNickname", data["nickname"]);
     store.commit("setUserType", data["userType"]);
     store.commit("setIsLogin", true);
-    getObjectUrl(data["avatar"], (url) => {
+    await getObjectUrlOfPublicResources(data["avatar"], (url) => {
       store.commit("setAvatar", url);
     })
   }

@@ -4,6 +4,7 @@ import com.acautomaton.forum.dto.user.GetEmailVerifyCodeForSettingEmailDTO;
 import com.acautomaton.forum.dto.user.SetEmailDTO;
 import com.acautomaton.forum.dto.user.SetNicknameDTO;
 import com.acautomaton.forum.dto.user.SetPasswordDTO;
+import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
@@ -32,10 +33,9 @@ public class UserController {
         return Response.success(vo);
     }
 
-    @GetMapping("/get/avatar/getAuthorization")
-    public Response getAvatarGetAuthorization() {
-        CosAuthorizationVO vo = userService.getAvatarGetAuthorizationByUid(userService.getCurrentUser().getUid());
-        return Response.success(Map.of("avatar", vo));
+    @GetMapping("/get/avatar")
+    public Response getAvatar() {
+        return Response.success(CosFolderPath.AVATAR + userService.getAvatarByUid(userService.getCurrentUser().getUid()));
     }
 
     @GetMapping("/get/avatar/updateAuthorization")

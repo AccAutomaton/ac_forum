@@ -1,8 +1,10 @@
 package com.acautomaton.forum.service.util;
 
 import com.acautomaton.forum.enumerate.CosActions;
+import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
+import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -86,6 +88,15 @@ public class CosService {
             log.error("向COS服务器请求临时密钥时发生错误: {}", e.getMessage());
             throw new ForumException("系统错误，请稍后再试");
         }
+    }
+
+    public CosAuthorizationVO getPublicResourcesReadAuthorization() {
+        Integer expireTime = 60 * 60;
+        Credentials credentials = getCosAccessAuthorization(expireTime, CosActions.GET_OBJECT, List.of(
+                CosFolderPath.AVATAR + "*",
+                CosFolderPath.TOPIC_AVATAR + "*"
+        ));
+        return CosAuthorizationVO.publicResourcesAuthorization(credentials, expireTime, bucketName, region);
     }
 
     public boolean objectExists(String key) {
