@@ -19,6 +19,7 @@ public class Artist {
     private Integer collections;
     private Integer follows;
     private Integer fans;
+    private Integer articles;
     private Integer receiveVisits;
     private Integer receiveThumbsUp;
     private Integer receiveCollections;

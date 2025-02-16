@@ -42,7 +42,7 @@ public class TopicController {
         return Response.success();
     }
 
-    @GetMapping("/get/One")
+    @GetMapping("/get/one")
     public Response getOneTopic(@RequestParam Integer topicId) {
         GetTopicVO vo = topicService.getTopicById(topicId);
         return Response.success(vo);

@@ -32,7 +32,7 @@ import store from "@/store/index.js";
         </el-menu-item>
         <el-menu-item index="/article">
           <el-icon><Document /></el-icon>
-          <span>贴子</span>
+          <span>文章</span>
         </el-menu-item>
         <el-menu-item index="/creation">
           <el-icon><EditPen /></el-icon>

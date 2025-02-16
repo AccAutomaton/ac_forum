@@ -15,7 +15,6 @@ import com.acautomaton.forum.mapper.RechargeMapper;
 import com.acautomaton.forum.mapper.UserMapper;
 import com.acautomaton.forum.mapper.VipMapper;
 import com.acautomaton.forum.service.util.AlipayService;
-import com.acautomaton.forum.service.util.RedisService;
 import com.acautomaton.forum.vo.vip.BuyVipVO;
 import com.acautomaton.forum.vo.vip.GetPriceVO;
 import com.alipay.api.AlipayApiException;
@@ -37,16 +36,14 @@ public class VipService {
     UserMapper userMapper;
     RechargeMapper rechargeMapper;
     CoinRecordMapper coinRecordMapper;
-    RedisService redisService;
     AlipayService alipayService;
     MessageService messageService;
 
     @Autowired
-    public VipService(VipMapper vipMapper, UserMapper userMapper, RedisService redisService, AlipayService alipayService,
+    public VipService(VipMapper vipMapper, UserMapper userMapper, AlipayService alipayService,
                       MessageService messageService, RechargeMapper rechargeMapper, CoinRecordMapper coinRecordMapper) {
         this.vipMapper = vipMapper;
         this.userMapper = userMapper;
-        this.redisService = redisService;
         this.alipayService = alipayService;
         this.rechargeMapper = rechargeMapper;
         this.coinRecordMapper = coinRecordMapper;
@@ -169,7 +166,7 @@ public class VipService {
                 lambdaUpdateWrapper.set(Vip::getExpirationTime, targetDate);
                 vipMapper.update(lambdaUpdateWrapper);
                 sendBuyVipSuccessfullyMessage(uid, targetVipType, targetDate);
-                log.info("[同步]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
+                log.info("[Sync]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
             }
         }
     }
@@ -202,7 +199,7 @@ public class VipService {
             lambdaUpdateWrapper.set(Vip::getExpirationTime, targetDate);
             vipMapper.update(lambdaUpdateWrapper);
             sendBuyVipSuccessfullyMessage(uid, targetVipType, targetDate);
-            log.info("[异步]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
+            log.info("[Async]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
         }
         return true;
     }

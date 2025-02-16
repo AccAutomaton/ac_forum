@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum CollectionType {
     OTHER(0, "其它"),
     TOPIC(1, "话题"),
-    ARTICLE(2, "贴子");
+    ARTICLE(2, "文章");
 
     @EnumValue
     private final Integer index;

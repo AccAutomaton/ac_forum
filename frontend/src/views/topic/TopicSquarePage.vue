@@ -15,8 +15,8 @@ const selectOptions = [
   {value: "visitsByAsc", label: "热度由低到高"},
   {value: "createTimeByDesc", label: "时间从近到远"},
   {value: "createTimeByAsc", label: "时间从远到近"},
-  {value: "articlesByDesc", label: "帖子从多到少"},
-  {value: "articlesByAsc", label: "帖子从少到多"},
+  {value: "articlesByDesc", label: "文章从多到少"},
+  {value: "articlesByAsc", label: "文章从少到多"},
 ]
 const createTopicDialogVisible = ref(false);
 const newTopicTitle = ref(""), newTopicDescription = ref("");
