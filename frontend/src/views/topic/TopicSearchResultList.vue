@@ -77,7 +77,7 @@ defineExpose({
               <el-col :span="19">
                 <el-row>
                   <div>
-                    <el-text size="large" tag="b" line-clamp="1">{{ record["title"] }}</el-text>
+                    <el-text style="color: black" size="large" tag="b" line-clamp="1">{{ record["title"] }}</el-text>
                   </div>
                 </el-row>
                 <el-row align="middle" justify="center">

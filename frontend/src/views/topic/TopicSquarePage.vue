@@ -51,7 +51,7 @@ const onClickConfirmCreateTopicButton = async () => {
     <el-aside width="325px">
       <el-card shadow="never" style="height: 40px; border: none; text-align: center">
         <el-button :icon="Plus" plain type="info"
-                   style="font-size: 16px; font-weight: bolder; padding-left: 30px; padding-right: 30px; height: 40px; width: 70%; border-radius: 25px"
+                   style="font-size: 16px; font-weight: bolder; padding-left: 30px; padding-right: 30px; height: 40px; width: 70%; border-radius: 25px; color: black"
                    @click="onClickCreateTopicButton">
           <span>发起新话题</span>
         </el-button>

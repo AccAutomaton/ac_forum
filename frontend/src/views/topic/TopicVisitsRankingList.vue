@@ -53,7 +53,7 @@ refreshRankingList();
                 </el-col>
                 <el-col :span="15">
                   <div>
-                    <el-text size="large" tag="b" line-clamp="2">{{ record["title"] }}</el-text>
+                    <el-text style="color: black;" size="large" tag="b" line-clamp="2">{{ record["title"] }}</el-text>
                   </div>
                   <div>
                     <el-text line-clamp="1">{{ record["visits"] }} 次浏览</el-text>
