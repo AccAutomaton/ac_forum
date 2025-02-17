@@ -2,13 +2,13 @@ package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.entity.Topic;
 import com.acautomaton.forum.entity.User;
-import com.acautomaton.forum.enumerate.CosActions;
 import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
 import com.acautomaton.forum.mapper.TopicMapper;
+import com.acautomaton.forum.service.async.TopicAsyncService;
 import com.acautomaton.forum.service.util.CosService;
-import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
+import com.acautomaton.forum.service.util.RedisService;
 import com.acautomaton.forum.vo.topic.GetTopicListVO;
 import com.acautomaton.forum.vo.topic.GetTopicVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
@@ -16,7 +16,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.tencent.cloud.Credentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,13 +27,17 @@ import java.util.List;
 @Slf4j
 @Service
 public class TopicService {
+    TopicAsyncService topicAsyncService;
     TopicMapper topicMapper;
     CosService cosService;
+    RedisService redisService;
 
     @Autowired
-    public TopicService(TopicMapper topicMapper, CosService cosService) {
+    public TopicService(TopicMapper topicMapper, CosService cosService, RedisService redisService, TopicAsyncService topicAsyncService) {
         this.topicMapper = topicMapper;
         this.cosService = cosService;
+        this.redisService = redisService;
+        this.topicAsyncService = topicAsyncService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -76,7 +79,7 @@ public class TopicService {
         log.info("用户 {} 修改了话题 {}", operatorUid, id);
     }
 
-    public GetTopicVO getTopicById(Integer topidId) {
+    public GetTopicVO getTopicById(Integer uid, Integer topidId) {
         MPJLambdaWrapper<Topic> mpjLambdaWrapper = new MPJLambdaWrapper<>();
         mpjLambdaWrapper.eq(Topic::getId, topidId);
         if (!topicMapper.exists(mpjLambdaWrapper)) {
@@ -86,17 +89,21 @@ public class TopicService {
                 .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getArticles, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
                 .selectAs(Topic::getAdministrator, GetTopicVO::getAdministratorId)
                 .selectAs(User::getNickname, GetTopicVO::getAdministratorNickname)
+                .selectAs(User::getAvatar, GetTopicVO::getAdministratorAvatar)
                 .innerJoin(User.class, User::getUid, Topic::getAdministrator);
         GetTopicVO vo = topicMapper.selectJoinOne(GetTopicVO.class, mpjLambdaWrapper);
-        if (vo.getAvatar().toString().isEmpty()) {
+        if (vo.getAvatar().isEmpty()) {
             vo.setAvatar(null);
         } else {
-            Integer expiredSeconds = 60;
-            String avatarKey = CosFolderPath.TOPIC_AVATAR + vo.getAvatar().toString();
-            Credentials credentials = cosService.getCosAccessAuthorization(expiredSeconds, CosActions.GET_OBJECT, List.of(avatarKey));
-            vo.setAvatar(CosAuthorizationVO.keyAuthorization(
-                    credentials, expiredSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey
-            ));
+            vo.setAvatar(CosFolderPath.TOPIC_AVATAR + vo.getAvatar());
+        }
+        if (vo.getAdministratorAvatar().isEmpty()) {
+            vo.setAdministratorAvatar(null);
+        } else {
+            vo.setAdministratorAvatar(CosFolderPath.AVATAR + vo.getAdministratorAvatar());
+        }
+        if (!hasVisitedTopic(uid, topidId, 60)) {
+            topicAsyncService.increaseVisitsById(topidId);
         }
         return vo;
     }
@@ -137,8 +144,19 @@ public class TopicService {
                 break;
             case "synthesize":
             default:
-                mpjLambdaWrapper.orderByDesc(Topic::getVisits, Topic::getCreateTime, Topic::getArticles);
+                mpjLambdaWrapper.orderByDesc(Topic::getVisits, Topic::getArticles, Topic::getCreateTime);
         }
         return topicMapper.selectJoinList(GetTopicVO.class, mpjLambdaWrapper);
+    }
+
+    private Boolean hasVisitedTopic(Integer uid, Integer topicId, Integer intervalSeconds) {
+        String key = "has_visited_topic_" + topicId + "_uid_" + uid + "_interval_" + intervalSeconds;
+        if (redisService.hasKey(key)) {
+            redisService.set(key, true, intervalSeconds);
+            return true;
+        } else {
+            redisService.set(key, true, intervalSeconds);
+            return false;
+        }
     }
 }

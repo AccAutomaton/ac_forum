@@ -1,7 +1,5 @@
 package com.acautomaton.forum.vo.topic;
 
-import com.acautomaton.forum.exception.ForumException;
-import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -22,17 +20,10 @@ public class GetTopicVO {
     String description;
     Integer administratorId;
     String administratorNickname;
+    String administratorAvatar;
     Integer articles;
     Integer visits;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     Date createTime;
-    Object avatar;
-
-    public void setAvatar(Object avatar) {
-        if ((avatar != null) && !(avatar instanceof String || avatar instanceof CosAuthorizationVO)) {
-            log.info("构造 {} 时 avatar 参数异常: 既不是 [String]，也不是 [CosAuthorizationVO]", GetTopicVO.class);
-            throw new ForumException("系统错误，请稍后重试");
-        }
-        this.avatar = avatar;
-    }
+    String avatar;
 }

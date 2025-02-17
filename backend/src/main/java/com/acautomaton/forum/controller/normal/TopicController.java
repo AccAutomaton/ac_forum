@@ -44,7 +44,7 @@ public class TopicController {
 
     @GetMapping("/get/one")
     public Response getOneTopic(@RequestParam Integer topicId) {
-        GetTopicVO vo = topicService.getTopicById(topicId);
+        GetTopicVO vo = topicService.getTopicById(userService.getCurrentUser().getUid(), topicId);
         return Response.success(vo);
     }
 

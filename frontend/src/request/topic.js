@@ -25,3 +25,14 @@ export const createTopic = (title, description) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getTopicById = (id) =>
+    request({
+        url: '/topic/get/one',
+        method: 'GET',
+        params: {
+            topicId: id,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

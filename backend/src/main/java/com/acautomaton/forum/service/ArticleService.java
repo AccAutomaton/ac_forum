@@ -83,7 +83,7 @@ public class ArticleService {
         GetArticleVO vo = articleMapper.selectJoinOne(GetArticleVO.class, articleLambdaWrapper);
         vo.setOwnerAvatar(CosFolderPath.AVATAR + vo.getOwnerAvatar());
         vo.setTopicAvatar(CosFolderPath.TOPIC_AVATAR + vo.getTopicAvatar());
-        if (hasVisitedArticle(uid, id, 60)) {
+        if (!hasVisitedArticle(uid, id, 60)) {
             articleAsyncService.increaseVisitsById(id);
             topicAsyncService.increaseVisitsById(vo.getTopic());
         }
@@ -95,10 +95,10 @@ public class ArticleService {
         String key = "has_visited_article_" + articleId + "_uid_" + uid + "_interval_" + intervalSeconds;
         if (redisService.hasKey(key)) {
             redisService.set(key, true, intervalSeconds);
-            return false;
+            return true;
         } else {
             redisService.set(key, true, intervalSeconds);
-            return true;
+            return false;
         }
     }
 }

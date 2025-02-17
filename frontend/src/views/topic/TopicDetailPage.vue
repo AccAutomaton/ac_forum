@@ -1,0 +1,139 @@
+<!--suppress CssUnusedSymbol -->
+<script setup>
+import {useRoute} from "vue-router";
+import {getTopicById} from "@/request/topic.js";
+import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import moment from "moment";
+import ArtistInformationPopover from "@/components/user/ArtistInformationPopover.vue";
+import {ref} from 'vue'
+import {Setting} from "@element-plus/icons-vue";
+import store from "@/store/index.js";
+
+const topicId = useRoute().params.topicId;
+const title = ref(""), description = ref("");
+const administratorId = ref(0), administratorNickname = ref(""), administratorAvatar = ref("");
+const articles = ref(0), visits = ref(0), createTime = ref(""), avatar = ref("");
+const administratorStatisticRef = ref(), administratorInformationPopoverRef = ref()
+
+const getTopicInfomation = async () => {
+  const data = await getTopicById(topicId);
+  if (data !== null) {
+    title.value = data["title"];
+    description.value = data["description"];
+    administratorId.value = data["administratorId"];
+    administratorNickname.value = data["administratorNickname"];
+    if (data["administratorAvatar"] !== undefined) {
+      await getObjectUrlOfPublicResources(data["administratorAvatar"], (url) => {
+        administratorAvatar.value = url;
+      });
+    }
+    articles.value = data["articles"];
+    visits.value = data["visits"];
+    createTime.value = data["createTime"];
+    if (data["avatar"] !== undefined) {
+      await getObjectUrlOfPublicResources(data["avatar"], (url) => {
+        avatar.value = url;
+      })
+    }
+  }
+}
+getTopicInfomation();
+</script>
+
+<template>
+  <el-container>
+    <el-header height="auto">
+      <el-card style="border-radius: 25px;">
+        <el-row align="middle" justify="center" style="width: 100%" :gutter="5">
+          <el-col :span="2">
+            <el-row align="middle" justify="center">
+              <el-avatar v-if="avatar === ''" shape="square" size="large">
+                <span style="font-size: large">{{ title.slice(0, 2) }}</span>
+              </el-avatar>
+              <el-avatar v-else shape="square" size="large" :src="avatar"
+                         style="background-color: transparent;"/>
+            </el-row>
+          </el-col>
+          <el-col :span="12">
+            <el-text style="font-size: xx-large; font-weight: bolder; color: black" truncated>{{ title }}</el-text>
+          </el-col>
+          <el-col :span="2">
+            <el-button v-if="administratorId === store.getters.getUid" round :icon="Setting">管理话题</el-button>
+          </el-col>
+          <el-col :span="2" style="text-align: center">
+            <el-statistic :value="articles" style="float: right">
+              <template #title>
+                <div style="display: inline-flex; align-items: center">
+                  文章数
+                </div>
+              </template>
+            </el-statistic>
+          </el-col>
+          <el-col :span="2" style="text-align: center">
+            <el-statistic :value="visits">
+              <template #title>
+                <div style="display: inline-flex; align-items: center">
+                  浏览量
+                </div>
+              </template>
+            </el-statistic>
+          </el-col>
+          <el-col :span="2" style="text-align: center">
+            <el-statistic :value="''" style="float: left">
+              <template #title>
+                <div style="display: inline-flex; align-items: center">
+                  创建时间
+                </div>
+              </template>
+              <template #prefix>
+                {{ moment(createTime, 'YYYY-MM-DD').fromNow() }}
+              </template>
+            </el-statistic>
+          </el-col>
+          <el-col :span="2" style="text-align: center">
+            <el-statistic class="administrator-statistic" :value="''" ref="administratorStatisticRef"
+                          style="background-color: rgba(128,128,128,0.1); border-radius: 15px">
+              <template #title>
+                <div style="display: inline-flex; align-items: center">
+                  话题主
+                </div>
+              </template>
+              <template #prefix>
+                <el-avatar style="background-color: transparent" :src="administratorAvatar" :size="16"/>
+                <el-text style="font-size: 14px; max-width: 85px; text-align: left; margin-left: 5px" truncated>
+                  {{ administratorNickname }}
+                </el-text>
+              </template>
+            </el-statistic>
+            <el-popover ref="administratorInformationPopoverRef" :virtual-ref="administratorStatisticRef"
+                        trigger="click" virtual-triggering width="300" :offset="24" :persistent="false">
+              <ArtistInformationPopover :uid="administratorId" :nickname="administratorNickname"
+                                        :avatar="administratorAvatar"/>
+            </el-popover>
+          </el-col>
+        </el-row>
+      </el-card>
+    </el-header>
+    <el-container>
+      <el-aside>
+        2
+      </el-aside>
+      <el-main>3</el-main>
+    </el-container>
+  </el-container>
+</template>
+
+<style scoped>
+:deep() .el-card__body {
+  padding: 10px;
+}
+
+.administrator-statistic {
+  cursor: pointer;
+}
+
+.administrator-statistic:hover {
+  border-style: solid;
+  border-color: rgba(64, 158, 255, 0.5);
+}
+</style>

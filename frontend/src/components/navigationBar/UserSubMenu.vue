@@ -14,6 +14,7 @@ const refreshNavigationBarUserInformation = async () => {
   }
   const data = await getNavigationBarUserInformation();
   if (data !== null) {
+    store.commit("setUid", data["uid"]);
     store.commit("setNickname", data["nickname"]);
     store.commit("setUserType", data["userType"]);
     store.commit("setIsLogin", true);

@@ -11,6 +11,7 @@ export const getObjectUrlOfPublicResources = async (key, callback) => {
             Key: key,
         }, (err, data) => {
             if (err !== null) {
+                console.log(key)
                 ElNotification({title: "服务器错误", type: "error", message: "存储服务发生错误"});
             } else {
                 callback(data.Url);
