@@ -23,6 +23,7 @@ public class Article {
     private Integer topic;
     private String title;
     private String content;
+    private String firstImage;
     private Integer visits;
     private Integer thumbsUp;
     private Integer collections;

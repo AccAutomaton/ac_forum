@@ -15,6 +15,6 @@ public class CreateArticleDTO {
     @Size(max = 32, message = "标题不能超过32个字")
     String title;
     @NotBlank(message = "内容不能为空")
-    @Size(message = "内容不能超过214783647个字")
+    @Size(max = 100000, message = "内容不能超过100000个字")
     String content;
 }

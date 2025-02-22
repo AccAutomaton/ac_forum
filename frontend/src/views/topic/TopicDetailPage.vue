@@ -8,6 +8,9 @@ import ArtistInformationPopover from "@/components/user/ArtistInformationPopover
 import {ref} from 'vue'
 import {Setting} from "@element-plus/icons-vue";
 import store from "@/store/index.js";
+import ArticleOfTopicVisitsRankingList from "@/views/topic/ArticleOfTopicVisitsRankingList.vue";
+import ArticleOfTopicThumbsUpRankingList from "@/views/topic/ArticleOfTopicThumbsUpRankingList.vue";
+import ArticleListOfTopic from "@/views/topic/ArticleListOfTopic.vue";
 
 const topicId = useRoute().params.topicId;
 const title = ref(""), description = ref("");
@@ -115,10 +118,21 @@ getTopicInfomation();
       </el-card>
     </el-header>
     <el-container>
-      <el-aside>
-        2
+      <el-aside width="325px" style="margin-left: 20px">
+        <el-card shadow="never"
+                 style="border-radius: 25px; border-color: rgba(211,211,211,0.5); border-width: thin; margin-top: 20px">
+          <ArticleOfTopicVisitsRankingList :topicId="topicId"/>
+        </el-card>
       </el-aside>
-      <el-main>3</el-main>
+      <el-main style="padding-bottom: 0">
+        <ArticleListOfTopic :topicId="topicId"/>
+      </el-main>
+      <el-aside width="325px" style="margin-right: 20px">
+        <el-card shadow="never"
+                 style="border-radius: 25px; border-color: rgba(211,211,211,0.5); border-width: thin; margin-top: 20px">
+          <ArticleOfTopicThumbsUpRankingList :topicId="topicId"/>
+        </el-card>
+      </el-aside>
     </el-container>
   </el-container>
 </template>

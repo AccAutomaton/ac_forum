@@ -5,6 +5,19 @@ import {ref} from "vue";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
 
+const getCardClass = (index) => {
+  switch (index) {
+    case 0:
+      return "card-top-1";
+    case 1:
+      return "card-top-2";
+    case 2:
+      return "card-top-3";
+    default:
+      return "card-top-lower";
+  }
+}
+
 const rankingList = ref([]);
 const refreshRankingList = async () => {
   const data = await queryTopicList(1, 10, "visitsByDesc", "");
@@ -34,12 +47,13 @@ refreshRankingList();
       </div>
     </el-header>
     <el-main style="padding-top: 10px">
-      <el-scrollbar max-height="65vh" width="100%">
+      <el-scrollbar height="65vh" width="100%">
+        <el-empty v-if="rankingList.length === 0" description="暂无话题" :image-size="125"/>
         <ul style="padding: 0; margin-top: 0">
           <li v-for="(record, index) in rankingList" :key="record['id']" style="list-style: none;">
             <el-card shadow="hover" @click="router.push('/topic/' + record['id'])"
                      style="margin-bottom: 10px; cursor: pointer; height: 80px; display: flex; align-items: center;
-                     justify-content: center; border-radius: 15px">
+                     justify-content: center; border-radius: 15px" :class="getCardClass(index)">
               <el-row :gutter="10" style="width: 283px; margin-left: 15px">
                 <el-col :span="2" class="col">
                   <span style="color: red; font-style: italic; font-weight: bolder">{{ index + 1 }}</span>
@@ -74,5 +88,21 @@ refreshRankingList();
   text-align: center;
   align-items: center;
   justify-content: center
+}
+
+.card-top-1 {
+  background-color: rgba(255, 215, 0, 0.2);
+}
+
+.card-top-2 {
+  background-color: rgba(255, 215, 0, 0.15);
+}
+
+.card-top-3 {
+  background-color: rgba(255, 215, 0, 0.1);
+}
+
+.card-top-lower {
+  background-color: rgba(211, 211, 211, 0.1);
 }
 </style>

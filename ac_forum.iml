@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="GENERAL_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
+  <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.idea/.cache" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
@@ -9,6 +8,5 @@
       <excludeFolder url="file://$MODULE_DIR$/.idea/mybatisx" />
       <excludeFolder url="file://$MODULE_DIR$/ac_forum_log" />
     </content>
-    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

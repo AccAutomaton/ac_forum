@@ -25,4 +25,8 @@ import moment from "moment"
 import 'moment/dist/locale/zh-cn'
 moment.locale("zh-cn")
 
+// --- byteDance-icon --- //
+import ArcoVueIcon from '@arco-design/web-vue/es/icon';
+app.use(ArcoVueIcon)
+
 app.mount('#app')

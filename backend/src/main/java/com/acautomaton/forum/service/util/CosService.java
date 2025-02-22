@@ -94,7 +94,8 @@ public class CosService {
         Integer expireTime = 60 * 60;
         Credentials credentials = getCosAccessAuthorization(expireTime, CosActions.GET_OBJECT, List.of(
                 CosFolderPath.AVATAR + "*",
-                CosFolderPath.TOPIC_AVATAR + "*"
+                CosFolderPath.TOPIC_AVATAR + "*",
+                CosFolderPath.ARTICLE_IMAGE + "*"
         ));
         return CosAuthorizationVO.publicResourcesAuthorization(credentials, expireTime, bucketName, region);
     }
