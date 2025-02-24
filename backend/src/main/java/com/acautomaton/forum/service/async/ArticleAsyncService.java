@@ -33,7 +33,7 @@ public class ArticleAsyncService {
         lambdaUpdateWrapper.eq(Article::getId, id);
         lambdaUpdateWrapper.setIncrBy(Article::getVisits, 1);
         articleMapper.update(lambdaUpdateWrapper);
-        synchronizeArticleToElasticSearchById(id);
+        synchronizeArticleToElasticSearchByArticleId(id);
         log.info("[Async]文章 {} 浏览量+1", id);
     }
 
@@ -59,7 +59,7 @@ public class ArticleAsyncService {
     }
 
     @Async
-    public void synchronizeArticleToElasticSearchById(Integer id) {
+    public void synchronizeArticleToElasticSearchByArticleId(Integer id) {
         MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
         queryWrapper
                 .eq(Article::getId, id)
@@ -75,8 +75,30 @@ public class ArticleAsyncService {
     }
 
     @Async
-    public void synchronizeDeleteArticleToElasticSearchById(Integer id) {
+    public void synchronizeDeleteArticleToElasticSearchByTopicId(Integer id) {
         esArticleRepository.deleteById(id);
         log.info("[Async]同步删除 ElasticSearch 文章 {}", id);
+    }
+
+    @Async
+    public void synchronizeArticleToElasticSearchByTopicId(Integer topicId) {
+        MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
+        queryWrapper.eq(Article::getTopic, topicId);
+        long count = articleMapper.selectCount(queryWrapper);
+        queryWrapper
+                .select(Article::getId, Article::getOwner, Article::getTopic, Article::getTitle, Article::getContent, Article::getFirstImage, Article::getVisits, Article::getThumbsUp, Article::getCollections, Article::getTipping, Article::getForwards, Article::getCreateTime, Article::getUpdateTime)
+                .selectAs(User::getNickname, EsArticle::getOwnerNickname)
+                .selectAs(User::getAvatar, EsArticle::getOwnerAvatar)
+                .selectAs(Topic::getTitle, EsArticle::getTopicTitle)
+                .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
+                .innerJoin(User.class, User::getUid, Article::getOwner)
+                .innerJoin(Topic.class, Topic::getId, Article::getTopic);
+        List<EsArticle> articles;
+        for (long i = 0; i < count; i += 100) {
+            queryWrapper.last("limit " + i + ", 100");
+            articles = articleMapper.selectJoinList(EsArticle.class, queryWrapper);
+            esArticleRepository.saveAll(articles);
+            log.info("[Async]同步话题 {} 的文章数据到 ElasticSearch ({} / {})", topicId, Math.min(i + 100, count), count);
+        }
     }
 }

@@ -75,7 +75,7 @@ public class ArticleService {
         artistMapper.update(articleLambdaUpdateWrapper);
         topicLambdaUpdateWrapper.setIncrBy(Topic::getArticles, 1);
         topicMapper.update(topicLambdaUpdateWrapper);
-        articleAsyncService.synchronizeArticleToElasticSearchById(article.getId());
+        articleAsyncService.synchronizeArticleToElasticSearchByArticleId(article.getId());
         log.info("用户 {} 创建了文章 {}", owner, article.getId());
         return article.getId();
     }
@@ -144,7 +144,7 @@ public class ArticleService {
         }
         articleMapper.delete(topicLambdaUpdateWrapper);
         log.info("用户 {} 删除了文章 {}", uid, topicId);
-        articleAsyncService.synchronizeDeleteArticleToElasticSearchById(topicId);
+        articleAsyncService.synchronizeDeleteArticleToElasticSearchByTopicId(topicId);
     }
 
     public void updateArticleById(Integer uid, Integer topicId, String title, String content) {
@@ -162,7 +162,7 @@ public class ArticleService {
         topicLambdaUpdateWrapper.set(Article::getUpdateTime, new Date());
         articleMapper.update(topicLambdaUpdateWrapper);
         log.info("用户 {} 修改了文章 {}", uid, topicId);
-        articleAsyncService.synchronizeArticleToElasticSearchById(topicId);
+        articleAsyncService.synchronizeArticleToElasticSearchByArticleId(topicId);
     }
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {

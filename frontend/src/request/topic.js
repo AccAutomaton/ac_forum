@@ -36,3 +36,27 @@ export const getTopicById = (id) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const deleteTopic = (id) =>
+    request({
+        url: '/topic/delete',
+        method: 'DELETE',
+        params: {
+            topicId: id,
+        }
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const updateTopic = (id, title, description) =>
+    request({
+        url: '/topic/update',
+        method: 'PATCH',
+        data: {
+            id: id,
+            title: title,
+            description: description,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

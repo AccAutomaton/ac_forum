@@ -6,6 +6,7 @@ import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
 import com.acautomaton.forum.mapper.TopicMapper;
+import com.acautomaton.forum.service.async.ArticleAsyncService;
 import com.acautomaton.forum.service.async.TopicAsyncService;
 import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.RedisService;
@@ -28,16 +29,19 @@ import java.util.List;
 @Service
 public class TopicService {
     TopicAsyncService topicAsyncService;
+    ArticleAsyncService articleAsyncService;
     TopicMapper topicMapper;
     CosService cosService;
     RedisService redisService;
 
     @Autowired
-    public TopicService(TopicMapper topicMapper, CosService cosService, RedisService redisService, TopicAsyncService topicAsyncService) {
+    public TopicService(TopicMapper topicMapper, CosService cosService, RedisService redisService, TopicAsyncService topicAsyncService,
+                        ArticleAsyncService articleAsyncService) {
         this.topicMapper = topicMapper;
         this.cosService = cosService;
         this.redisService = redisService;
         this.topicAsyncService = topicAsyncService;
+        this.articleAsyncService = articleAsyncService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -63,6 +67,7 @@ public class TopicService {
         }
         topicMapper.delete(updateWrapper);
         log.info("用户 {} 删除了话题 {}", operatorUid, id);
+        articleAsyncService.synchronizeArticleToElasticSearchByTopicId(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -70,13 +75,22 @@ public class TopicService {
         UpdateWrapper<Topic> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id);
         updateWrapper.eq("administrator", operatorUid);
-        if (!topicMapper.exists(updateWrapper)) {
+        Topic topic = topicMapper.selectOne(updateWrapper);
+        if (topic == null) {
             throw new ForumIllegalAccountException("您没有权限修改该话题");
+        }
+        if (!topic.getTitle().equals(title)) {
+            QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("title", title);
+            if (topicMapper.exists(queryWrapper)) {
+                throw new ForumExistentialityException("话题已存在，请更换话题名称");
+            }
         }
         updateWrapper.set("title", title);
         updateWrapper.set("description", description);
         topicMapper.update(updateWrapper);
         log.info("用户 {} 修改了话题 {}", operatorUid, id);
+        articleAsyncService.synchronizeArticleToElasticSearchByTopicId(id);
     }
 
     public GetTopicVO getTopicById(Integer uid, Integer topidId) {
