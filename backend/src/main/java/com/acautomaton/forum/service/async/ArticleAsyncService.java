@@ -54,7 +54,7 @@ public class ArticleAsyncService {
             queryWrapper.last("limit " + i + ", 100");
             articles = articleMapper.selectJoinList(EsArticle.class, queryWrapper);
             esArticleRepository.saveAll(articles);
-            log.info("全量同步文章数据到 Elastic Search ({} / {})", Math.min(i + 100, count), count);
+            log.info("[Async]全量同步文章数据到 ElasticSearch ({} / {})", Math.min(i + 100, count), count);
         }
     }
 
@@ -71,5 +71,12 @@ public class ArticleAsyncService {
                 .innerJoin(User.class, User::getUid, Article::getOwner)
                 .innerJoin(Topic.class, Topic::getId, Article::getTopic);
         esArticleRepository.save(articleMapper.selectJoinOne(EsArticle.class, queryWrapper));
+        log.info("[Async]同步文章 {} 数据到 ElasticSearch", id);
+    }
+
+    @Async
+    public void synchronizeDeleteArticleToElasticSearchById(Integer id) {
+        esArticleRepository.deleteById(id);
+        log.info("[Async]同步删除 ElasticSearch 文章 {}", id);
     }
 }

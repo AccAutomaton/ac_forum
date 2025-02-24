@@ -5,6 +5,7 @@ import com.acautomaton.forum.enumerate.ArticleQueryType;
 import com.acautomaton.forum.enumerate.BrowseRecordType;
 import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.exception.ForumExistentialityException;
+import com.acautomaton.forum.exception.ForumIllegalAccountException;
 import com.acautomaton.forum.mapper.ArticleMapper;
 import com.acautomaton.forum.mapper.ArtistMapper;
 import com.acautomaton.forum.mapper.TopicMapper;
@@ -129,6 +130,39 @@ public class ArticleService {
             esArticles = esArticleRepository.findByTopicAndTitleOrContent(topicId, keyword, keyword, pageable);
         }
         return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath());
+    }
+
+    public void deleteArticleById(Integer uid, Integer topicId) {
+        LambdaUpdateWrapper<Article> topicLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        topicLambdaUpdateWrapper.eq(Article::getId, topicId);
+        Article article = articleMapper.selectOne(topicLambdaUpdateWrapper);
+        if (article == null) {
+            throw new ForumExistentialityException("文章不存在");
+        }
+        if (!article.getOwner().equals(uid)) {
+            throw new ForumIllegalAccountException("没有权限进行此操作");
+        }
+        articleMapper.delete(topicLambdaUpdateWrapper);
+        log.info("用户 {} 删除了文章 {}", uid, topicId);
+        articleAsyncService.synchronizeDeleteArticleToElasticSearchById(topicId);
+    }
+
+    public void updateArticleById(Integer uid, Integer topicId, String title, String content) {
+        LambdaUpdateWrapper<Article> topicLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        topicLambdaUpdateWrapper.eq(Article::getId, topicId);
+        Article article = articleMapper.selectOne(topicLambdaUpdateWrapper);
+        if (article == null) {
+            throw new ForumExistentialityException("文章不存在");
+        }
+        if (!article.getOwner().equals(uid)) {
+            throw new ForumIllegalAccountException("没有权限进行此操作");
+        }
+        topicLambdaUpdateWrapper.set(Article::getTitle, title);
+        topicLambdaUpdateWrapper.set(Article::getContent, content);
+        topicLambdaUpdateWrapper.set(Article::getUpdateTime, new Date());
+        articleMapper.update(topicLambdaUpdateWrapper);
+        log.info("用户 {} 修改了文章 {}", uid, topicId);
+        articleAsyncService.synchronizeArticleToElasticSearchById(topicId);
     }
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {
