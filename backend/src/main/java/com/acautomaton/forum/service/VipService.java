@@ -107,7 +107,7 @@ public class VipService {
             LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             lambdaUpdateWrapper.eq(User::getUid, uid);
             Integer coins = userMapper.selectOne(lambdaUpdateWrapper).getCoins();
-            CoinRecord coinRecord = new CoinRecord(null, uid, CoinRecordType.BUY_VIP_PAYOUT, priceVO.getPayCoins(), coins, vipType.getValue(), "抵扣 " + priceVO.getPayCoins() * 1.0 / 100 + " RMB", CoinRecordStatus.RUNNING, now, now, 0);
+            CoinRecord coinRecord = new CoinRecord(null, uid, CoinRecordType.BUY_VIP_PAYOUT, priceVO.getPayCoins(), coins - priceVO.getPayCoins(), vipType.getValue(), "抵扣 " + priceVO.getPayCoins() * 1.0 / 100 + " RMB", CoinRecordStatus.RUNNING, now, now, 0);
             coinRecordMapper.insert(coinRecord);
             coinRecordId = coinRecord.getId();
             lambdaUpdateWrapper.set(User::getCoins, coins - priceVO.getPayCoins());
@@ -121,7 +121,9 @@ public class VipService {
                 lambdaUpdateWrapper.set(CoinRecord::getStatus, CoinRecordStatus.SUCCESS);
                 coinRecordMapper.update(lambdaUpdateWrapper);
             }
-            rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.BUY_VIP, RechargeStatus.SUCCESS, (int) (Double.parseDouble(price) * 100), vipType.getValue(), comment, coinRecordId, systemInfo, now, now, 0));
+            rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.BUY_VIP,
+                    RechargeStatus.SUCCESS, (int) (Double.parseDouble(price) * 100), vipType.getValue(), comment, coinRecordId,
+                    systemInfo, now, now, 0));
             LambdaUpdateWrapper<Vip> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             lambdaUpdateWrapper.eq(Vip::getUid, uid);
             lambdaUpdateWrapper.set(Vip::getVipType, vipType);
@@ -134,7 +136,9 @@ public class VipService {
         GoodsDetail goodsDetail = new GoodsDetail();
         goodsDetail.setGoodsName(vipType.getValue());
         goodsDetail.setPrice(price);
-        rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.BUY_VIP, RechargeStatus.WAITING, (int) (Double.parseDouble(price) * 100), vipType.getValue(), comment, coinRecordId, systemInfo, now, now, 0));
+        rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.BUY_VIP,
+                RechargeStatus.WAITING, (int) (Double.parseDouble(price) * 100), vipType.getValue(), comment, coinRecordId,
+                systemInfo, now, now, 0));
         log.info("用户 {} 发起购买 {} (RMB {}) 的订单支付宝跳转请求: {}", uid, vipType.getValue(), price, uuid);
         return new BuyVipVO(true, alipayService.createOrder(uuid, price, subject, "/vip", List.of(goodsDetail)));
     }
@@ -175,6 +179,7 @@ public class VipService {
     public Boolean refreshPayingStatusByUid(Integer uid) throws AlipayApiException {
         LambdaQueryWrapper<Recharge> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Recharge::getUid, uid);
+        lambdaQueryWrapper.eq(Recharge::getType, RechargeType.BUY_VIP);
         lambdaQueryWrapper.eq(Recharge::getStatus, RechargeStatus.WAITING);
         Recharge recharge = rechargeMapper.selectOne(lambdaQueryWrapper);
         if (recharge == null) {
@@ -200,8 +205,9 @@ public class VipService {
             vipMapper.update(lambdaUpdateWrapper);
             sendBuyVipSuccessfullyMessage(uid, targetVipType, targetDate);
             log.info("[Async]用户 {} 购买 {} 支付成功 (alipay {})", uid, targetVipType.getValue(), recharge.getTradeId());
+            return true;
         }
-        return true;
+        return false;
     }
 
     private void sendBuyVipSuccessfullyMessage(Integer uid, VipType vipType, Date targetDate) {

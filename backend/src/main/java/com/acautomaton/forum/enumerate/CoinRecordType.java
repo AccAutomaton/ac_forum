@@ -11,6 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum CoinRecordType {
+    RECHARGE(-2, "充值"),
     REFUND(-1, "退款收入"),
     OTHER(0, "其它"),
     NORMAL_INCOME(1, "普通收益"),

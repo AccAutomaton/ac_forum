@@ -87,3 +87,40 @@ export const setPassword = (oldPassword, newPassword) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getCoins = () => request({
+    url: '/user/get/balance/coin',
+    method: 'GET',
+}).then((response) => {
+    return response["data"];
+})
+
+export const buyCoins = (coins) =>
+    request({
+        url: 'user/buy/coin',
+        method: 'POST',
+        params: {
+            coins: coins,
+        }
+    }).then(response => {
+        return response["data"];
+    })
+
+export const afterPaying = (tradeId) =>
+    request({
+        url: 'user/buy/coin/payed',
+        method: 'POST',
+        params: {
+            tradeId: tradeId,
+        }
+    }).then(response => {
+        return response["data"];
+    })
+
+export const refreshPayingStatus = () =>
+    request({
+        url: 'user/pay/coin/refresh',
+        method: 'POST',
+    }).then(response => {
+        return response["data"];
+    })

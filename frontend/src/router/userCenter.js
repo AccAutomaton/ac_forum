@@ -23,6 +23,23 @@ const userCenterRoutes = [
                         component: () => import("@/views/userCenter/account/RevisePasswordTab.vue")
                     }
                 ]
+            },
+            {
+                path: 'purse',
+                children: [
+                    {
+                        path: '',
+                        redirect: '/userCenter/purse/balance',
+                    },
+                    {
+                        path: 'balance',
+                        component: () => import("@/views/userCenter/purse/balance/BalanceTab.vue")
+                    },
+                    {
+                        path: 'record',
+                        component: () => import("@/views/userCenter/purse/ConsumeRecordTab.vue")
+                    }
+                ]
             }
         ],
         meta: {
