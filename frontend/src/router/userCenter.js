@@ -37,7 +37,7 @@ const userCenterRoutes = [
                     },
                     {
                         path: 'record',
-                        component: () => import("@/views/userCenter/purse/ConsumeRecordTab.vue")
+                        component: () => import("@/views/userCenter/purse/consumeRecord/ConsumeRecordTab.vue")
                     }
                 ]
             }

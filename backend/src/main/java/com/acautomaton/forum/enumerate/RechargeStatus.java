@@ -12,9 +12,9 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RechargeStatus {
     WAITING(-1, "等待支付"),
-    SUCCESS(0, "支付成功"),
-    FAILED(1, "支付失败"),
-    CANCEL(2, "支付取消"),
+    SUCCESS(0, "交易成功"),
+    FAILED(1, "交易失败"),
+    CANCEL(2, "交易取消"),
     REFUND(3, "已退款"),
     OTHER(4, "其它");
 
