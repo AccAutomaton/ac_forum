@@ -258,28 +258,12 @@ const clickConfirmReviseEmailButton = async () => {
         <el-divider :border-style="'dotted'"/>
         <el-row>
           <el-text size="large" class="title-text">创建时间</el-text>
-          <el-text>
-            <el-date-picker
-                v-model="createTime"
-                type="datetime"
-                value-format="YYYY-MM-DD hh:mm:ss"
-                format="YYYY年MM月DD日   hh:mm:ss"
-                readonly
-            />
-          </el-text>
+          <el-text>{{ createTime }}</el-text>
         </el-row>
         <el-divider :border-style="'dotted'"/>
         <el-row>
           <el-text size="large" class="title-text">修改时间</el-text>
-          <el-text>
-            <el-date-picker
-                v-model="updateTime"
-                type="datetime"
-                value-format="YYYY-MM-DD hh:mm:ss"
-                format="YYYY年MM月DD日   hh:mm:ss"
-                readonly
-            />
-          </el-text>
+          <el-text>{{ updateTime }}</el-text>
         </el-row>
         <el-divider :border-style="'dotted'"/>
       </el-scrollbar>

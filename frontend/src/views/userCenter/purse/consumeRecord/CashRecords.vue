@@ -1,7 +1,8 @@
 <script setup>
-import {ref} from "vue";
-import {getRechargeById, getRechargeList} from "@/request/recharge.js";
-import {View} from "@element-plus/icons-vue";
+import {nextTick, ref} from "vue";
+import {cancelRechargeById, continueRechargeById, getRechargeById, getRechargeList} from "@/request/recharge.js";
+import {Close, Money, View} from "@element-plus/icons-vue";
+import {ElMessageBox, ElNotification} from "element-plus";
 
 const tableData = ref([]);
 const currentPageNumber = ref(1), currentPageSize = ref(10), pages = ref(0);
@@ -56,6 +57,37 @@ const onClickViewDetailIcon = async (rechargeId) => {
     chargeDetailDialogVisible.value = true;
   }
 }
+
+const alipayForm = ref(""), alipayPage = ref();
+const onClickContinuePayingIcon = async (rechargeId) => {
+  const data = await continueRechargeById(rechargeId);
+  if (data !== null) {
+    alipayForm.value = data["pageRedirectionData"];
+    await nextTick(() => {
+      alipayPage.value.children[0].submit();
+      setTimeout(() => {
+      }, 500)
+    });
+  }
+}
+
+const onClickCancelPayingIcon = async (rechargeId) => {
+  ElMessageBox.confirm(
+      '是否要取消该订单?',
+      '取消订单',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '关闭',
+        type: 'warning',
+      }
+  ).then(async () => {
+    const data = await cancelRechargeById(rechargeId);
+    if (data !== null) {
+      await getData();
+      ElNotification({type: "success", title: "订单取消成功"});
+    }
+  })
+}
 </script>
 
 <template>
@@ -100,12 +132,24 @@ const onClickViewDetailIcon = async (rechargeId) => {
     </el-table-column>
     <el-table-column label="操作" fixed="right" width="115" align="center" show-overflow-tooltip>
       <template #default="scope">
-        <el-tooltip content="查看详情" placement="left" effect="light">
+        <el-tooltip content="查看详情" placement="top" effect="light">
           <el-icon size="16" class="view-icon-button" @click="onClickViewDetailIcon(scope.row['id'])">
             <View/>
           </el-icon>
         </el-tooltip>
-        <!-- TODO: 订单待支付时，可取消订单或继续支付 -->
+        <span v-if="scope.row['status']['index'] === -1">
+          <el-tooltip content="继续支付" placement="top" effect="light">
+          <el-icon style="margin-left: 5px; margin-right: 4px" size="16" class="view-icon-button"
+                   @click="onClickContinuePayingIcon(scope.row['id'])">
+            <Money/>
+          </el-icon>
+        </el-tooltip>
+        <el-tooltip content="取消订单" placement="top" effect="light">
+          <el-icon size="16" class="view-icon-button" @click="onClickCancelPayingIcon(scope.row['id'])">
+            <Close/>
+          </el-icon>
+        </el-tooltip>
+        </span>
       </template>
     </el-table-column>
   </el-table>
@@ -151,7 +195,7 @@ const onClickViewDetailIcon = async (rechargeId) => {
         <el-input class="dialog-input" v-model="selectedRecharge['uuid']" readonly/>
       </el-col>
       <el-col :span="12">
-        <el-input class="dialog-input" v-model="selectedRecharge['tradeId']" readonly/>
+        <el-input class="dialog-input" v-model="selectedRecharge['tradeId']" placeholder="<无>" readonly/>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -198,18 +242,17 @@ const onClickViewDetailIcon = async (rechargeId) => {
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-date-picker v-model="selectedRecharge['createTime']" type="datetime" value-format="YYYY-MM-DD hh:mm:ss"
-                        format="YYYY年MM月DD日 hh:mm:ss" readonly style="width: 100%; margin-bottom: 10px"/>
+        <el-input class="dialog-input" v-model="selectedRecharge['createTime']" readonly/>
       </el-col>
       <el-col :span="12">
-        <el-date-picker v-model="selectedRecharge['updateTime']" type="datetime" value-format="YYYY-MM-DD hh:mm:ss"
-                        format="YYYY年MM月DD日 hh:mm:ss" readonly style="width: 100%; margin-bottom: 10px"/>
+        <el-input class="dialog-input" v-model="selectedRecharge['updateTime']" readonly/>
       </el-col>
     </el-row>
     <div class="dialog-div">备注</div>
     <el-input class="dialog-input" type="textarea" v-model="selectedRecharge['comment']" readonly rows="4" resize="none"
               placeholder="<无备注>"/>
   </el-dialog>
+  <div ref="alipayPage" v-html="alipayForm"/>
 </template>
 
 <style scoped>

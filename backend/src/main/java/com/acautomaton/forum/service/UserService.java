@@ -1,5 +1,6 @@
 package com.acautomaton.forum.service;
 
+import cn.hutool.json.JSONUtil;
 import com.acautomaton.forum.entity.*;
 import com.acautomaton.forum.enumerate.*;
 import com.acautomaton.forum.exception.ForumExistentialityException;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -193,15 +195,16 @@ public class UserService {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUid, uid);
         User user = userMapper.selectOne(queryWrapper);
-        CoinRecord coinRecord = new CoinRecord(null, uid, CoinRecordType.RECHARGE, coins, user.getCoins(), "充值", "",
+        CoinRecord coinRecord = new CoinRecord(null, uid, CoinRecordType.RECHARGE, coins, user.getCoins(), "AC币充值", "",
                 CoinRecordStatus.RUNNING, now, now, 0);
         coinRecordMapper.insert(coinRecord);
         String subject = "AC币充值";
         GoodsDetail goodsDetail = new GoodsDetail();
         goodsDetail.setGoodsName(coins + "AC币");
         goodsDetail.setPrice(price);
+        String systemInfo = JSONUtil.toJsonStr(Map.of("goodsDetail", goodsDetail));
         rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.RECHARGE_AC_COIN,
-                RechargeStatus.WAITING, coins, subject, comment, coinRecord.getId(), null, now, now, 0));
+                RechargeStatus.WAITING, coins, subject, comment, coinRecord.getId(), systemInfo, now, now, 0));
         log.info("用户 {} 发起购买 {}AC币 (RMB {}) 的订单支付宝跳转请求: {}", uid, coins, price, uuid);
         return alipayService.createOrder(uuid, price, subject, "/userCenter/purse/balance", List.of(goodsDetail));
     }

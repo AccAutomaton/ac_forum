@@ -113,7 +113,10 @@ public class VipService {
             lambdaUpdateWrapper.set(User::getCoins, coins - priceVO.getPayCoins());
             userMapper.update(lambdaUpdateWrapper);
         }
-        String systemInfo = JSONUtil.toJsonStr(Map.of("vipTypeIndex", vipType.getIndex(), "targetDate", priceVO.getTargetExpireDate()));
+        GoodsDetail goodsDetail = new GoodsDetail();
+        goodsDetail.setGoodsName(vipType.getValue());
+        goodsDetail.setPrice(price);
+        String systemInfo = JSONUtil.toJsonStr(Map.of("vipTypeIndex", vipType.getIndex(), "targetDate", priceVO.getTargetExpireDate(), "goodsDetail", goodsDetail));
         if (Double.parseDouble(price) <= 0.0) {
             if (coinRecordId != null) {
                 LambdaUpdateWrapper<CoinRecord> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
@@ -133,9 +136,6 @@ public class VipService {
             return new BuyVipVO(false, null);
         }
         String subject = "AC论坛VIP - " + vipType.getValue();
-        GoodsDetail goodsDetail = new GoodsDetail();
-        goodsDetail.setGoodsName(vipType.getValue());
-        goodsDetail.setPrice(price);
         rechargeMapper.insert(new Recharge(null, uid, uuid, null, RechargeChannel.ALI_PAY, RechargeType.BUY_VIP,
                 RechargeStatus.WAITING, (int) (Double.parseDouble(price) * 100), vipType.getValue(), comment, coinRecordId,
                 systemInfo, now, now, 0));

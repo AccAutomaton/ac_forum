@@ -17,3 +17,17 @@ export const getRechargeById = (rechargeId) => request({
 }).then(response => {
     return response["data"];
 })
+
+export const continueRechargeById = (rechargeId) => request({
+    url: '/recharge/continue/' + rechargeId,
+    method: 'POST',
+}).then(response => {
+    return response["data"];
+})
+
+export const cancelRechargeById = (rechargeId) => request({
+    url: '/recharge/cancel/' + rechargeId,
+    method: 'PATCH',
+}).then(response => {
+    return response["data"];
+})
