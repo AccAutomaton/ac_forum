@@ -1,7 +1,7 @@
 import request from "@/request/index.js";
 
 export const getRechargeList = (pageNumber, pageSize) => request({
-    url: '/recharge/get/list',
+    url: '/recharge/list',
     method: 'GET',
     params: {
         pageNumber: pageNumber,
@@ -12,22 +12,28 @@ export const getRechargeList = (pageNumber, pageSize) => request({
 })
 
 export const getRechargeById = (rechargeId) => request({
-    url: '/recharge/get/' + rechargeId,
+    url: '/recharge/' + rechargeId,
     method: 'GET',
 }).then(response => {
     return response["data"];
 })
 
 export const continueRechargeById = (rechargeId) => request({
-    url: '/recharge/continue/' + rechargeId,
+    url: '/recharge/continue',
     method: 'POST',
+    params: {
+        rechargeId: rechargeId,
+    }
 }).then(response => {
     return response["data"];
 })
 
 export const cancelRechargeById = (rechargeId) => request({
-    url: '/recharge/cancel/' + rechargeId,
+    url: '/recharge/cancel',
     method: 'PATCH',
+    params: {
+        rechargeId: rechargeId,
+    }
 }).then(response => {
     return response["data"];
 })

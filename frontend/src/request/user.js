@@ -2,7 +2,7 @@ import request from "@/request/index.js";
 
 export const getNavigationBarUserInformation = () =>
     request({
-        url: '/user/get/navigationBarInformation',
+        url: '/user/navigationBarInformation',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -10,7 +10,7 @@ export const getNavigationBarUserInformation = () =>
 
 export const getAvatarGetAuthorization = () =>
     request({
-        url: '/user/get/avatar',
+        url: '/user/avatar',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -18,7 +18,7 @@ export const getAvatarGetAuthorization = () =>
 
 export const getAvatarUpdateAuthorization = () =>
     request({
-        url: '/user/get/avatar/updateAuthorization',
+        url: '/user/avatar/updateAuthorization',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -26,7 +26,7 @@ export const getAvatarUpdateAuthorization = () =>
 
 export const setAvatarCustomization = () =>
     request({
-        url: '/user/set/avatar/customization',
+        url: '/user/avatar/customization',
         method: 'PATCH',
     }).then((response) => {
         return response["data"];
@@ -34,7 +34,7 @@ export const setAvatarCustomization = () =>
 
 export const getUserDetails = () =>
     request({
-        url: '/user/get/details',
+        url: '/user/details',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -42,7 +42,7 @@ export const getUserDetails = () =>
 
 export const setNickname = (newNickname) =>
     request({
-        url: '/user/set/nickname',
+        url: '/user/nickname',
         method: 'PATCH',
         data: {
             newNickname: newNickname
@@ -53,7 +53,7 @@ export const setNickname = (newNickname) =>
 
 export const getEmailVerifyCodeForSettingEmail = (newEmail, captchaUUID, captchaCode) =>
     request({
-        url: '/user/getEmailVerifyCode/setEmail',
+        url: '/user/emailVerifyCode/setEmail',
         method: 'POST',
         data: {
             newEmail: newEmail,
@@ -66,7 +66,7 @@ export const getEmailVerifyCodeForSettingEmail = (newEmail, captchaUUID, captcha
 
 export const setEmail = (newEmail, verifyCode) =>
     request({
-        url: '/user/set/email',
+        url: '/user/email',
         method: 'PATCH',
         data: {
             newEmail: newEmail,
@@ -78,7 +78,7 @@ export const setEmail = (newEmail, verifyCode) =>
 
 export const setPassword = (oldPassword, newPassword) =>
     request({
-        url: '/user/set/password',
+        url: '/user/password',
         method: 'PATCH',
         data: {
             oldPassword: oldPassword,
@@ -89,7 +89,7 @@ export const setPassword = (oldPassword, newPassword) =>
     })
 
 export const getCoins = () => request({
-    url: '/user/get/balance/coin',
+    url: '/user/coin',
     method: 'GET',
 }).then((response) => {
     return response["data"];
@@ -97,7 +97,7 @@ export const getCoins = () => request({
 
 export const buyCoins = (coins) =>
     request({
-        url: 'user/buy/coin',
+        url: '/user/coin/buy',
         method: 'POST',
         params: {
             coins: coins,
@@ -108,7 +108,7 @@ export const buyCoins = (coins) =>
 
 export const afterPaying = (tradeId) =>
     request({
-        url: 'user/buy/coin/payed',
+        url: '/user/coin/payed',
         method: 'POST',
         params: {
             tradeId: tradeId,
@@ -119,7 +119,7 @@ export const afterPaying = (tradeId) =>
 
 export const refreshPayingStatus = () =>
     request({
-        url: 'user/pay/coin/refresh',
+        url: '/user/coin/refresh',
         method: 'POST',
     }).then(response => {
         return response["data"];

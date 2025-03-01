@@ -25,7 +25,7 @@ public class ArticleController {
         this.userService = userService;
     }
 
-    @RequestMapping("/create")
+    @PutMapping("/create")
     public Response createArticle(@RequestBody CreateArticleDTO dto) {
         Integer articleId = articleService.createArticle(
                 userService.getCurrentUser().getUid(), dto.getTopic(), dto.getTitle(), dto.getContent()
@@ -33,27 +33,23 @@ public class ArticleController {
         return Response.success(Map.of("articleId", articleId));
     }
 
-    @GetMapping("/get/one")
-    public Response getOneArticle(@RequestParam Integer articleId) {
+    @GetMapping("/{articleId}")
+    public Response getOneArticle(@PathVariable Integer articleId) {
         return Response.success(articleService.getAriticleById(userService.getCurrentUser().getUid(), articleId));
     }
 
-    @GetMapping("/get/list")
-    public Response getListByTopic(@RequestParam Integer pageNumber,
-                                   @RequestParam Integer pageSize,
-                                   @RequestParam Integer queryType,
-                                   @RequestParam String keyword) {
-        GetEsArticalListVO vo = articleService.getEsArticleList(ArticleQueryType.getById(queryType), keyword, pageNumber, pageSize);
-        return Response.success(vo);
-    }
-
-    @GetMapping("/get/list/topic/{topicId}")
-    public Response getListByTopic(@PathVariable Integer topicId,
-                                   @RequestParam Integer pageNumber,
-                                   @RequestParam Integer pageSize,
-                                   @RequestParam Integer queryType,
-                                   @RequestParam String keyword) {
-        GetEsArticalListVO vo = articleService.getEsArticleListByTopicId(topicId, ArticleQueryType.getById(queryType), keyword, pageNumber, pageSize);
+    @GetMapping("/list")
+    public Response getList(@RequestParam(required = false) Integer topicId,
+                            @RequestParam(defaultValue = "0") Integer pageNumber,
+                            @RequestParam(defaultValue = "5") Integer pageSize,
+                            @RequestParam(defaultValue = "0") Integer queryType,
+                            @RequestParam String keyword) {
+        GetEsArticalListVO vo;
+        if (topicId == null) {
+            vo = articleService.getEsArticleList(ArticleQueryType.getById(queryType), keyword, pageNumber, pageSize);
+        } else {
+            vo = articleService.getEsArticleListByTopicId(topicId, ArticleQueryType.getById(queryType), keyword, pageNumber, pageSize);
+        }
         return Response.success(vo);
     }
 }

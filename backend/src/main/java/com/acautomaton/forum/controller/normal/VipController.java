@@ -27,7 +27,7 @@ public class VipController {
         this.userService = userService;
     }
 
-    @GetMapping("/get")
+    @GetMapping("")
     public Response getVip() {
         Vip vip = vipService.getVipByUid(userService.getCurrentUser().getUid());
         return Response.success(vip);

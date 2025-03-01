@@ -29,13 +29,13 @@ public class LoginController {
         return Response.success();
     }
 
-    @PostMapping("/getEmailVerifyCode/register")
+    @PostMapping("/emailVerifyCode/register")
     public Response getEmailVerifyCodeForRegister(@Validated @RequestBody GetEmailVerifyCodeForRegisterDTO dto) {
         loginService.getEmailVerifyCodeForRegister(dto);
         return Response.success();
     }
 
-    @GetMapping("/getCaptcha")
+    @GetMapping("/captcha")
     public Response getCaptcha() {
         return Response.success(captchaService.getCaptcha());
     }
@@ -45,7 +45,7 @@ public class LoginController {
         return Response.success(loginService.login(dto));
     }
 
-    @PostMapping("/getEmailVerifyCode/findBackPassword")
+    @PostMapping("/emailVerifyCode/findBackPassword")
     public Response getEmailVerifyCodeForFindingBackPassword(@Validated @RequestBody GetEmailVerifyCodeForFindingBackPasswordDTO dto) {
         loginService.getEmailVerifyCodeForFindingBackPassword(dto);
         return Response.success();

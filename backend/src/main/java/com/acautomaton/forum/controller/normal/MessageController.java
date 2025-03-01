@@ -1,11 +1,9 @@
 package com.acautomaton.forum.controller.normal;
 
-import com.acautomaton.forum.dto.message.DoReadMessageDTO;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.MessageService;
 import com.acautomaton.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,7 +18,7 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping("/get/list")
+    @GetMapping("/list")
     public Response getList(@RequestParam Integer pageNumber,
                             @RequestParam Integer pageSize,
                             @RequestParam(required = false) Boolean seen) {
@@ -29,14 +27,14 @@ public class MessageController {
         ));
     }
 
-    @GetMapping("/get/count/notSeen")
+    @GetMapping("/count/notSeen")
     public Response getNotSeenMessagesCount() {
         return Response.success(messageService.getNotSeenMessagesCountByuid(userService.getCurrentUser().getUid()));
     }
 
     @PatchMapping("/read")
-    public Response doReadMessage(@Validated @RequestBody DoReadMessageDTO dto) {
-        messageService.readMessage(dto.getMessageId(), userService.getCurrentUser().getUid());
+    public Response doReadMessage(@RequestParam Integer messageId) {
+        messageService.readMessage(messageId, userService.getCurrentUser().getUid());
         return Response.success();
     }
 }

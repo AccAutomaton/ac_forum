@@ -2,7 +2,7 @@ import request from "@/request/index.js";
 
 export const queryTopicList = (pageNumber, pageSize, queryType, keyword) =>
     request({
-        url: '/topic/get/list',
+        url: '/topic/list',
         method: 'GET',
         params: {
             pageNumber: pageNumber,
@@ -28,11 +28,8 @@ export const createTopic = (title, description) =>
 
 export const getTopicById = (id) =>
     request({
-        url: '/topic/get/one',
+        url: '/topic/' + id,
         method: 'GET',
-        params: {
-            topicId: id,
-        }
     }).then((response) => {
         return response["data"];
     })

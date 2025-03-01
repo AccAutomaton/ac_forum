@@ -2,7 +2,7 @@ import request from "@/request/index.js";
 
 export const getVip = () =>
     request({
-        url: 'vip/get',
+        url: '/vip',
         method: 'GET',
     }).then(response => {
         return response["data"];
@@ -10,7 +10,7 @@ export const getVip = () =>
 
 export const getVipPrice = (targetVipIndex) =>
     request({
-        url: 'vip/price',
+        url: '/vip/price',
         method: 'GET',
         params: {
             targetVipIndex: targetVipIndex,
@@ -21,7 +21,7 @@ export const getVipPrice = (targetVipIndex) =>
 
 export const buyVip = (targetVipIndex, mode) =>
     request({
-        url: 'vip/buy',
+        url: '/vip/buy',
         method: 'POST',
         data: {
             targetVipIndex: targetVipIndex,
@@ -33,7 +33,7 @@ export const buyVip = (targetVipIndex, mode) =>
 
 export const afterPaying = (tradeId) =>
     request({
-        url: 'vip/buy/payed',
+        url: '/vip/buy/payed',
         method: 'POST',
         params: {
             tradeId: tradeId,
@@ -44,7 +44,7 @@ export const afterPaying = (tradeId) =>
 
 export const refreshPayingStatus = () => 
     request({
-        url: 'vip/pay/refresh',
+        url: '/vip/pay/refresh',
         method: 'POST',
     }).then(response => {
         return response["data"];

@@ -21,22 +21,22 @@ public class RechargeController {
         this.userService = userService;
     }
 
-    @GetMapping("/get/list")
+    @GetMapping("/list")
     public Response getRechargeList(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
         return Response.success(rechargeService.getRechargeList(userService.getCurrentUser().getUid(), pageNumber, pageSize));
     }
-    @GetMapping("/get/{rechargeId}")
+    @GetMapping("/{rechargeId}")
     public Response getRechargeById(@PathVariable Integer rechargeId) {
         return Response.success(rechargeService.getRechargeById(rechargeId, userService.getCurrentUser().getUid()));
     }
 
-    @PostMapping("/continue/{rechargeId}")
-    public Response continueRechargeById(@PathVariable Integer rechargeId) throws AlipayApiException {
+    @PostMapping("/continue")
+    public Response continueRechargeById(@RequestParam Integer rechargeId) throws AlipayApiException {
         return Response.success(Map.of("pageRedirectionData", rechargeService.continueRecharge(rechargeId, userService.getCurrentUser().getUid())));
     }
 
-    @PatchMapping("/cancel/{rechargeId}")
-    public Response cancelRechargeById(@PathVariable Integer rechargeId) {
+    @PatchMapping("/cancel")
+    public Response cancelRechargeById(@RequestParam Integer rechargeId) {
         rechargeService.cancelRecharge(rechargeId, userService.getCurrentUser().getUid());
         return Response.success();
     }

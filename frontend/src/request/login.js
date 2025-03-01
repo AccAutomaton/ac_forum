@@ -2,7 +2,7 @@ import request from "@/request/index.js";
 
 export const getGraphicCaptchaImage = () =>
     request({
-        url: '/getCaptcha',
+        url: '/captcha',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -10,7 +10,7 @@ export const getGraphicCaptchaImage = () =>
 
 export const getEmailVerifyCodeForRegister = (email, captchaUUID, captchaCode) =>
     request({
-        url: '/getEmailVerifyCode/register',
+        url: '/emailVerifyCode/register',
         method: 'POST',
         data: {
             email: email,
@@ -50,7 +50,7 @@ export const login = (username, password) =>
 
 export const getEmailVerifyCodeForFindingBackPassword = (username, email, captchaUUID, captchaCode) =>
     request({
-        url: '/getEmailVerifyCode/findBackPassword',
+        url: '/emailVerifyCode/findBackPassword',
         method: 'POST',
         data: {
             username: username,

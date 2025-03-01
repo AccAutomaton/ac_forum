@@ -2,7 +2,7 @@ import request from "@/request/index.js";
 
 export const getNotSeenMessageCount = () =>
     request({
-        url: '/message/get/count/notSeen',
+        url: '/message/count/notSeen',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -10,7 +10,7 @@ export const getNotSeenMessageCount = () =>
 
 export const getMessageList = (pageNumber, pageSize, seen) =>
     request({
-        url: '/message/get/list',
+        url: '/message/list',
         method: 'GET',
         params: {
             pageNumber: pageNumber,
@@ -23,9 +23,9 @@ export const getMessageList = (pageNumber, pageSize, seen) =>
 
 export const doReadMessage = (messageId) =>
     request({
-        url: 'message/read',
+        url: '/message/read',
         method: 'PATCH',
-        data: {
+        params: {
             messageId: messageId,
         }
     }).then((response) => {

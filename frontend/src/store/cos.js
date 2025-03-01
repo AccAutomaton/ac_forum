@@ -10,7 +10,7 @@ const publicResourcesCosReadAuthorization = {
     },
     getters: {
         getPublicResourcesReadCOS: async (state) => {
-            if (state.expiredTime === 0 || (new Date().getTime()) / 1000 - state.expiredTime <= 60 * 5) {
+            if (state.expiredTime === 0 || new Date().getTime() / 1000 - state.expiredTime <= 60 * 5) {
                 const data = await request({
                     url: "/cos/authorization/read/public",
                     method: "GET",

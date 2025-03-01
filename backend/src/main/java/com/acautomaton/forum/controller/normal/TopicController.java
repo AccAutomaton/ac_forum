@@ -42,13 +42,13 @@ public class TopicController {
         return Response.success();
     }
 
-    @GetMapping("/get/one")
-    public Response getOneTopic(@RequestParam Integer topicId) {
+    @GetMapping("/{topicId}")
+    public Response getOneTopic(@PathVariable Integer topicId) {
         GetTopicVO vo = topicService.getTopicById(userService.getCurrentUser().getUid(), topicId);
         return Response.success(vo);
     }
 
-    @GetMapping("/get/list")
+    @GetMapping("/list")
     public Response getTopicList(@RequestParam Integer pageNumber,
                                  @RequestParam Integer pageSize,
                                  @RequestParam String queryType,

@@ -29,66 +29,66 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/get/navigationBarInformation")
+    @GetMapping("/navigationBarInformation")
     public Response getNavigationBarInformation() {
         GetNavigationBarInformationVO vo = userService.getNavigationBarInformationByUid(userService.getCurrentUser().getUid());
         return Response.success(vo);
     }
 
-    @GetMapping("/get/avatar")
+    @GetMapping("/avatar")
     public Response getAvatar() {
         return Response.success(CosFolderPath.AVATAR + userService.getAvatarByUid(userService.getCurrentUser().getUid()));
     }
 
-    @GetMapping("/get/avatar/updateAuthorization")
+    @GetMapping("/avatar/updateAuthorization")
     public Response getAvatarUpdateAuthorization() {
         CosAuthorizationVO vo = userService.getAvatarUpdateAuthorizationByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("targetAvatar", vo));
     }
 
-    @PatchMapping("/set/avatar/customization")
+    @PatchMapping("/avatar/customization")
     public Response setAvatarCustomization() {
         userService.setAvatarCustomization(userService.getCurrentUser().getUid());
         return Response.success();
     }
 
-    @GetMapping("/get/details")
+    @GetMapping("/details")
     public Response getDetails() {
         GetDetailsVO vo = userService.getDetailsByUid(userService.getCurrentUser().getUid());
         return Response.success(vo);
     }
 
-    @PatchMapping("/set/nickname")
+    @PatchMapping("/nickname")
     public Response setNickname(@Validated @RequestBody SetNicknameDTO dto) {
         userService.setNickname(userService.getCurrentUser().getUid(), dto.getNewNickname());
         return Response.success();
     }
 
-    @PostMapping("/getEmailVerifyCode/setEmail")
+    @PostMapping("/emailVerifyCode/updateEmail")
     public Response getEmailVerifyCodeForSettingEmail(@Validated @RequestBody GetEmailVerifyCodeForSettingEmailDTO dto) {
         userService.getEmailVerifyCodeForSettingEmail(dto.getNewEmail(), dto.getCaptchaUUID(), dto.getCaptchaCode());
         return Response.success();
     }
 
-    @PatchMapping("/set/email")
+    @PatchMapping("/email")
     public Response setEmail(@Validated @RequestBody SetEmailDTO dto) {
         userService.setEmail(userService.getCurrentUser().getUid(), dto.getNewEmail(), dto.getVerifyCode());
         return Response.success();
     }
 
-    @PatchMapping("/set/password")
+    @PatchMapping("/password")
     public Response setPassword(@Validated @RequestBody SetPasswordDTO dto) {
         userService.setPassword(userService.getCurrentUser().getUid(), dto.getOldPassword(), dto.getNewPassword());
         return Response.success();
     }
 
-    @GetMapping("/get/balance/coin")
+    @GetMapping("/coin")
     public Response getCoinBalance() {
         Integer balance = userService.getCoinsByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("coins", balance));
     }
 
-    @PostMapping("/buy/coin")
+    @PostMapping("/coin/buy")
     public Response buyCoins(@RequestParam Integer coins) throws AlipayApiException {
         if (coins <= 0 || coins > 99999999) {
             throw new ForumIllegalArgumentException("充值数非法");
@@ -96,13 +96,13 @@ public class UserController {
         return Response.success(Map.of("pageRedirectionData", userService.buyCoins(userService.getCurrentUser().getUid(), coins)));
     }
 
-    @PostMapping("/buy/coin/payed")
+    @PostMapping("/coin/payed")
     public Response buyCoinsAfterPaying(@RequestParam String tradeId) throws AlipayApiException {
         userService.afterPaying(userService.getCurrentUser().getUid(), tradeId);
         return Response.success();
     }
 
-    @PostMapping("/pay/coin/refresh")
+    @PostMapping("/coin/refresh")
     public Response refreshPayingStatus() throws AlipayApiException {
         Boolean result = userService.refreshPayingStatusByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("hasNewStatus", result));
