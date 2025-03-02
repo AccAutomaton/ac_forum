@@ -46,4 +46,15 @@ public class CoinController {
         Boolean result = coinService.refreshPayingStatusByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("hasNewStatus", result));
     }
+
+    @GetMapping("/list")
+    public Response getCoinRecordList(@RequestParam Integer pageNumber,
+                                      @RequestParam Integer pageSize) {
+        return Response.success(coinService.getCoinRecordList(userService.getCurrentUser().getUid(), pageNumber, pageSize));
+    }
+
+    @GetMapping("/{coinRecordId}")
+    public Response getCoinRecord(@PathVariable Integer coinRecordId) {
+        return Response.success(coinService.getCoinRecordById(coinRecordId, userService.getCurrentUser().getUid()));
+    }
 }

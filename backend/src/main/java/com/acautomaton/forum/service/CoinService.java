@@ -10,10 +10,12 @@ import com.acautomaton.forum.mapper.CoinRecordMapper;
 import com.acautomaton.forum.mapper.RechargeMapper;
 import com.acautomaton.forum.mapper.UserMapper;
 import com.acautomaton.forum.service.util.AlipayService;
+import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.domain.GoodsDetail;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,30 @@ public class CoinService {
         queryWrapper.select(User::getCoins);
         queryWrapper.eq(User::getUid, uid);
         return userMapper.selectOne(queryWrapper).getCoins();
+    }
+
+    public PageHelperVO<CoinRecord> getCoinRecordList(Integer uid, Integer pageNumber, Integer pageSize) {
+        LambdaQueryWrapper<CoinRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CoinRecord::getUid, uid);
+        queryWrapper.select(CoinRecord::getId, CoinRecord::getType, CoinRecord::getCoinVolume, CoinRecord::getCoinBalance,
+                CoinRecord::getProject, CoinRecord::getComment, CoinRecord::getStatus, CoinRecord::getUpdateTime);
+        queryWrapper.orderByDesc(CoinRecord::getUpdateTime);
+        return new PageHelperVO<>(
+                PageHelper.startPage(pageNumber, pageSize < 40 ? pageSize : 40)
+                        .doSelectPageInfo(() -> coinRecordMapper.selectList(queryWrapper))
+        );
+    }
+
+    public CoinRecord getCoinRecordById(Integer coinRecordId, Integer uid) {
+        LambdaQueryWrapper<CoinRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CoinRecord::getId, coinRecordId);
+        queryWrapper.select(CoinRecord::getId, CoinRecord::getUid, CoinRecord::getType, CoinRecord::getCoinVolume, CoinRecord::getCoinBalance,
+                CoinRecord::getProject, CoinRecord::getComment, CoinRecord::getStatus, CoinRecord::getCreateTime, CoinRecord::getUpdateTime);
+        CoinRecord coinRecord = coinRecordMapper.selectOne(queryWrapper);
+        if (coinRecord == null || !coinRecord.getUid().equals(uid)) {
+            throw new ForumExistentialityException("交易不存在");
+        }
+        return coinRecord;
     }
 
     @Transactional(rollbackFor = Exception.class)

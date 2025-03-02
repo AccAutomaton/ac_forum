@@ -3,14 +3,15 @@ package com.acautomaton.forum.service;
 import cn.hutool.json.JSONUtil;
 import com.acautomaton.forum.entity.CoinRecord;
 import com.acautomaton.forum.entity.Recharge;
+import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.enumerate.CoinRecordStatus;
 import com.acautomaton.forum.enumerate.RechargeStatus;
 import com.acautomaton.forum.enumerate.RechargeType;
 import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumExistentialityException;
-import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.mapper.CoinRecordMapper;
 import com.acautomaton.forum.mapper.RechargeMapper;
+import com.acautomaton.forum.mapper.UserMapper;
 import com.acautomaton.forum.service.util.AlipayService;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.alipay.api.AlipayApiException;
@@ -31,13 +32,15 @@ public class RechargeService {
     RechargeMapper rechargeMapper;
     AlipayService alipayService;
     CoinRecordMapper coinRecordMapper;
+    UserMapper userMapper;
 
     @Autowired
     public RechargeService(RechargeMapper rechargeMapper, AlipayService alipayService,
-                           CoinRecordMapper coinRecordMapper) {
+                           CoinRecordMapper coinRecordMapper, UserMapper userMapper) {
         this.rechargeMapper = rechargeMapper;
         this.alipayService = alipayService;
         this.coinRecordMapper = coinRecordMapper;
+        this.userMapper = userMapper;
     }
 
     public PageHelperVO<Recharge> getRechargeList(Integer uid, Integer pageNumber, Integer pageSize) {
@@ -60,7 +63,7 @@ public class RechargeService {
                 Recharge::getCreateTime, Recharge::getUpdateTime);
         Recharge recharge = rechargeMapper.selectOne(queryWrapper);
         if (recharge == null || !recharge.getUid().equals(uid)) {
-            throw new ForumIllegalArgumentException("交易不存在");
+            throw new ForumExistentialityException("交易不存在");
         }
         return recharge;
     }
@@ -106,9 +109,12 @@ public class RechargeService {
         if (recharge.getCoinRecordId() != null) {
             CoinRecord coinRecord = coinRecordMapper.selectById(recharge.getCoinRecordId());
             coinRecord.setStatus(CoinRecordStatus.CANCEL);
-            coinRecord.setCoinBalance(coinRecord.getCoinBalance() - coinRecord.getCoinVolume());
+            coinRecord.setCoinBalance(coinRecord.getCoinBalance() + coinRecord.getCoinVolume());
             coinRecord.setUpdateTime(now);
             coinRecordMapper.updateById(coinRecord);
+            User user = userMapper.selectById(uid);
+            user.setCoins(user.getCoins() + coinRecord.getCoinVolume());
+            userMapper.updateById(user);
         }
         log.info("用户 {} 取消支付订单序号 {}", uid, rechargeId);
     }

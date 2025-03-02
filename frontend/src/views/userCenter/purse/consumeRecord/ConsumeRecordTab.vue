@@ -1,8 +1,15 @@
 <script setup>
 import CashRecords from "@/views/userCenter/purse/consumeRecord/CashRecords.vue";
 import CoinRecords from "@/views/userCenter/purse/consumeRecord/CoinRecords.vue";
+import {ref} from "vue";
+import {useRoute} from "vue-router";
+import router from "@/router/index.js";
 
-// TODO: 根据 Url params 跳转不同 tab
+const enableTab = ref(useRoute().query.tab === undefined ? "cash" : useRoute().query.tab);
+
+const onTabClick = (pane) => {
+  router.push({query: {tab: pane.paneName}});
+}
 </script>
 
 <template>
@@ -13,11 +20,11 @@ import CoinRecords from "@/views/userCenter/purse/consumeRecord/CoinRecords.vue"
     <el-divider style="margin: 0"/>
     <el-main style="padding-bottom: 0">
       <el-scrollbar style="height: 70vh">
-        <el-tabs type="border-card">
-          <el-tab-pane label="现金" lazy>
+        <el-tabs type="border-card" v-model="enableTab" stretch @tab-click="onTabClick">
+          <el-tab-pane label="现金" name="cash" lazy>
             <CashRecords/>
           </el-tab-pane>
-          <el-tab-pane label="AC币" lazy>
+          <el-tab-pane label="AC币" name="coin" lazy>
             <CoinRecords/>
           </el-tab-pane>
         </el-tabs>

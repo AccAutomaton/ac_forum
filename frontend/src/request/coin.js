@@ -36,3 +36,23 @@ export const refreshPayingStatus = () =>
     }).then(response => {
         return response["data"];
     })
+
+export const getCoinRecordList = (pageNumber, pageSize) =>
+    request({
+        url: '/coin/list',
+        method: 'GET',
+        params: {
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+        }
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const getCoinRecordById = (coinRecordId) =>
+    request({
+        url: '/coin/' + coinRecordId,
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })

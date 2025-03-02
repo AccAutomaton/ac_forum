@@ -3,7 +3,7 @@
 import {ref, watch} from "vue";
 import {getCoins} from "@/request/coin.js";
 import {useTransition} from "@vueuse/core";
-import {CaretTop, QuestionFilled} from "@element-plus/icons-vue";
+import {CaretTop, Coin, QuestionFilled} from "@element-plus/icons-vue";
 import PayDialog from "@/views/userCenter/purse/balance/PayDialog.vue";
 import PaySuccessDialog from "@/views/userCenter/purse/balance/PaySuccessDialog.vue";
 import {refreshPayingStatus} from "@/request/coin.js";
@@ -117,14 +117,7 @@ const clickRefreshPayingStatusButton = async () => {
       <el-scrollbar style="height: 70vh">
         <el-row align="middle">
           <el-icon :size=40 color="#edbe00">
-            <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24">
-              <g fill="none" fill-rule="evenodd">
-                <path
-                    d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
-                <path fill="currentColor"
-                      d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16m-1.414 3.757a2 2 0 0 1 2.701-.116l.127.116l2.829 2.829a2 2 0 0 1 .116 2.701l-.116.127l-2.829 2.829a2 2 0 0 1-2.701.116l-.127-.116l-2.829-2.829a2 2 0 0 1-.116-2.701l.116-.127zM12 9.172L9.172 12L12 14.828L14.828 12z"/>
-              </g>
-            </svg>
+            <el-icon><Coin /></el-icon>
           </el-icon>
           <el-text style="font-size: xxx-large; color: #edbe00; margin-left: 20px; font-weight: bold;">
             {{ Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(coinsOutput) }}
@@ -146,14 +139,7 @@ const clickRefreshPayingStatusButton = async () => {
                      style="border-radius: 25px; margin-left: 10px; margin-right: 10px; cursor: pointer">
               <el-row style="font-weight: bold; font-size: large">
                 <el-icon :size=25>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24">
-                    <g fill="none" fill-rule="evenodd">
-                      <path
-                          d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
-                      <path fill="currentColor"
-                            d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16m-1.414 3.757a2 2 0 0 1 2.701-.116l.127.116l2.829 2.829a2 2 0 0 1 .116 2.701l-.116.127l-2.829 2.829a2 2 0 0 1-2.701.116l-.127-.116l-2.829-2.829a2 2 0 0 1-.116-2.701l.116-.127zM12 9.172L9.172 12L12 14.828L14.828 12z"/>
-                    </g>
-                  </svg>
+                  <el-icon><Coin /></el-icon>
                 </el-icon>
                 <span style="margin-left: 5px">
                   {{ type.value }}
@@ -178,14 +164,7 @@ const clickRefreshPayingStatusButton = async () => {
                      style="border-radius: 25px; margin-left: 10px; margin-right: 10px; cursor: pointer">
               <el-row style="font-weight: bold; font-size: large">
                 <el-icon :size=25>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24">
-                    <g fill="none" fill-rule="evenodd">
-                      <path
-                          d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
-                      <path fill="currentColor"
-                            d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16m-1.414 3.757a2 2 0 0 1 2.701-.116l.127.116l2.829 2.829a2 2 0 0 1 .116 2.701l-.116.127l-2.829 2.829a2 2 0 0 1-2.701.116l-.127-.116l-2.829-2.829a2 2 0 0 1-.116-2.701l.116-.127zM12 9.172L9.172 12L12 14.828L14.828 12z"/>
-                    </g>
-                  </svg>
+                  <el-icon><Coin /></el-icon>
                 </el-icon>
                 <el-input type="number" v-model="customizeRechargeValue" style="width: 80%; margin-left: 5px"
                           size="small"

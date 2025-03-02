@@ -6,7 +6,7 @@ import {ElMessageBox, ElNotification} from "element-plus";
 
 const tableData = ref([]);
 const currentPageNumber = ref(1), currentPageSize = ref(10), pages = ref(0);
-const clickedChargeId = ref(0), chargeDetailDialogVisible = ref(false);
+const chargeDetailDialogVisible = ref(false);
 
 const channelTagType = (index) => {
   switch (index) {
@@ -49,7 +49,6 @@ getData();
 
 const selectedRecharge = ref({});
 const onClickViewDetailIcon = async (rechargeId) => {
-  clickedChargeId.value = rechargeId;
   const data = await getRechargeById(rechargeId);
   if (data !== null) {
     selectedRecharge.value = data;
