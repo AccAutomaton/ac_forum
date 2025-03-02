@@ -1,5 +1,6 @@
 <script setup>
 import CashRecords from "@/views/userCenter/purse/consumeRecord/CashRecords.vue";
+import CoinRecords from "@/views/userCenter/purse/consumeRecord/CoinRecords.vue";
 
 // TODO: 根据 Url params 跳转不同 tab
 </script>
@@ -17,7 +18,7 @@ import CashRecords from "@/views/userCenter/purse/consumeRecord/CashRecords.vue"
             <CashRecords/>
           </el-tab-pane>
           <el-tab-pane label="AC币" lazy>
-            <CashRecords/>
+            <CoinRecords/>
           </el-tab-pane>
         </el-tabs>
       </el-scrollbar>

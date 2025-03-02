@@ -5,13 +5,11 @@ import com.acautomaton.forum.dto.user.SetEmailDTO;
 import com.acautomaton.forum.dto.user.SetNicknameDTO;
 import com.acautomaton.forum.dto.user.SetPasswordDTO;
 import com.acautomaton.forum.enumerate.CosFolderPath;
-import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.user.GetDetailsVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
-import com.alipay.api.AlipayApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -80,31 +78,5 @@ public class UserController {
     public Response setPassword(@Validated @RequestBody SetPasswordDTO dto) {
         userService.setPassword(userService.getCurrentUser().getUid(), dto.getOldPassword(), dto.getNewPassword());
         return Response.success();
-    }
-
-    @GetMapping("/coin")
-    public Response getCoinBalance() {
-        Integer balance = userService.getCoinsByUid(userService.getCurrentUser().getUid());
-        return Response.success(Map.of("coins", balance));
-    }
-
-    @PostMapping("/coin/buy")
-    public Response buyCoins(@RequestParam Integer coins) throws AlipayApiException {
-        if (coins <= 0 || coins > 99999999) {
-            throw new ForumIllegalArgumentException("充值数非法");
-        }
-        return Response.success(Map.of("pageRedirectionData", userService.buyCoins(userService.getCurrentUser().getUid(), coins)));
-    }
-
-    @PostMapping("/coin/payed")
-    public Response buyCoinsAfterPaying(@RequestParam String tradeId) throws AlipayApiException {
-        userService.afterPaying(userService.getCurrentUser().getUid(), tradeId);
-        return Response.success();
-    }
-
-    @PostMapping("/coin/refresh")
-    public Response refreshPayingStatus() throws AlipayApiException {
-        Boolean result = userService.refreshPayingStatusByUid(userService.getCurrentUser().getUid());
-        return Response.success(Map.of("hasNewStatus", result));
     }
 }

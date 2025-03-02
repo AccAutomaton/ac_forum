@@ -1,7 +1,7 @@
 <script setup>
 import {nextTick, ref} from "vue";
 import {ElNotification} from "element-plus";
-import {buyCoins} from "@/request/user.js";
+import {buyCoins} from "@/request/coin.js";
 
 const payDialogVisible = ref(false), currentCoins = ref(0);
 const alipayForm = ref(""), alipayPage = ref();

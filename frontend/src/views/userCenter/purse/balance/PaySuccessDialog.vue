@@ -2,7 +2,7 @@
 import {ref} from "vue";
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
-import {afterPaying} from "@/request/user.js";
+import {afterPaying} from "@/request/coin.js";
 
 const paySuccessDialogVisible = ref(false);
 if (useRoute().query.method === "alipay.trade.page.pay.return") {

@@ -1,12 +1,12 @@
 <script setup>
 
 import {ref, watch} from "vue";
-import {getCoins} from "@/request/user.js";
+import {getCoins} from "@/request/coin.js";
 import {useTransition} from "@vueuse/core";
 import {CaretTop, QuestionFilled} from "@element-plus/icons-vue";
 import PayDialog from "@/views/userCenter/purse/balance/PayDialog.vue";
 import PaySuccessDialog from "@/views/userCenter/purse/balance/PaySuccessDialog.vue";
-import {refreshPayingStatus} from "@/request/user.js";
+import {refreshPayingStatus} from "@/request/coin.js";
 import {ElNotification} from "element-plus";
 
 const rechargeCoinType = [
