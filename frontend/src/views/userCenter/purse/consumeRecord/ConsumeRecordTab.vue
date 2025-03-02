@@ -7,6 +7,10 @@ import router from "@/router/index.js";
 
 const enableTab = ref(useRoute().query.tab === undefined ? "cash" : useRoute().query.tab);
 
+if (!(enableTab.value === "cash" || enableTab.value === "coin")) {
+  router.push("/404");
+}
+
 const onTabClick = (pane) => {
   router.push({query: {tab: pane.paneName}});
 }

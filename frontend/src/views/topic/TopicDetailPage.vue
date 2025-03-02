@@ -43,6 +43,8 @@ const getTopicInfomation = async () => {
     }
     newTopicTitle.value = title.value;
     newTopicDescription.value = description.value;
+  } else {
+    await router.push("/404");
   }
 }
 getTopicInfomation();
