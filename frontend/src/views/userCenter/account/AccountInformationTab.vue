@@ -201,7 +201,7 @@ const clickConfirmReviseEmailButton = async () => {
     </el-header>
     <el-divider style="margin: 0"/>
     <el-main style="padding-bottom: 0">
-      <el-scrollbar style="height: 70vh">
+      <el-scrollbar style="height: 75.5vh">
         <el-row style="align-items: center">
           <el-text size="large" class="title-text">头像</el-text>
           <el-image

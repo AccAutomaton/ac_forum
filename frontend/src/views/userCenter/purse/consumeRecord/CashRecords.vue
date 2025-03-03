@@ -5,7 +5,7 @@ import {Close, Money, View} from "@element-plus/icons-vue";
 import {ElMessageBox, ElNotification} from "element-plus";
 
 const tableData = ref([]);
-const currentPageNumber = ref(1), currentPageSize = ref(10), pages = ref(0);
+const currentPageNumber = ref(1), currentPageSize = ref(20), pages = ref(0);
 const chargeDetailDialogVisible = ref(false);
 
 const channelTagType = (index) => {
@@ -90,7 +90,7 @@ const onClickCancelPayingIcon = async (rechargeId) => {
 </script>
 
 <template>
-  <el-table :data="tableData" style="width: 100%" stripe height="54.5vh">
+  <el-table :data="tableData" style="width: 100%" stripe height="61vh">
     <el-table-column prop="updateTime" label="交易时间" width="175" align="center" show-overflow-tooltip/>
     <el-table-column prop="subject" label="交易项目" width="115" align="center" show-overflow-tooltip/>
     <el-table-column label="交易金额" width="125" header-align="center" show-overflow-tooltip>

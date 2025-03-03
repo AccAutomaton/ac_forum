@@ -42,7 +42,7 @@ refreshRankingList();
       </div>
     </el-header>
     <el-main style="padding: 10px 5px 10px 5px">
-      <el-scrollbar height="60.5vh" width="100%">
+      <el-scrollbar height="65vh" width="100%">
         <el-empty v-if="rankingList.length === 0" description="暂无文章" :image-size="125"/>
         <ul style="padding: 0; margin-top: 0">
           <li v-for="(record, index) in rankingList" :key="record['id']" style="list-style: none;">

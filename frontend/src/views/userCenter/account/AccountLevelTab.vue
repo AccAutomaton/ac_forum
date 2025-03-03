@@ -130,7 +130,7 @@ const onClickViewDetailIcon = async (pointRecordId) => {
     </el-header>
     <el-divider style="margin: 0"/>
     <el-main style="padding-bottom: 0">
-      <el-scrollbar style="height: 70vh">
+      <el-scrollbar style="height: 75.5vh">
         <div v-for="(level, index) in levels" :key="index" :style="'width: ' + level.width">
           <el-progress v-if="levelIndex === index" :percentage="(points / level.maxPoint) * 100"
                        style="margin-bottom: 10px" :color="level.enableColor"
@@ -155,7 +155,7 @@ const onClickViewDetailIcon = async (pointRecordId) => {
             </span>
           </el-progress>
         </div>
-        <el-table :data="pointRecordList" style="width: 100%" stripe height="34.5vh">
+        <el-table :data="pointRecordList" style="width: 100%" stripe height="42vh">
           <el-table-column prop="updateTime" label="时间" width="175" align="center" show-overflow-tooltip/>
           <el-table-column label="经验变化" width="115" align="center" show-overflow-tooltip>
             <template #default="scope">

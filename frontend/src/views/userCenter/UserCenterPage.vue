@@ -6,7 +6,7 @@ import {DataAnalysis, Document, Finished, Lock, PieChart, Setting, Wallet} from 
 <template>
   <el-container>
     <el-aside>
-      <el-scrollbar height="78vh">
+      <el-scrollbar height="85vh">
         <el-menu
             :default-active="$route.path"
             :default-openeds="['/userCenter/account', '/userCenter/purse']"

@@ -40,7 +40,7 @@ const clickRevisePasswordButton = async () => {
     </el-header>
     <el-divider style="margin: 0"/>
     <el-main style="padding-bottom: 0">
-      <el-scrollbar style="height: 70vh">
+      <el-scrollbar style="height: 75.5vh">
         <el-row style="text-align: center; margin-bottom: 10px; width: 400px;" align="middle">
           <el-input v-model="oldPassword" placeholder="请输入旧密码" clearable show-password size="large"
                     :prefix-icon="Lock" minlength="8">

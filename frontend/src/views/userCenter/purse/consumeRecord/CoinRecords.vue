@@ -4,7 +4,7 @@ import {ref} from "vue";
 import {getCoinRecordById, getCoinRecordList} from "@/request/coin.js";
 
 const tableData = ref([]);
-const currentPageNumber = ref(1), currentPageSize = ref(10), pages = ref(0);
+const currentPageNumber = ref(1), currentPageSize = ref(20), pages = ref(0);
 const coinRecordDetailDialogVisible = ref(false);
 
 const statusTagType = (index) => {
@@ -63,7 +63,7 @@ const onClickViewDetailIcon = async (coinRecordId) => {
 </script>
 
 <template>
-  <el-table :data="tableData" style="width: 100%" stripe height="54.5vh">
+  <el-table :data="tableData" style="width: 100%" stripe height="61vh">
     <el-table-column prop="updateTime" label="交易时间" width="175" align="center" show-overflow-tooltip/>
     <el-table-column prop="project" label="交易项目" width="115" align="center" show-overflow-tooltip/>
     <el-table-column label="交易额" width="125" header-align="center" show-overflow-tooltip>

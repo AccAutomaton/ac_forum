@@ -23,7 +23,7 @@ const onTabClick = (pane) => {
     </el-header>
     <el-divider style="margin: 0"/>
     <el-main style="padding-bottom: 0">
-      <el-scrollbar style="height: 70vh">
+      <el-scrollbar style="height: 75.5vh">
         <el-tabs type="border-card" v-model="enableTab" stretch @tab-click="onTabClick">
           <el-tab-pane label="现金" name="cash" lazy>
             <CashRecords/>

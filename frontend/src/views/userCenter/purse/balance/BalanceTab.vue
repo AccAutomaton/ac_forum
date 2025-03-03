@@ -114,7 +114,7 @@ const clickRefreshPayingStatusButton = async () => {
     </el-header>
     <el-divider style="margin: 0"/>
     <el-main style="padding-bottom: 0; margin-top: -20px">
-      <el-scrollbar style="height: 70vh">
+      <el-scrollbar style="height: 75.5vh">
         <el-row align="middle">
           <el-icon :size=40 color="#edbe00">
             <el-icon><Coin /></el-icon>
