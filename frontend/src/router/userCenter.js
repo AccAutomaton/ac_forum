@@ -19,6 +19,10 @@ const userCenterRoutes = [
                         component: () => import("@/views/userCenter/account/AccountInformationTab.vue")
                     },
                     {
+                        path: 'level',
+                        component: () => import("@/views/userCenter/account/AccountLevelTab.vue")
+                    },
+                    {
                         path: 'revisePassword',
                         component: () => import("@/views/userCenter/account/RevisePasswordTab.vue")
                     }

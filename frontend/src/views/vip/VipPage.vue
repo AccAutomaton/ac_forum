@@ -149,7 +149,7 @@ const clickRefreshPayingStatusButton = async () => {
                 <div style="margin-top: 20px; font-size: small; color: gray">每日签到可获取</div>
                 <div style="font-size: small; color: gray">
                   <span>{{ type.coinsPerDay }}</span>
-                  <span> AC币</span>
+                  <span> 经验</span>
                 </div>
                 <div style="float: right; margin-top: 40px">
                   <span>RMB</span>

@@ -1,6 +1,6 @@
 <script setup>
 
-import {Document, Finished, Lock, PieChart, Setting, Wallet} from "@element-plus/icons-vue";
+import {DataAnalysis, Document, Finished, Lock, PieChart, Setting, Wallet} from "@element-plus/icons-vue";
 </script>
 
 <template>
@@ -21,6 +21,10 @@ import {Document, Finished, Lock, PieChart, Setting, Wallet} from "@element-plus
             <el-menu-item index="/userCenter/account/information" route="/userCenter/account/information">
               <el-icon><Document /></el-icon>
               <span>账户信息</span>
+            </el-menu-item>
+            <el-menu-item index="/userCenter/account/level" route="/userCenter/account/level">
+              <el-icon><DataAnalysis/></el-icon>
+              <span>账户等级</span>
             </el-menu-item>
             <el-menu-item index="/userCenter/account/revisePassword" route="/userCenter/account/revisePassword">
               <el-icon><Lock /></el-icon>
