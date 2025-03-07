@@ -111,7 +111,7 @@ public class ArticleService {
         if (keyword.isBlank()) {
             esArticles = esArticleRepository.findAll(pageable);
         } else {
-            esArticles = esArticleRepository.findByTitleOrContent(keyword, keyword, pageable);
+            esArticles = esArticleRepository.findByTitleOrContentOrOwnerNickname(keyword, keyword, keyword, pageable);
         }
         return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath());
     }
@@ -127,7 +127,7 @@ public class ArticleService {
         if (keyword.isBlank()) {
             esArticles = esArticleRepository.findByTopic(topicId, pageable);
         } else {
-            esArticles = esArticleRepository.findByTopicAndTitleOrContent(topicId, keyword, keyword, pageable);
+            esArticles = esArticleRepository.findByTopicAndTitleOrContentOrOwnerNickname(topicId, keyword, keyword, keyword, pageable);
         }
         return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath());
     }

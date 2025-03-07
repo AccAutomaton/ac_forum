@@ -23,7 +23,7 @@ public class EsArticle {
     private Integer id;
     @Field(type = FieldType.Integer)
     private Integer owner;
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String ownerNickname;
     @Field(type = FieldType.Keyword)
     private String ownerAvatar;
