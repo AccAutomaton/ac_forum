@@ -4,7 +4,9 @@ import com.acautomaton.forum.entity.*;
 import com.acautomaton.forum.enumerate.*;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
+import com.acautomaton.forum.mapper.ArtistMapper;
 import com.acautomaton.forum.mapper.UserMapper;
+import com.acautomaton.forum.mapper.VipMapper;
 import com.acautomaton.forum.service.util.CaptchaService;
 import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.EmailService;
@@ -32,15 +34,19 @@ public class UserService {
     CosService cosService;
     CaptchaService captchaService;
     PasswordEncoder passwordEncoder;
+    ArtistMapper artistMapper;
+    VipMapper vipMapper;
 
     @Autowired
     public UserService(UserMapper userMapper, CosService cosService, CaptchaService captchaService, EmailService emailService,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder, ArtistMapper artistMapper, VipMapper vipMapper) {
         this.userMapper = userMapper;
         this.cosService = cosService;
         this.captchaService = captchaService;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.artistMapper = artistMapper;
+        this.vipMapper = vipMapper;
     }
 
     public User getCurrentUser() {
@@ -49,10 +55,16 @@ public class UserService {
     }
 
     public GetNavigationBarInformationVO getNavigationBarInformationByUid(Integer uid) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", uid);
-        User user = userMapper.selectOne(queryWrapper);
-        return new GetNavigationBarInformationVO(user);
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("uid", uid);
+        User user = userMapper.selectOne(userQueryWrapper);
+        QueryWrapper<Artist> artistQueryWrapper = new QueryWrapper<>();
+        artistQueryWrapper.eq("uid", uid);
+        Artist artist = artistMapper.selectOne(artistQueryWrapper);
+        QueryWrapper<Vip> vipQueryWrapper = new QueryWrapper<>();
+        vipQueryWrapper.eq("uid", uid);
+        Vip vip = vipMapper.selectOne(vipQueryWrapper);
+        return new GetNavigationBarInformationVO(user, vip, artist);
     }
 
     public String getAvatarByUid(Integer uid) {
@@ -154,4 +166,6 @@ public class UserService {
         queryWrapper.eq("uid", uid);
         return userMapper.selectOne(queryWrapper);
     }
+
+
 }

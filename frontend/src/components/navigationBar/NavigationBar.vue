@@ -1,5 +1,5 @@
 <script setup>
-import {ChatLineSquare, CreditCard, Discount, Document, EditPen, Message} from "@element-plus/icons-vue";
+import {ChatLineSquare, CreditCard, Discount, Document, Message} from "@element-plus/icons-vue";
 import UserSubMenu from "@/components/navigationBar/UserSubMenu.vue";
 import MessageBox from "@/components/navigationBar/MessageBox.vue";
 import store from "@/store/index.js";
@@ -40,12 +40,6 @@ import store from "@/store/index.js";
           </el-icon>
           <span>文章</span>
         </el-menu-item>
-        <el-menu-item index="/creation">
-          <el-icon>
-            <EditPen/>
-          </el-icon>
-          <span>创作</span>
-        </el-menu-item>
         <el-menu-item index="/chat">
           <el-icon>
             <Message/>
@@ -60,7 +54,7 @@ import store from "@/store/index.js";
           <span>会员</span>
         </el-menu-item>
         <MessageBox v-if="store.getters.getIsLogin"/>
-        <UserSubMenu style="margin-left: 5px"/>
+        <UserSubMenu style="margin-left: 20px"/>
       </el-menu>
     </el-header>
     <el-main style="padding-bottom: 0">

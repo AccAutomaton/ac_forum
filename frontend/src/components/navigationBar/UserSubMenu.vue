@@ -1,12 +1,26 @@
 <script setup>
 import store from "@/store/index.js";
-import {Discount, Promotion, SwitchButton} from "@element-plus/icons-vue";
+import {Promotion} from "@element-plus/icons-vue";
 import {useStorage} from "@vueuse/core";
 import {getNavigationBarUserInformation} from "@/request/user.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
-import router from "@/router/index.js";
+import UserPopoverCard from "@/components/navigationBar/UserPopoverCard.vue";
+import {ref} from "vue";
 
 const authorization = useStorage("Authorization", "");
+const userInformation = ref({
+    vip: {
+      vipType: {
+        index: Number,
+        value: String,
+      },
+      expirationTime: String,
+    },
+    follows: Number,
+    collections: Number,
+    articles: Number,
+  },
+);
 
 const refreshNavigationBarUserInformation = async () => {
   if (authorization.value === "" && store.getters.getAuthorizationCode === "") {
@@ -19,18 +33,12 @@ const refreshNavigationBarUserInformation = async () => {
     store.commit("setUserType", data["userType"]);
     store.commit("setIsLogin", true);
     await getObjectUrlOfPublicResources(data["avatar"], (url) => {
+      data["avatar"] = url;
       store.commit("setAvatar", url);
     })
+    userInformation.value = data;
   }
 }
-
-const logout = () => {
-  authorization.value = "";
-  store.commit('clearLoginInformation');
-  store.commit('clearUserInformation');
-  router.push("/login");
-}
-
 refreshNavigationBarUserInformation();
 </script>
 
@@ -41,18 +49,7 @@ refreshNavigationBarUserInformation();
                  :src="store.getters.getAvatar"/>
       {{ store.getters.getNickname }}
     </template>
-    <el-menu-item index="/userCenter">
-      <el-icon>
-        <Discount/>
-      </el-icon>
-      <span style="margin: 0 auto">个人中心</span>
-    </el-menu-item>
-    <el-menu-item index="" @click="logout" style="color: red">
-      <el-icon>
-        <SwitchButton/>
-      </el-icon>
-      <span style="margin: 0 auto">退出登录</span>
-    </el-menu-item>
+    <UserPopoverCard :userInfomation="userInformation"/>
   </el-sub-menu>
   <el-menu-item index="/login" v-else>
     <el-icon>
