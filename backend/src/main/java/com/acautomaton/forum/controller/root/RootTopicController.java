@@ -1,25 +1,25 @@
 package com.acautomaton.forum.controller.root;
 
 import com.acautomaton.forum.response.Response;
-import com.acautomaton.forum.service.async.ArticleAsyncService;
+import com.acautomaton.forum.service.async.TopicAsyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/root/article")
-public class RootArticleController {
-    ArticleAsyncService articleAsyncService;
+@RequestMapping("/root/topic")
+public class RootTopicController {
+    TopicAsyncService topicAsyncService;
 
     @Autowired
-    public RootArticleController(ArticleAsyncService articleAsyncService) {
-        this.articleAsyncService = articleAsyncService;
+    public RootTopicController(TopicAsyncService topicAsyncService) {
+        this.topicAsyncService = topicAsyncService;
     }
 
     @PostMapping("/elasticSearch/synchronize/fully")
-    public Response synchronizeDataToElasticsearchFully() {
-        articleAsyncService.synchronizeArticleDataToElasticSearchFully();
+    public Response synchronizeDataToElasticSearchFully() {
+        topicAsyncService.synchronizeTopicDataToElasticSearchFully();
         return Response.success();
     }
 }

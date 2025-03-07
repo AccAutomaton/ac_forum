@@ -1,11 +1,14 @@
 package com.acautomaton.forum.service;
 
+import com.acautomaton.forum.entity.EsTopic;
 import com.acautomaton.forum.entity.Topic;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.enumerate.CosFolderPath;
+import com.acautomaton.forum.enumerate.TopicQueryType;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
 import com.acautomaton.forum.mapper.TopicMapper;
+import com.acautomaton.forum.repository.EsTopicRepository;
 import com.acautomaton.forum.service.async.ArticleAsyncService;
 import com.acautomaton.forum.service.async.TopicAsyncService;
 import com.acautomaton.forum.service.util.CosService;
@@ -15,15 +18,16 @@ import com.acautomaton.forum.vo.topic.GetTopicVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -33,15 +37,17 @@ public class TopicService {
     TopicMapper topicMapper;
     CosService cosService;
     RedisService redisService;
+    EsTopicRepository esTopicRepository;
 
     @Autowired
     public TopicService(TopicMapper topicMapper, CosService cosService, RedisService redisService, TopicAsyncService topicAsyncService,
-                        ArticleAsyncService articleAsyncService) {
+                        ArticleAsyncService articleAsyncService, EsTopicRepository esTopicRepository) {
         this.topicMapper = topicMapper;
         this.cosService = cosService;
         this.redisService = redisService;
         this.topicAsyncService = topicAsyncService;
         this.articleAsyncService = articleAsyncService;
+        this.esTopicRepository = esTopicRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -54,6 +60,7 @@ public class TopicService {
         Topic topic = new Topic(null, title, description, administrator, 0, 0, new Date(), "", 0);
         topicMapper.insert(topic);
         log.info("用户 {} 创建了话题 {}", administrator, topic.getId());
+        esTopicRepository.save(new EsTopic(topic));
         return topic.getId();
     }
 
@@ -68,14 +75,15 @@ public class TopicService {
         topicMapper.delete(updateWrapper);
         log.info("用户 {} 删除了话题 {}", operatorUid, id);
         articleAsyncService.synchronizeArticleToElasticSearchByTopicId(id);
+        topicAsyncService.synchronizeDeleteTopicToElasticSearchByTopicId(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void updateTopic(Integer id, Integer operatorUid, String title, String description) {
-        UpdateWrapper<Topic> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", id);
-        updateWrapper.eq("administrator", operatorUid);
-        Topic topic = topicMapper.selectOne(updateWrapper);
+        QueryWrapper<Topic> topicQueryWrapper = new QueryWrapper<>();
+        topicQueryWrapper.eq("id", id);
+        topicQueryWrapper.eq("administrator", operatorUid);
+        Topic topic = topicMapper.selectOne(topicQueryWrapper);
         if (topic == null) {
             throw new ForumIllegalAccountException("您没有权限修改该话题");
         }
@@ -86,9 +94,10 @@ public class TopicService {
                 throw new ForumExistentialityException("话题已存在，请更换话题名称");
             }
         }
-        updateWrapper.set("title", title);
-        updateWrapper.set("description", description);
-        topicMapper.update(updateWrapper);
+        topic.setTitle(title);
+        topic.setDescription(description);
+        topicMapper.updateById(topic);
+        esTopicRepository.save(new EsTopic((topic)));
         log.info("用户 {} 修改了话题 {}", operatorUid, id);
         articleAsyncService.synchronizeArticleToElasticSearchByTopicId(id);
     }
@@ -122,45 +131,15 @@ public class TopicService {
         return vo;
     }
 
-    public GetTopicListVO getTopicList(Integer pageNumber, Integer pageSize, String queryType, String keyword) {
-        PageHelperVO<GetTopicVO> pageHelperVO = new PageHelperVO<>(
-                PageHelper.startPage(pageNumber, pageSize < 20 ? pageSize : 20).doSelectPageInfo(() -> getTopicList(queryType, keyword))
-        );
-        return new GetTopicListVO(pageHelperVO, CosFolderPath.TOPIC_AVATAR.getPath());
-    }
-
-    private List<GetTopicVO> getTopicList(String queryType, String keyword) {
-        MPJLambdaWrapper<Topic> mpjLambdaWrapper = new MPJLambdaWrapper<>();
-        mpjLambdaWrapper
-                .select(Topic::getId, Topic::getTitle, Topic::getDescription, Topic::getArticles, Topic::getVisits, Topic::getCreateTime, Topic::getAvatar)
-                .selectAs(Topic::getAdministrator, GetTopicVO::getAdministratorId)
-                .selectAs(User::getNickname, GetTopicVO::getAdministratorNickname)
-                .innerJoin(User.class, User::getUid, Topic::getAdministrator)
-                .likeIfExists(Topic::getTitle, keyword).or().likeIfExists(Topic::getDescription, keyword);
-        switch (queryType) {
-            case "visitsByDesc":
-                mpjLambdaWrapper.orderByDesc(Topic::getVisits);
-                break;
-            case "visitsByAsc":
-                mpjLambdaWrapper.orderByAsc(Topic::getVisits);
-                break;
-            case "createTimeByDesc":
-                mpjLambdaWrapper.orderByDesc(Topic::getCreateTime);
-                break;
-            case "createTimeByAsc":
-                mpjLambdaWrapper.orderByAsc(Topic::getCreateTime);
-                break;
-            case "articlesByDesc":
-                mpjLambdaWrapper.orderByDesc(Topic::getArticles);
-                break;
-            case "articlesByAsc":
-                mpjLambdaWrapper.orderByAsc(Topic::getArticles);
-                break;
-            case "synthesize":
-            default:
-                mpjLambdaWrapper.orderByDesc(Topic::getVisits, Topic::getArticles, Topic::getCreateTime);
+    public GetTopicListVO getTopicList(TopicQueryType queryType, String keyword, Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize > 20 ? 20 : pageSize, queryType.getSort());
+        Page<EsTopic> esTopics;
+        if (keyword.isBlank()) {
+            esTopics = esTopicRepository.findAll(pageable);
+        } else {
+            esTopics = esTopicRepository.findByTitleOrDescription(keyword, keyword, pageable);
         }
-        return topicMapper.selectJoinList(GetTopicVO.class, mpjLambdaWrapper);
+        return new GetTopicListVO(new PageHelperVO<>(esTopics), CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
     private Boolean hasVisitedTopic(Integer uid, Integer topicId, Integer intervalSeconds) {

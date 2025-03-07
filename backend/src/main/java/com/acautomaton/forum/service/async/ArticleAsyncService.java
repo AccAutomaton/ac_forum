@@ -38,7 +38,7 @@ public class ArticleAsyncService {
     }
 
     @Async
-    public void synchronizeDataToElasticSearchFully() {
+    public void synchronizeArticleDataToElasticSearchFully() {
         MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
         long count = articleMapper.selectCount(queryWrapper);
         queryWrapper

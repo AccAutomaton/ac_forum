@@ -8,15 +8,15 @@ import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 
 const searchInput = ref("");
-const selectSearchType = ref("synthesize");
+const selectSearchType = ref(0);
 const selectOptions = [
-  {value: "synthesize", label: "综合排序"},
-  {value: "visitsByDesc", label: "热度由高到低"},
-  {value: "visitsByAsc", label: "热度由低到高"},
-  {value: "createTimeByDesc", label: "时间从近到远"},
-  {value: "createTimeByAsc", label: "时间从远到近"},
-  {value: "articlesByDesc", label: "文章从多到少"},
-  {value: "articlesByAsc", label: "文章从少到多"},
+  {value: 0, label: "最佳匹配"},
+  {value: 1, label: "时间升序"},
+  {value: 2, label: "时间降序"},
+  {value: 3, label: "浏览量升序"},
+  {value: 4, label: "浏览量降序"},
+  {value: 5, label: "文章数升序"},
+  {value: 6, label: "文章数降序"},
 ]
 const createTopicDialogVisible = ref(false);
 const newTopicTitle = ref(""), newTopicDescription = ref("");
@@ -41,7 +41,8 @@ const onClickConfirmCreateTopicButton = async () => {
   if (data !== null) {
     ElNotification({title: "创建成功", type: "success"});
     createTopicDialogVisible.value = false;
-    router.push("/topic/" + data["topicId"]).then(() => {});
+    router.push("/topic/" + data["topicId"]).then(() => {
+    });
   }
 }
 </script>
@@ -50,7 +51,7 @@ const onClickConfirmCreateTopicButton = async () => {
   <el-container>
     <el-aside width="325px">
       <el-card shadow="never" style="height: 40px; border: none; text-align: center">
-        <el-button :icon="Plus" plain type="info"
+        <el-button :icon="Plus"
                    style="font-size: 16px; font-weight: bolder; padding-left: 30px; padding-right: 30px; height: 40px; width: 70%; border-radius: 25px; color: black"
                    @click="onClickCreateTopicButton">
           <span>发起新话题</span>

@@ -2,6 +2,7 @@ package com.acautomaton.forum.controller.normal;
 
 import com.acautomaton.forum.dto.topic.CreateTopicDTO;
 import com.acautomaton.forum.dto.topic.UpdateTopicDTO;
+import com.acautomaton.forum.enumerate.TopicQueryType;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.TopicService;
 import com.acautomaton.forum.service.UserService;
@@ -49,10 +50,10 @@ public class TopicController {
     }
 
     @GetMapping("/list")
-    public Response getTopicList(@RequestParam Integer pageNumber,
-                                 @RequestParam Integer pageSize,
-                                 @RequestParam String queryType,
+    public Response getTopicList(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                 @RequestParam(defaultValue = "15") Integer pageSize,
+                                 @RequestParam(defaultValue = "0") Integer queryType,
                                  @RequestParam String keyword) {
-        return Response.success(topicService.getTopicList(pageNumber, pageSize, queryType, keyword));
+        return Response.success(topicService.getTopicList(TopicQueryType.getById(queryType), keyword, pageNumber, pageSize));
     }
 }

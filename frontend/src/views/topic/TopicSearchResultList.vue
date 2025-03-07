@@ -19,14 +19,14 @@ const getCardCss = (index) => {
 }
 
 const topicList = ref([]);
-const currentPageNumber = ref(1), currentPageSize = ref(15), currentQueryType = ref("synthesize"), currentKeyWord = ref("");
+const currentPageNumber = ref(1), currentPageSize = ref(15), currentQueryType = ref(0), currentKeyWord = ref("");
 const pages = ref(0);
 const refreshTopicList = async () => {
-  const data = await queryTopicList(currentPageNumber.value, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
+  const data = await queryTopicList(currentPageNumber.value - 1, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
   if (data !== null) {
     topicList.value = data["topicList"]["records"];
     pages.value = data["topicList"]["pages"];
-    currentPageNumber.value = data["topicList"]["pageNumber"];
+    currentPageNumber.value = data["topicList"]["pageNumber"] + 1;
     currentPageSize.value = data["topicList"]["pageSize"];
     for (let i = 0; i < topicList.value.length; i++) {
       if (topicList.value[i]["avatar"] !== "") {

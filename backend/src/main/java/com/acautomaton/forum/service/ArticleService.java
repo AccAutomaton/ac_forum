@@ -145,6 +145,7 @@ public class ArticleService {
         articleMapper.delete(topicLambdaUpdateWrapper);
         log.info("用户 {} 删除了文章 {}", uid, topicId);
         articleAsyncService.synchronizeDeleteArticleToElasticSearchByTopicId(topicId);
+        topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
     }
 
     public void updateArticleById(Integer uid, Integer topicId, String title, String content) {
@@ -163,6 +164,7 @@ public class ArticleService {
         articleMapper.update(topicLambdaUpdateWrapper);
         log.info("用户 {} 修改了文章 {}", uid, topicId);
         articleAsyncService.synchronizeArticleToElasticSearchByArticleId(topicId);
+        topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
     }
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {
