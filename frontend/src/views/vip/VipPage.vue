@@ -86,7 +86,7 @@ const getUserVipInformation = async () => {
   const data = await getVip();
   if (data !== null) {
     currentVipType.value = data["vipType"]["index"];
-    currentSelectedVipType.value = currentVipType.value;
+    currentSelectedVipType.value = currentVipType.value === 0 ? 1 : currentVipType.value;
     currentExpirationTime.value = data["expirationTime"];
     await refreshPrice();
   }
