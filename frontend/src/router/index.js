@@ -5,6 +5,7 @@ import userCenterRoutes from "@/router/userCenter.js";
 import topicRoutes from "@/router/topic.js";
 import vipRoutes from "@/router/vip.js";
 import notFoundRoutes from "@/router/notFound.js";
+import articleRoutes from "@/router/article.js";
 
 const indexRoutes = [
     {
@@ -29,7 +30,7 @@ const indexRoutes = [
 ];
 
 // noinspection JSCheckFunctionSignatures
-const routes = indexRoutes.concat(userCenterRoutes, topicRoutes, vipRoutes, notFoundRoutes)
+const routes = indexRoutes.concat(userCenterRoutes, topicRoutes, vipRoutes, articleRoutes, notFoundRoutes)
 
 const router = createRouter({
     history: createWebHistory(),

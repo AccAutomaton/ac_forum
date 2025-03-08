@@ -15,4 +15,5 @@ public class GetEsArticalListVO {
     PageHelperVO<EsArticle> articleList;
     String artistAvatarPrefix;
     String articleImagePrefix;
+    String topicAvatarPrefix;
 }

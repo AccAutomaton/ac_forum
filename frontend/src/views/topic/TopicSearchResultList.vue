@@ -61,7 +61,7 @@ defineExpose({
 <template>
   <el-card shadow="never"
            style="border-radius: 25px; border-color: rgba(211,211,211,0.5); border-width: thin; margin-top: 30px">
-    <el-scrollbar height="71vh">
+    <el-scrollbar height="70.5vh">
       <div style="width: 100%; padding-bottom: 10px; display: grid; grid-template-columns: 33.3% 33.3% 33.3%;">
         <el-card v-for="(record, index) in topicList" :key="record['id']" shadow="hover" :style="getCardCss(index)"
                  @click="router.push('/topic/' + record['id'])">
@@ -101,18 +101,18 @@ defineExpose({
         </el-card>
       </div>
     </el-scrollbar>
+    <div style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 5px; margin-bottom: 5px">
+      <el-pagination
+          v-model:current-page="currentPageNumber"
+          v-model:page-size="currentPageSize"
+          :page-sizes="[6, 9, 12, 15, 18]"
+          size=large
+          layout="prev, pager, next, ->, sizes"
+          :page-count="pages"
+          @change="onPaginationParametersChanged"
+      />
+    </div>
   </el-card>
-  <div style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 10px">
-    <el-pagination
-        v-model:current-page="currentPageNumber"
-        v-model:page-size="currentPageSize"
-        :page-sizes="[6, 9, 12, 15, 18]"
-        size=large
-        layout="prev, pager, next, ->, sizes"
-        :page-count="pages"
-        @change="onPaginationParametersChanged"
-    />
-  </div>
 </template>
 
 <style scoped>

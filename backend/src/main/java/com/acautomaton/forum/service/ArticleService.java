@@ -113,7 +113,7 @@ public class ArticleService {
         } else {
             esArticles = esArticleRepository.findByTitleOrContentOrOwnerNickname(keyword, keyword, keyword, pageable);
         }
-        return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath());
+        return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
     public GetEsArticalListVO getEsArticleListByTopicId(Integer topicId, ArticleQueryType queryType, String keyword, Integer pageNumber, Integer pageSize) {
@@ -129,7 +129,7 @@ public class ArticleService {
         } else {
             esArticles = esArticleRepository.findByTopicAndTitleOrContentOrOwnerNickname(topicId, keyword, keyword, keyword, pageable);
         }
-        return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath());
+        return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
     public void deleteArticleById(Integer uid, Integer topicId) {

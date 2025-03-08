@@ -30,7 +30,7 @@ export const register = (username, password, email, verifycode) =>
             username: username,
             password: password,
             email: email,
-            verifycode: verifycode,
+            verifyCode: verifycode,
         }
     }).then((response) => {
         return response["data"];

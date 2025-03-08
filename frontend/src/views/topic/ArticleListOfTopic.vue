@@ -102,7 +102,7 @@ const clickOwner = (ownerId) => {
                                 margin: 5px 10px; cursor: pointer">
           <div style="height: 80px; margin: 1px">
             <el-row align="middle">
-              <el-col :span="record['firstImage'] === '' ? 24 : 20">
+              <el-col :span="20">
                 <el-row>
                   <el-text style="font-size: 18px; font-weight: bolder; color: black" line-clamp="1">
                     {{ record["title"] }}
@@ -207,22 +207,25 @@ const clickOwner = (ownerId) => {
               <el-col v-if="record['firstImage'] !== ''" :span="4" style="text-align: center">
                 <el-image :src="record['firstImage']" loading="lazy" fit="cover"/>
               </el-col>
+              <el-col v-else :span="4" style="text-align: center; font-size: 14px; color: #a19b9b">
+                无图片
+              </el-col>
             </el-row>
           </div>
         </el-card>
       </el-row>
     </el-scrollbar>
     <div style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 10px">
-    <el-pagination
-        v-model:current-page="currentPageNumber"
-        v-model:page-size="currentPageSize"
-        :page-sizes="[5, 10, 15, 20]"
-        size=large
-        layout="prev, pager, next, ->, sizes"
-        :page-count="pages"
-        @change="onPaginationParametersChanged"
-    />
-  </div>
+      <el-pagination
+          v-model:current-page="currentPageNumber"
+          v-model:page-size="currentPageSize"
+          :page-sizes="[5, 10, 15, 20]"
+          size=large
+          layout="prev, pager, next, ->, sizes"
+          :page-count="pages"
+          @change="onPaginationParametersChanged"
+      />
+    </div>
   </el-card>
 </template>
 
