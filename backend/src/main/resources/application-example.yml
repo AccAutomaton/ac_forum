@@ -54,6 +54,8 @@ spring:
           max-idle: 10
           min-idle: 5
           max-wait: 5000ms
+      repositories:
+        enabled: false
   mail:
     host: SMTP_HOST_DOMAIN
     username: SMTP_USERNAME

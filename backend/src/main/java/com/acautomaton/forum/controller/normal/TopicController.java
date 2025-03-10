@@ -56,4 +56,9 @@ public class TopicController {
                                  @RequestParam String keyword) {
         return Response.success(topicService.getTopicList(TopicQueryType.getById(queryType), keyword, pageNumber, pageSize));
     }
+
+    @GetMapping("/list/idAndTitle")
+    public Response getTopicIdAndTitleList(@RequestParam String keyword) {
+        return Response.success(topicService.getTopicIdAndTitleList(keyword));
+    }
 }

@@ -47,10 +47,23 @@ public class EsTopic {
         this.avatar = topic.getAvatar();
     }
 
+    public EsTopic(Integer id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     public static List<EsTopic> toEsTopicList(List<Topic> topics) {
         List<EsTopic> esTopics = new ArrayList<>();
         for (Topic topic : topics) {
             esTopics.add(new EsTopic(topic));
+        }
+        return esTopics;
+    }
+
+    public static List<EsTopic> getIdAndTitle(List<EsTopic> topics) {
+        List<EsTopic> esTopics = new ArrayList<>();
+        for (EsTopic topic : topics) {
+            esTopics.add(new EsTopic(topic.getId(), topic.getTitle()));
         }
         return esTopics;
     }

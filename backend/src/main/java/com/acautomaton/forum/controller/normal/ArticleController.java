@@ -52,4 +52,9 @@ public class ArticleController {
         }
         return Response.success(vo);
     }
+
+    @GetMapping("/image/updateAuthorization")
+    public Response getImageUpdateAuthorization() {
+        return Response.success(articleService.getArticleImageUpdateAuthorization(userService.getCurrentUser().getUid()));
+    }
 }

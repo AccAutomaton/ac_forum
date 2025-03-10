@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -140,6 +141,17 @@ public class TopicService {
             esTopics = esTopicRepository.findByTitleOrDescription(keyword, keyword, pageable);
         }
         return new GetTopicListVO(new PageHelperVO<>(esTopics), CosFolderPath.TOPIC_AVATAR.getPath());
+    }
+
+    public List<EsTopic> getTopicIdAndTitleList(String keyword) {
+        Pageable pageable = PageRequest.of(0, 20, TopicQueryType.VISITS_DESC.getSort());
+        Page<EsTopic> esTopics;
+        if (keyword.isBlank()) {
+            esTopics = esTopicRepository.findAll(pageable);
+        } else {
+            esTopics = esTopicRepository.findByTitleOrDescription(keyword, keyword, pageable);
+        }
+        return EsTopic.getIdAndTitle(esTopics.getContent());
     }
 
     private Boolean hasVisitedTopic(Integer uid, Integer topicId, Integer intervalSeconds) {

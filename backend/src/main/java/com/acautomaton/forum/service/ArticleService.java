@@ -3,6 +3,7 @@ package com.acautomaton.forum.service;
 import com.acautomaton.forum.entity.*;
 import com.acautomaton.forum.enumerate.ArticleQueryType;
 import com.acautomaton.forum.enumerate.BrowseRecordType;
+import com.acautomaton.forum.enumerate.CosActions;
 import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
@@ -10,16 +11,20 @@ import com.acautomaton.forum.mapper.ArticleMapper;
 import com.acautomaton.forum.mapper.ArtistMapper;
 import com.acautomaton.forum.mapper.TopicMapper;
 import com.acautomaton.forum.repository.EsArticleRepository;
+import com.acautomaton.forum.repository.EsTopicRepository;
 import com.acautomaton.forum.service.async.ArticleAsyncService;
 import com.acautomaton.forum.service.async.BrowseRecordAsyncService;
 import com.acautomaton.forum.service.async.TopicAsyncService;
+import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.RedisService;
 import com.acautomaton.forum.entity.EsArticle;
 import com.acautomaton.forum.vo.article.GetEsArticalListVO;
+import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.tencent.cloud.Credentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +34,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,15 +46,18 @@ public class ArticleService {
     ArtistMapper artistMapper;
     TopicMapper topicMapper;
     EsArticleRepository esArticleRepository;
+    EsTopicRepository esTopicRepository;
     ArticleAsyncService articleAsyncService;
     BrowseRecordAsyncService browseRecordAsyncService;
     TopicAsyncService topicAsyncService;
     RedisService redisService;
+    CosService cosService;
 
     @Autowired
     public ArticleService(ArticleMapper articleMapper, ArtistMapper artistMapper, TopicMapper topicMapper,
                           ArticleAsyncService articleAsyncService, BrowseRecordAsyncService browseRecordAsyncService,
-                          TopicAsyncService topicAsyncService, RedisService redisService, EsArticleRepository esArticleRepository) {
+                          TopicAsyncService topicAsyncService, RedisService redisService, EsArticleRepository esArticleRepository,
+                          CosService cosService, EsTopicRepository esTopicRepository) {
         this.articleMapper = articleMapper;
         this.artistMapper = artistMapper;
         this.topicMapper = topicMapper;
@@ -56,6 +66,8 @@ public class ArticleService {
         this.topicAsyncService = topicAsyncService;
         this.redisService = redisService;
         this.esArticleRepository = esArticleRepository;
+        this.cosService = cosService;
+        this.esTopicRepository = esTopicRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -75,7 +87,18 @@ public class ArticleService {
         artistMapper.update(articleLambdaUpdateWrapper);
         topicLambdaUpdateWrapper.setIncrBy(Topic::getArticles, 1);
         topicMapper.update(topicLambdaUpdateWrapper);
-        articleAsyncService.synchronizeArticleToElasticSearchByArticleId(article.getId());
+        esTopicRepository.save(new EsTopic(topicMapper.selectById(article.getTopic())));
+        MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
+        queryWrapper
+                .eq(Article::getId, article.getId())
+                .select(Article::getId, Article::getOwner, Article::getTopic, Article::getTitle, Article::getContent, Article::getFirstImage, Article::getVisits, Article::getThumbsUp, Article::getCollections, Article::getTipping, Article::getForwards, Article::getCreateTime, Article::getUpdateTime)
+                .selectAs(User::getNickname, EsArticle::getOwnerNickname)
+                .selectAs(User::getAvatar, EsArticle::getOwnerAvatar)
+                .selectAs(Topic::getTitle, EsArticle::getTopicTitle)
+                .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
+                .innerJoin(User.class, User::getUid, Article::getOwner)
+                .innerJoin(Topic.class, Topic::getId, Article::getTopic);
+        esArticleRepository.save(articleMapper.selectJoinOne(EsArticle.class, queryWrapper));
         log.info("用户 {} 创建了文章 {}", owner, article.getId());
         return article.getId();
     }
@@ -165,6 +188,19 @@ public class ArticleService {
         log.info("用户 {} 修改了文章 {}", uid, topicId);
         articleAsyncService.synchronizeArticleToElasticSearchByArticleId(topicId);
         topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
+    }
+
+    public CosAuthorizationVO getArticleImageUpdateAuthorization(Integer uid) {
+        Integer expireSeconds = 60;
+        String imagePrefix;
+        do {
+            imagePrefix = CosFolderPath.ARTICLE_IMAGE.getPath() + UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + ".png";
+        } while (cosService.objectExists(imagePrefix));
+        Credentials credentials = cosService.getCosAccessAuthorization(
+                expireSeconds, CosActions.PUT_OBJECT, List.of(imagePrefix)
+        );
+        log.info("用户 {} 请求了图片 {} 上传权限", uid, imagePrefix);
+        return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), imagePrefix);
     }
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {

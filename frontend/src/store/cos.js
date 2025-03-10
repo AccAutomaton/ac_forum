@@ -32,6 +32,9 @@ const publicResourcesCosReadAuthorization = {
             }
             return state.cos;
         },
+        SyncGetPublicResourcesReadCOS: (state) => {
+            return state.cos;
+        },
         getPublicResourcesBucket: (state) => {
             return state.bucket
         },

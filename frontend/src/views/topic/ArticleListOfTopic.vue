@@ -4,6 +4,7 @@ import {ref} from "vue";
 import {queryArticleListOfTopic} from "@/request/article.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
+import removeMd from "remove-markdown";
 
 const selectOptions = [
   {value: 0, label: "最佳匹配"},
@@ -110,7 +111,7 @@ const clickOwner = (ownerId) => {
                 </el-row>
                 <el-row>
                   <el-text line-clamp="2" style="height: 40px">
-                    {{ record["content"] }}
+                    {{ removeMd(record["content"]) }}
                   </el-text>
                 </el-row>
                 <el-row :gutter="5">
@@ -205,7 +206,7 @@ const clickOwner = (ownerId) => {
                 </el-row>
               </el-col>
               <el-col v-if="record['firstImage'] !== ''" :span="4" style="text-align: center">
-                <el-image :src="record['firstImage']" loading="lazy" fit="cover"/>
+                <el-image :src="record['firstImage']" loading="lazy" fit="contain" style="height: 75px"/>
               </el-col>
               <el-col v-else :span="4" style="text-align: center; font-size: 14px; color: #a19b9b">
                 无图片

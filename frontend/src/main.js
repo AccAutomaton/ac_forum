@@ -29,4 +29,7 @@ moment.locale("zh-cn")
 import ArcoVueIcon from '@arco-design/web-vue/es/icon';
 app.use(ArcoVueIcon)
 
+// --- md-editor-vs --- //
+import 'md-editor-v3/lib/style.css';
+
 app.mount('#app')

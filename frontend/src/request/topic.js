@@ -57,3 +57,14 @@ export const updateTopic = (id, title, description) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const queryTopicIdAndTitleList = (keyword) =>
+    request({
+        url: '/topic/list/idAndTitle',
+        method: 'GET',
+        params: {
+            keyword: keyword,
+        }
+    }).then((response) => {
+        return response["data"];
+    })
