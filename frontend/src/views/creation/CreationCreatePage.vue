@@ -2,10 +2,11 @@
 import {ref} from "vue";
 import {MdEditor} from 'md-editor-v3';
 import {SyncGetObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
-import {ElNotification} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
 import {queryTopicIdAndTitleList} from "@/request/topic.js";
 import {createArticle, getArticleImageUploadAuthorization} from "@/request/article.js";
 import router from "@/router/index.js";
+import {useStorage} from "@vueuse/core";
 
 const toolbars = [
   'bold',
@@ -40,8 +41,16 @@ const toolbars = [
   'catalog',
 ];
 
-const title = ref(""), content = ref("");
-const topicId = ref(), options = ref([]);
+const articleCache = useStorage("createArticleCache", {
+  title: "",
+  topicId: undefined,
+  topicTitle: "",
+  content: "",
+});
+
+const title = ref(articleCache.value.title), content = ref(articleCache.value.content);
+const topicId = ref(articleCache.value.topicId);
+const options = ref([]), showDefaultTopic = ref(false);
 const topicListLoadingStatus = ref(true);
 const searchTopics = async (keyword) => {
   topicListLoadingStatus.value = true;
@@ -81,17 +90,17 @@ const sanitize = (html) => {
 
 const onUploadImg = async (files, callback) => {
   const res = await Promise.all(
-    files.map((file) => {
-      return new Promise(async (rev) => {
-        const data = await getArticleImageUploadAuthorization();
-        if (data !== null) {
-          const filename = data["key"].substring(data["key"].toString().lastIndexOf("/") + 1);
-          uploadObject(data, file, () => {
-            rev(filename);
-          });
-        }
-      });
-    })
+      files.map((file) => {
+        return new Promise(async (rev) => {
+          const data = await getArticleImageUploadAuthorization();
+          if (data !== null) {
+            const filename = data["key"].substring(data["key"].toString().lastIndexOf("/") + 1);
+            uploadObject(data, file, () => {
+              rev(filename);
+            });
+          }
+        });
+      })
   );
   callback(res.map((item) => item));
 };
@@ -109,18 +118,39 @@ const onClickCreateArticleButton = async () => {
     ElNotification({title: "内容不能超过 100,000 个字", type: "warning"});
     return;
   }
-  if (topicId.value === "") {
+  if (topicId.value === undefined) {
     ElNotification({title: "请选择话题", type: "warning"});
     return;
   }
   const data = await createArticle(topicId.value, title.value, content.value);
   if (data !== null) {
     ElNotification({title: "发布成功", type: "success"});
-    router.push("/article/" + data["articleId"]).then(() => {});
+    router.push("/article/" + data["articleId"]).then(() => {
+    });
   }
 }
 
-// TODO 保存、自动保存、读取保存等
+const save = (content) => {
+  articleCache.value.title = title.value;
+  articleCache.value.topicId = topicId.value;
+  for (let i = 0; i < options.value.length; i++) {
+    if (options.value[i].value === topicId.value) {
+      articleCache.value.topicTitle = options.value[i].label;
+      break;
+    }
+  }
+  articleCache.value.content = content;
+};
+
+const onSave = (content) => {
+  save(content);
+  ElNotification({title: "保存成功", type: "success", message: "已保存到本地"});
+}
+
+const onBlur = () => {
+  save(content.value);
+  ElMessage("已自动保存到本地");
+}
 </script>
 
 <template>
@@ -129,7 +159,7 @@ const onClickCreateArticleButton = async () => {
       <el-row style="margin-bottom: 10px" :gutter="20">
         <el-col :span="16">
           <el-input v-model="title" style="font-size: 16px; font-weight: bolder; color: black"
-                    placeholder="请输入文章标题" maxlength="32" show-word-limit>
+                    placeholder="请输入文章标题" maxlength="32" show-word-limit @blur="onBlur">
             <template #prepend>
               <span style="font-size: 14px; font-weight: lighter">文章标题</span>
             </template>
@@ -137,14 +167,18 @@ const onClickCreateArticleButton = async () => {
         </el-col>
         <el-col :span="5">
           <el-select-v2 v-model="topicId" filterable remote :remote-method="searchTopics" clearable
-                        :loading="topicListLoadingStatus" placeholder="话题" :options="options">
+                        :loading="topicListLoadingStatus" placeholder="话题" :options="options"
+                        :reserve-keyword="false" @change="showDefaultTopic = true" @blur="onBlur">
             <template #label="{ label, value }">
-              <span>{{ label }}</span>
+              <span v-if="showDefaultTopic">{{ label }}</span>
+              <span v-else>{{ articleCache.topicTitle }}</span>
               <span style="color: var(--el-text-color-secondary); font-size: 12px; float: right">#{{ value }}</span>
             </template>
             <template #default="{ item }">
               <span>{{ item.label }}</span>
-              <span style="color: var(--el-text-color-secondary); font-size: 12px; float: right">#{{ item.value }}</span>
+              <span style="color: var(--el-text-color-secondary); font-size: 12px; float: right">#{{
+                  item.value
+                }}</span>
             </template>
           </el-select-v2>
         </el-col>
@@ -155,7 +189,7 @@ const onClickCreateArticleButton = async () => {
       <el-row>
         <MdEditor v-model="content" previewTheme="github" codeTheme="github" :codeFoldable="false" :toolbars="toolbars"
                   :tableShape="[8, 8]" placeholder="在此输入正文..." showToolbarName style="height: 79.5vh"
-                  :sanitize="sanitize" @onUploadImg="onUploadImg"/>
+                  :sanitize="sanitize" @onUploadImg="onUploadImg" @onSave="onSave" @blur="onBlur"/>
       </el-row>
     </el-main>
   </el-container>
