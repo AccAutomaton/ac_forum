@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,13 +26,14 @@ public class TopicAsyncService {
     }
 
     @Async
+    @Transactional(rollbackFor = Exception.class)
     public void increaseVisitsById(Integer id) {
         LambdaUpdateWrapper<Topic> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(Topic::getId, id);
         lambdaUpdateWrapper.setIncrBy(Topic::getVisits, 1);
         topicMapper.update(lambdaUpdateWrapper);
+        log.info("[Async]话题 {} 浏览量+1", id);
         synchronizeTopicToElasticSearchByArticleId(id);
-        log.info("[Async] 话题 {} 浏览量+1", id);
     }
 
     @Async

@@ -4,7 +4,7 @@ import {useRoute} from "vue-router";
 import {deleteTopic, getTopicById, updateTopic} from "@/request/topic.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import moment from "moment";
-import ArtistInformationPopover from "@/components/user/ArtistInformationPopover.vue";
+import ArtistInformationPopoverContent from "@/components/user/ArtistInformationPopoverContent.vue";
 import {ref} from 'vue'
 import {Setting} from "@element-plus/icons-vue";
 import store from "@/store/index.js";
@@ -142,7 +142,7 @@ const onClickCancelUpdateTopicButton = () => {
             </el-statistic>
             <el-popover ref="administratorInformationPopoverRef" :virtual-ref="administratorStatisticRef"
                         trigger="click" virtual-triggering width="300" :offset="24" :persistent="false">
-              <ArtistInformationPopover :uid="administratorId" :nickname="administratorNickname"
+              <ArtistInformationPopoverContent :uid="administratorId" :nickname="administratorNickname"
                                         :avatar="administratorAvatar"/>
             </el-popover>
           </el-col>

@@ -1,15 +1,12 @@
 package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.entity.*;
-import com.acautomaton.forum.enumerate.ArticleQueryType;
-import com.acautomaton.forum.enumerate.BrowseRecordType;
-import com.acautomaton.forum.enumerate.CosActions;
-import com.acautomaton.forum.enumerate.CosFolderPath;
+import com.acautomaton.forum.enumerate.*;
+import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
-import com.acautomaton.forum.mapper.ArticleMapper;
-import com.acautomaton.forum.mapper.ArtistMapper;
-import com.acautomaton.forum.mapper.TopicMapper;
+import com.acautomaton.forum.exception.ForumIllegalArgumentException;
+import com.acautomaton.forum.mapper.*;
 import com.acautomaton.forum.repository.EsArticleRepository;
 import com.acautomaton.forum.repository.EsTopicRepository;
 import com.acautomaton.forum.service.async.ArticleAsyncService;
@@ -18,6 +15,7 @@ import com.acautomaton.forum.service.async.TopicAsyncService;
 import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.RedisService;
 import com.acautomaton.forum.entity.EsArticle;
+import com.acautomaton.forum.vo.article.GetArticleVO;
 import com.acautomaton.forum.vo.article.GetEsArticalListVO;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
@@ -45,6 +43,13 @@ public class ArticleService {
     ArticleMapper articleMapper;
     ArtistMapper artistMapper;
     TopicMapper topicMapper;
+    FollowMapper followMapper;
+    CommentMapper commentMapper;
+    ThumbsUpMapper thumbsUpMapper;
+    CollectionMapper collectionMapper;
+    UserMapper userMapper;
+    CoinRecordMapper coinRecordMapper;
+    PointRecordMapper pointRecordMapper;
     EsArticleRepository esArticleRepository;
     EsTopicRepository esTopicRepository;
     ArticleAsyncService articleAsyncService;
@@ -52,12 +57,16 @@ public class ArticleService {
     TopicAsyncService topicAsyncService;
     RedisService redisService;
     CosService cosService;
+    MessageService messageService;
 
     @Autowired
     public ArticleService(ArticleMapper articleMapper, ArtistMapper artistMapper, TopicMapper topicMapper,
                           ArticleAsyncService articleAsyncService, BrowseRecordAsyncService browseRecordAsyncService,
                           TopicAsyncService topicAsyncService, RedisService redisService, EsArticleRepository esArticleRepository,
-                          CosService cosService, EsTopicRepository esTopicRepository) {
+                          CosService cosService, EsTopicRepository esTopicRepository, FollowMapper followMapper,
+                          CommentMapper commentMapper, ThumbsUpMapper thumbsUpMapper, CollectionMapper collectionMapper,
+                          UserMapper userMapper, CoinRecordMapper coinRecordMapper, MessageService messageService,
+                          PointRecordMapper pointRecordMapper) {
         this.articleMapper = articleMapper;
         this.artistMapper = artistMapper;
         this.topicMapper = topicMapper;
@@ -68,6 +77,14 @@ public class ArticleService {
         this.esArticleRepository = esArticleRepository;
         this.cosService = cosService;
         this.esTopicRepository = esTopicRepository;
+        this.followMapper = followMapper;
+        this.commentMapper = commentMapper;
+        this.thumbsUpMapper = thumbsUpMapper;
+        this.collectionMapper = collectionMapper;
+        this.userMapper = userMapper;
+        this.coinRecordMapper = coinRecordMapper;
+        this.messageService = messageService;
+        this.pointRecordMapper = pointRecordMapper;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -103,7 +120,8 @@ public class ArticleService {
         return article.getId();
     }
 
-    public EsArticle getAriticleById(Integer uid, Integer id) {
+    @Transactional(rollbackFor = Exception.class)
+    public GetArticleVO getAriticleById(Integer uid, Integer id) {
         MPJLambdaWrapper<Article> articleLambdaWrapper = new MPJLambdaWrapper<>();
         articleLambdaWrapper.eq(Article::getId, id);
         if (!articleMapper.exists(articleLambdaWrapper)) {
@@ -111,15 +129,42 @@ public class ArticleService {
         }
         articleLambdaWrapper
                 .select(Article::getId, Article::getOwner, Article::getTopic, Article::getTitle, Article::getContent, Article::getFirstImage, Article::getVisits, Article::getThumbsUp, Article::getCollections, Article::getTipping, Article::getForwards, Article::getCreateTime, Article::getUpdateTime)
-                .selectAs(User::getNickname, EsArticle::getOwnerNickname)
-                .selectAs(User::getAvatar, EsArticle::getOwnerAvatar)
-                .selectAs(Topic::getTitle, EsArticle::getTopicTitle)
-                .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
+                .selectAs(User::getNickname, GetArticleVO::getOwnerNickname)
+                .selectAs(User::getAvatar, GetArticleVO::getOwnerAvatar)
+                .selectAs(Topic::getTitle, GetArticleVO::getTopicTitle)
+                .selectAs(Topic::getAvatar, GetArticleVO::getTopicAvatar)
+                .selectAs(Topic::getArticles, GetArticleVO::getTopicArticles)
+                .selectAs(Topic::getVisits, GetArticleVO::getTopicVisits)
+                .selectAs(Artist::getFans, GetArticleVO::getOwnerFans)
+                .selectAs(Artist::getArticles, GetArticleVO::getOwnerArticles)
                 .innerJoin(User.class, User::getUid, Article::getOwner)
-                .innerJoin(Topic.class, Topic::getId, Article::getTopic);
-        EsArticle vo = articleMapper.selectJoinOne(EsArticle.class, articleLambdaWrapper);
-        vo.setOwnerAvatar(CosFolderPath.AVATAR + vo.getOwnerAvatar());
-        vo.setTopicAvatar(CosFolderPath.TOPIC_AVATAR + vo.getTopicAvatar());
+                .innerJoin(Topic.class, Topic::getId, Article::getTopic)
+                .innerJoin(Artist.class, Artist::getUid, Article::getOwner);
+        GetArticleVO vo = articleMapper.selectJoinOne(GetArticleVO.class, articleLambdaWrapper);
+
+        LambdaQueryWrapper<Follow> followQueryWrapper = new LambdaQueryWrapper<>();
+        followQueryWrapper
+                .eq(Follow::getFollower, uid)
+                .eq(Follow::getBeFollowed, vo.getOwner());
+        vo.setAlreadyFollowOwner(followMapper.exists(followQueryWrapper));
+
+        LambdaQueryWrapper<ThumbsUp> thumbsUpLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        thumbsUpLambdaQueryWrapper
+                .eq(ThumbsUp::getThumbsUper, uid)
+                .eq(ThumbsUp::getBeThumbsUpedId, id);
+        vo.setAlreadyThumbsUp(thumbsUpMapper.exists(thumbsUpLambdaQueryWrapper));
+
+        LambdaQueryWrapper<Collection> collectionLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        collectionLambdaQueryWrapper
+                .eq(Collection::getCollector, uid)
+                .eq(Collection::getType, CollectionType.ARTICLE)
+                .eq(Collection::getBeCollectedId, id);
+        vo.setAlreadyCollected(collectionMapper.exists(collectionLambdaQueryWrapper));
+
+        LambdaQueryWrapper<Comment> commentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        commentLambdaQueryWrapper.eq(Comment::getTargetArticle, vo.getId());
+        vo.setComments(Math.toIntExact(commentMapper.selectCount(commentLambdaQueryWrapper)));
+
         if (!hasVisitedArticle(uid, id, 60)) {
             articleAsyncService.increaseVisitsById(id);
             topicAsyncService.increaseVisitsById(vo.getTopic());
@@ -155,38 +200,40 @@ public class ArticleService {
         return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteArticleById(Integer uid, Integer topicId) {
-        LambdaUpdateWrapper<Article> topicLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        topicLambdaUpdateWrapper.eq(Article::getId, topicId);
-        Article article = articleMapper.selectOne(topicLambdaUpdateWrapper);
+        LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        articleLambdaUpdateWrapper.eq(Article::getId, topicId);
+        Article article = articleMapper.selectOne(articleLambdaUpdateWrapper);
         if (article == null) {
             throw new ForumExistentialityException("文章不存在");
         }
         if (!article.getOwner().equals(uid)) {
             throw new ForumIllegalAccountException("没有权限进行此操作");
         }
-        articleMapper.delete(topicLambdaUpdateWrapper);
+        articleMapper.delete(articleLambdaUpdateWrapper);
         log.info("用户 {} 删除了文章 {}", uid, topicId);
         articleAsyncService.synchronizeDeleteArticleToElasticSearchByTopicId(topicId);
         topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
     }
 
-    public void updateArticleById(Integer uid, Integer topicId, String title, String content) {
-        LambdaUpdateWrapper<Article> topicLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        topicLambdaUpdateWrapper.eq(Article::getId, topicId);
-        Article article = articleMapper.selectOne(topicLambdaUpdateWrapper);
+    @Transactional(rollbackFor = Exception.class)
+    public void updateArticleById(Integer uid, Integer articleId, String title, String content) {
+        LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        articleLambdaUpdateWrapper.eq(Article::getId, articleId);
+        Article article = articleMapper.selectOne(articleLambdaUpdateWrapper);
         if (article == null) {
             throw new ForumExistentialityException("文章不存在");
         }
         if (!article.getOwner().equals(uid)) {
             throw new ForumIllegalAccountException("没有权限进行此操作");
         }
-        topicLambdaUpdateWrapper.set(Article::getTitle, title);
-        topicLambdaUpdateWrapper.set(Article::getContent, content);
-        topicLambdaUpdateWrapper.set(Article::getUpdateTime, new Date());
-        articleMapper.update(topicLambdaUpdateWrapper);
-        log.info("用户 {} 修改了文章 {}", uid, topicId);
-        articleAsyncService.synchronizeArticleToElasticSearchByArticleId(topicId);
+        articleLambdaUpdateWrapper.set(Article::getTitle, title);
+        articleLambdaUpdateWrapper.set(Article::getContent, content);
+        articleLambdaUpdateWrapper.set(Article::getUpdateTime, new Date());
+        articleMapper.update(articleLambdaUpdateWrapper);
+        log.info("用户 {} 修改了文章 {}", uid, articleId);
+        articleAsyncService.synchronizeArticleToElasticSearchByArticleId(articleId);
         topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
     }
 
@@ -201,6 +248,145 @@ public class ArticleService {
         );
         log.info("用户 {} 请求了图片 {} 上传权限", uid, imagePrefix);
         return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), imagePrefix);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void thumbsUp(User user, Integer articleId) {
+        LambdaQueryWrapper<Article> articleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleLambdaQueryWrapper.eq(Article::getId, articleId);
+        Article article = articleMapper.selectOne(articleLambdaQueryWrapper);
+        if (article == null) {
+            throw new ForumExistentialityException("目标文章不存在");
+        }
+        LambdaQueryWrapper<ThumbsUp> thumbsUpLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        thumbsUpLambdaQueryWrapper
+                .eq(ThumbsUp::getThumbsUper, user.getUid())
+                .eq(ThumbsUp::getBeThumbsUpedId, articleId);
+        if (thumbsUpMapper.exists(thumbsUpLambdaQueryWrapper)) {
+            return;
+        }
+        thumbsUpMapper.insert(new ThumbsUp(null, user.getUid(), articleId, new Date()));
+        log.info("用户 {} 点赞了文章 {}", user.getUid(), articleId);
+        articleAsyncService.increaseThumbsUpById(articleId);
+        messageService.createMessage(article.getOwner(), "您的文章收到来自用户 " + user.getNickname() + " 的点赞", MessageType.NORMAL,
+                "文章: " + article.getTitle(), "/article/" + articleId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void unThumbsUp(Integer uid, Integer articleId) {
+        LambdaQueryWrapper<ThumbsUp> thumbsUpLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        thumbsUpLambdaQueryWrapper
+                .eq(ThumbsUp::getThumbsUper, uid)
+                .eq(ThumbsUp::getBeThumbsUpedId, articleId);
+        if (thumbsUpMapper.exists(thumbsUpLambdaQueryWrapper)) {
+            thumbsUpMapper.delete(thumbsUpLambdaQueryWrapper);
+            log.info("用户 {} 取消点赞文章 {}", uid, articleId);
+            articleAsyncService.decreaseThumbsUpById(articleId);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void collect(Integer uid, Integer articleId) {
+        LambdaQueryWrapper<Article> articleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleLambdaQueryWrapper.eq(Article::getId, articleId);
+        if (!articleMapper.exists(articleLambdaQueryWrapper)) {
+            throw new ForumExistentialityException("目标文章不存在");
+        }
+        LambdaQueryWrapper<Collection> collectionLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        collectionLambdaQueryWrapper
+                .eq(Collection::getCollector, uid)
+                .eq(Collection::getType, CollectionType.ARTICLE)
+                .eq(Collection::getBeCollectedId, articleId);
+        if (collectionMapper.exists(collectionLambdaQueryWrapper)) {
+            return;
+        }
+        collectionMapper.insert(new Collection(null, uid, CollectionType.ARTICLE, articleId, new Date()));
+        LambdaUpdateWrapper<Artist> artistLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        artistLambdaUpdateWrapper
+                .eq(Artist::getUid, uid)
+                .setIncrBy(Artist::getCollections, 1);
+        artistMapper.update(artistLambdaUpdateWrapper);
+        log.info("用户 {} 收藏了文章 {}", uid, articleId);
+        articleAsyncService.increaseCollectionsById(articleId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void uncollect(Integer uid, Integer articleId) {
+        LambdaQueryWrapper<Collection> collectionLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        collectionLambdaQueryWrapper
+                .eq(Collection::getCollector, uid)
+                .eq(Collection::getType, CollectionType.ARTICLE)
+                .eq(Collection::getBeCollectedId, articleId);
+        if (collectionMapper.exists(collectionLambdaQueryWrapper)) {
+            collectionMapper.delete(collectionLambdaQueryWrapper);
+            LambdaUpdateWrapper<Artist> artistLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            artistLambdaUpdateWrapper
+                    .eq(Artist::getUid, uid)
+                    .setDecrBy(Artist::getCollections, 1);
+            artistMapper.update(artistLambdaUpdateWrapper);
+            log.info("用户 {} 取消收藏文章 {}", uid, articleId);
+            articleAsyncService.decreaseCollectionsById(articleId);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void tipping(User payUser, Integer articleId, Integer volume) {
+        if (payUser.getCoins() < volume) {
+            throw new ForumIllegalArgumentException("硬币余额不足");
+        }
+        LambdaQueryWrapper<Article> articleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleLambdaQueryWrapper.eq(Article::getId, articleId);
+        Article article = articleMapper.selectOne(articleLambdaQueryWrapper);
+        if (article == null) {
+            throw new ForumExistentialityException("目标文章不存在");
+        }
+        if (payUser.getUid().equals(article.getOwner())) {
+            throw new ForumException("不能给自己的文章投币");
+        }
+        Date now = new Date();
+
+        // Step 1: deduct payUser's coin and add payUser's point
+        payUser.setCoins(payUser.getCoins() - volume);
+        payUser.setPoints(payUser.getPoints() + volume);
+        userMapper.updateById(payUser);
+        // Step 2: add payUser's coin record
+        coinRecordMapper.insert(new CoinRecord(null, payUser.getUid(), CoinRecordType.COIN_PAYOUT, volume,
+                payUser.getCoins(), "文章投币", "投币给文章 " + article.getTitle(),
+                CoinRecordStatus.SUCCESS, now, now, 0));
+        // Step 3: add payUser's point record
+        pointRecordMapper.insert(new PointRecord(null, payUser.getUid(), PointRecordType.COIN_INCOME, volume,
+                payUser.getPoints(), "文章投币", "投币给文章 " + article.getTitle(),
+                PointRecordStatus.SUCCESS, now, now, 0));
+        // Step 4: add targetUser's coin
+        LambdaQueryWrapper<User> targetUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        targetUserLambdaQueryWrapper.eq(User::getUid, article.getOwner());
+        User targetUser = userMapper.selectOne(targetUserLambdaQueryWrapper);
+        targetUser.setCoins(targetUser.getCoins() + volume);
+        userMapper.updateById(targetUser);
+        // Step 5: add targetUser's coin record
+        coinRecordMapper.insert(new CoinRecord(null, article.getOwner(), CoinRecordType.COIN_INCOME, volume,
+                targetUser.getCoins(), "文章投币", "来自用户 " + payUser.getNickname() + " 给文章 " + article.getTitle() + " 的投币",
+                CoinRecordStatus.SUCCESS, now, now, 0));
+        // Step 6: add article's coin
+        articleAsyncService.increaseTippingById(articleId, volume);
+        log.info("用户 {} 给文章 {} 投币 {}", payUser.getUid(), articleId, volume);
+        // Step 7: send message to payUser
+        messageService.createMessage(payUser.getUid(), "感谢您为文章 " + article.getTitle() + " 投币", MessageType.NORMAL,
+                "账号经验 + " + volume, "");
+        // Step 8: send message to targetUser
+        messageService.createMessage(article.getOwner(), "您的文章收到来自用户 " + payUser.getNickname() + " 的投币", MessageType.NORMAL,
+                "文章: " + article.getTitle() + ", 投币: " + volume, "/article/" + articleId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void forward(Integer uid, Integer articleId) {
+        LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        articleLambdaUpdateWrapper.eq(Article::getId, articleId);
+        if (!articleMapper.exists(articleLambdaUpdateWrapper)) {
+            throw new ForumExistentialityException("目标文章不存在");
+        }
+        log.info("用户 {} 转发文章 {}", uid, articleId);
+        articleAsyncService.increaseForwardsById(articleId);
     }
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {

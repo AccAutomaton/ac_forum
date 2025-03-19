@@ -124,6 +124,12 @@ const onClickCreateArticleButton = async () => {
   }
   const data = await createArticle(topicId.value, title.value, content.value);
   if (data !== null) {
+    articleCache.value = {
+      title: "",
+      topicId: undefined,
+      topicTitle: "",
+      content: "",
+    }
     ElNotification({title: "发布成功", type: "success"});
     router.push("/article/" + data["articleId"]).then(() => {
     });

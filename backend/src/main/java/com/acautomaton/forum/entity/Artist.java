@@ -20,11 +20,6 @@ public class Artist {
     private Integer follows;
     private Integer fans;
     private Integer articles;
-    private Integer receiveVisits;
-    private Integer receiveThumbsUp;
-    private Integer receiveCollections;
-    private Integer receiveTipping;
-    private Integer receiveForwards;
     @JsonIgnore
     @TableLogic
     private Integer deleteFlag;

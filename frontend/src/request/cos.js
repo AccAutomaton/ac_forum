@@ -1,6 +1,7 @@
 import COS from "cos-js-sdk-v5";
 import {ElNotification} from "element-plus";
 import store from "@/store/index.js";
+import {computed} from "vue";
 
 export const getObjectUrlOfPublicResources = async (key, callback, oringinal = false) => {
     const cos = await store.getters.getPublicResourcesReadCOS;
@@ -21,8 +22,8 @@ export const getObjectUrlOfPublicResources = async (key, callback, oringinal = f
 }
 
 export const SyncGetObjectUrlOfPublicResources = (key, oringinal = false) => {
-    const cos = store.getters.SyncGetPublicResourcesReadCOS;
-    return cos.getObjectUrl({
+    const cos = computed(() => store.getters.SyncGetPublicResourcesReadCOS);
+    return cos.value.getObjectUrl({
         Bucket: store.getters.getPublicResourcesBucket,
         Region: store.getters.getPublicResourcesRegion,
         Key: key,

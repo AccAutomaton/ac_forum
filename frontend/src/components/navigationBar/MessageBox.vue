@@ -136,7 +136,7 @@ watch(() => store.getters.getIsLogin, (newValue) => {
         </li>
       </ul>
       <el-empty v-if="records.length === 0" description="暂无消息" :image-size="125"/>
-      <div v-if="isLastPage" style="text-align: center; color: #a19b9b;">- - - 我也是有底线的 - - -</div>
+      <div v-if="isLastPage && records.length !== 0" style="text-align: center; color: #a19b9b;">- - - 我也是有底线的 - - -</div>
       <div v-if="isLoading" style="text-align: center; color: #a19b9b;">- - - 加载中 - - -</div>
     </el-scrollbar>
   </el-popover>

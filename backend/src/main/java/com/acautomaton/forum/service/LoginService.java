@@ -87,7 +87,7 @@ public class LoginService {
             emailService.deleteVerifyCode(dto.getEmail());
             messageService.createMessage(user.getUid(), "欢迎您注册AC论坛!", MessageType.NORMAL,
                     "感谢您的支持", "");
-            artistMapper.insert(new Artist(user.getUid(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+            artistMapper.insert(new Artist(user.getUid(), 0, 0, 0, 0, 0));
             vipMapper.insert(new Vip(user.getUid(), VipType.NONE, null, 0));
         } else {
             log.warn("用户 {} 注册失败", user.getUsername());

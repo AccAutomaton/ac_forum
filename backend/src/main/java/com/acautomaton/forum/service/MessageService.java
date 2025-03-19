@@ -30,6 +30,7 @@ public class MessageService {
         this.messageMapper = messageMapper;
     }
 
+    @Async
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
     public void createMessage(Integer uid, String title, MessageType type, String content, String targetUrl) {

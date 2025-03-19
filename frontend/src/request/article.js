@@ -49,3 +49,62 @@ export const createArticle = (topic, title, content) =>
     }).then(response => {
         return response["data"];
     })
+
+export const getArticleById = (id) =>
+    request({
+        url: '/article/' + id,
+        method: 'GET',
+    }).then(response => {
+        return response["data"];
+    })
+
+export const thumbsUpArticle = (id) =>
+    request({
+        url: '/article/' + id + '/thumbsUp',
+        method: 'PATCH',
+    }).then(response => {
+        return response["data"];
+    })
+
+export const unThumbsUpArticle = (id) =>
+    request({
+        url: '/article/' + id + '/unThumbsUp',
+        method: 'PATCH',
+    }).then(response => {
+        return response["data"];
+    })
+
+export const collectArticle = (id) =>
+    request({
+        url: '/article/' + id + '/collect',
+        method: 'PATCH',
+    }).then(response => {
+        return response["data"];
+    })
+
+export const unCollectArticle = (id) =>
+    request({
+        url: '/article/' + id + '/unCollect',
+        method: 'PATCH',
+    }).then(response => {
+        return response["data"];
+    })
+
+export const tippingArticle = (id, volume) =>
+    request({
+        url: '/article/' + id + '/tipping',
+        method: 'POST',
+        params: {
+            volume: volume,
+        }
+    }).then(response => {
+        return response["data"];
+    })
+
+export const forwardArticle = (id) =>
+    request({
+        url: '/article/' + id + '/forward',
+        method: 'PATCH',
+    }).then(response => {
+        return response["data"];
+    })

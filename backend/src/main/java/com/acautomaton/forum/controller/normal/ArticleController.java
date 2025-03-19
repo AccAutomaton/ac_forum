@@ -6,6 +6,8 @@ import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.ArticleService;
 import com.acautomaton.forum.service.UserService;
 import com.acautomaton.forum.vo.article.GetEsArticalListVO;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -56,5 +58,41 @@ public class ArticleController {
     @GetMapping("/image/updateAuthorization")
     public Response getImageUpdateAuthorization() {
         return Response.success(articleService.getArticleImageUpdateAuthorization(userService.getCurrentUser().getUid()));
+    }
+
+    @PatchMapping("/{articleId}/thumbsUp")
+    public Response thumbsUp(@PathVariable Integer articleId) {
+        articleService.thumbsUp(userService.getCurrentUser(), articleId);
+        return Response.success();
+    }
+
+    @PatchMapping("/{articleId}/unThumbsUp")
+    public Response unThumbsUp(@PathVariable Integer articleId) {
+        articleService.unThumbsUp(userService.getCurrentUser().getUid(), articleId);
+        return Response.success();
+    }
+
+    @PatchMapping("/{articleId}/collect")
+    public Response collect(@PathVariable Integer articleId) {
+        articleService.collect(userService.getCurrentUser().getUid(), articleId);
+        return Response.success();
+    }
+
+    @PatchMapping("/{articleId}/unCollect")
+    public Response unCollect(@PathVariable Integer articleId) {
+        articleService.uncollect(userService.getCurrentUser().getUid(), articleId);
+        return Response.success();
+    }
+
+    @PostMapping("/{articleId}/tipping")
+    public Response tipping(@PathVariable Integer articleId, @RequestParam @Max(10000000) @Min(0) Integer volume) {
+        articleService.tipping(userService.getCurrentUser(), articleId, volume);
+        return Response.success();
+    }
+
+    @PatchMapping("/{articleId}/forward")
+    public Response forward(@PathVariable Integer articleId) {
+        articleService.forward(userService.getCurrentUser().getUid(), articleId);
+        return Response.success();
     }
 }
