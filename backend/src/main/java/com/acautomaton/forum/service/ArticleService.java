@@ -16,11 +16,14 @@ import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.RedisService;
 import com.acautomaton.forum.entity.EsArticle;
 import com.acautomaton.forum.vo.article.GetArticleVO;
+import com.acautomaton.forum.vo.article.GetCommentListVO;
 import com.acautomaton.forum.vo.article.GetEsArticalListVO;
+import com.acautomaton.forum.vo.comment.GetCommentVO;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.tencent.cloud.Credentials;
 import lombok.extern.slf4j.Slf4j;
@@ -151,6 +154,7 @@ public class ArticleService {
         LambdaQueryWrapper<ThumbsUp> thumbsUpLambdaQueryWrapper = new LambdaQueryWrapper<>();
         thumbsUpLambdaQueryWrapper
                 .eq(ThumbsUp::getThumbsUper, uid)
+                .eq(ThumbsUp::getType, ThumbsUpType.ARTICLE)
                 .eq(ThumbsUp::getBeThumbsUpedId, id);
         vo.setAlreadyThumbsUp(thumbsUpMapper.exists(thumbsUpLambdaQueryWrapper));
 
@@ -261,11 +265,12 @@ public class ArticleService {
         LambdaQueryWrapper<ThumbsUp> thumbsUpLambdaQueryWrapper = new LambdaQueryWrapper<>();
         thumbsUpLambdaQueryWrapper
                 .eq(ThumbsUp::getThumbsUper, user.getUid())
+                .eq(ThumbsUp::getType, ThumbsUpType.ARTICLE)
                 .eq(ThumbsUp::getBeThumbsUpedId, articleId);
         if (thumbsUpMapper.exists(thumbsUpLambdaQueryWrapper)) {
             return;
         }
-        thumbsUpMapper.insert(new ThumbsUp(null, user.getUid(), articleId, new Date()));
+        thumbsUpMapper.insert(new ThumbsUp(null, user.getUid(), ThumbsUpType.ARTICLE, articleId, new Date()));
         log.info("用户 {} 点赞了文章 {}", user.getUid(), articleId);
         articleAsyncService.increaseThumbsUpById(articleId);
         messageService.createMessage(article.getOwner(), "您的文章收到来自用户 " + user.getNickname() + " 的点赞", MessageType.NORMAL,
@@ -277,6 +282,7 @@ public class ArticleService {
         LambdaQueryWrapper<ThumbsUp> thumbsUpLambdaQueryWrapper = new LambdaQueryWrapper<>();
         thumbsUpLambdaQueryWrapper
                 .eq(ThumbsUp::getThumbsUper, uid)
+                .eq(ThumbsUp::getType, ThumbsUpType.ARTICLE)
                 .eq(ThumbsUp::getBeThumbsUpedId, articleId);
         if (thumbsUpMapper.exists(thumbsUpLambdaQueryWrapper)) {
             thumbsUpMapper.delete(thumbsUpLambdaQueryWrapper);
@@ -387,6 +393,73 @@ public class ArticleService {
         }
         log.info("用户 {} 转发文章 {}", uid, articleId);
         articleAsyncService.increaseForwardsById(articleId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Integer addComment(User user, Integer articleId, Integer targetCommentId, String content) {
+        LambdaQueryWrapper<Article> articleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleLambdaQueryWrapper.eq(Article::getId, articleId);
+        Article article = articleMapper.selectOne(articleLambdaQueryWrapper);
+        if (article == null) {
+            throw new ForumExistentialityException("目标文章不存在");
+        }
+        Comment targetComment = null;
+        if (targetCommentId != null) {
+            LambdaQueryWrapper<Comment> commentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            commentLambdaQueryWrapper.eq(Comment::getId, targetCommentId);
+            targetComment = commentMapper.selectOne(commentLambdaQueryWrapper);
+            if (targetComment == null) {
+                throw new ForumExistentialityException("目标评论不存在");
+            }
+        }
+        Comment comment = new Comment(null, user.getUid(), content, articleId, targetCommentId, 0, new Date(), 0);
+        commentMapper.insert(comment);
+        log.info("用户 {} 评论了文章 {}", user.getUid(), articleId);
+        if (targetCommentId == null) {
+            messageService.createMessage(article.getOwner(), "用户 " + user.getNickname() + " 评论了你的文章 " + article.getTitle(),
+                    MessageType.NORMAL, comment.getContent(), "/article/" + comment.getTargetArticle() + "?showComment=" + comment.getId());
+        } else {
+            messageService.createMessage(targetComment.getCommenter(), "用户 " + user.getNickname() + " 回复了你的评论", MessageType.NORMAL, comment.getContent(),
+                    "/article/" + comment.getTargetArticle() + "?showComment=" + comment.getId());
+        }
+        return comment.getId();
+    }
+
+    public GetCommentListVO getCommentListByArticleId(Integer uid, Integer articleId, Boolean latest, Integer pageNumber, Integer pageSize) {
+        LambdaQueryWrapper<Article> articleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        articleLambdaQueryWrapper.eq(Article::getId, articleId);
+        if (!articleMapper.exists(articleLambdaQueryWrapper)) {
+            throw new ForumExistentialityException("文章不存在");
+        }
+        PageHelperVO<GetCommentVO> commentPageHelperVO = new PageHelperVO<>(
+                PageHelper.startPage(pageNumber, pageSize < 20 ? pageSize : 20).doSelectPageInfo(() -> {
+                    MPJLambdaWrapper<Comment> commentLambdaWrapper = new MPJLambdaWrapper<>();
+                    commentLambdaWrapper
+                            .eq("t.target_article", articleId)
+                            .orderByDesc(latest, "t.create_time")
+                            .orderByDesc(!latest, "t.thumbs_up")
+                            .selectAs("t", Comment::getId, GetCommentVO::getId)
+                            .selectAs("t", Comment::getCommenter, GetCommentVO::getCommenter)
+                            .selectAs("t", Comment::getContent, GetCommentVO::getContent)
+                            .selectAs("t", Comment::getTargetComment, GetCommentVO::getTargetComment)
+                            .selectAs("t", Comment::getCreateTime, GetCommentVO::getCreateTime)
+                            .selectAs("t", Comment::getThumbsUp, GetCommentVO::getThumbsUp)
+                            .selectAs("comment_user", User::getNickname, GetCommentVO::getCommenterNickname)
+                            .selectAs("comment_user", User::getAvatar, GetCommentVO::getCommenterAvatar)
+                            .selectAs("target_comment", Comment::getCommenter, GetCommentVO::getTargetCommenter)
+                            .selectAs("target_user", User::getNickname, GetCommentVO::getTargetCommenterNickname)
+                            .selectAs("thumbs_up", ThumbsUp::getId, GetCommentVO::getAlreadyThumbsUp)
+                            .leftJoin(Comment.class, "target_comment", Comment::getId, "t", Comment::getTargetComment)
+                            .leftJoin(User.class, "target_user", User::getUid, "target_comment", Comment::getCommenter)
+                            .innerJoin(User.class, "comment_user", User::getUid, "t", Comment::getCommenter)
+                            .leftJoin(ThumbsUp.class, "thumbs_up", on -> on
+                                    .eq(ThumbsUp::getBeThumbsUpedId, "t", Comment::getId)
+                                    .eq(ThumbsUp::getThumbsUper, uid)
+                                    .eq(ThumbsUp::getType, ThumbsUpType.COMMENT));
+                    commentMapper.selectJoinList(GetCommentVO.class, commentLambdaWrapper);
+                })
+        );
+        return new GetCommentListVO(commentPageHelperVO, CosFolderPath.AVATAR.getPath());
     }
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {

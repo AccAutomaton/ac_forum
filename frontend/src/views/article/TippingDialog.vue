@@ -10,7 +10,7 @@ const dialogVisible = ref(false);
 const balance = ref(0);
 const volume = ref(0);
 const {articleId} = defineProps({
-  articleId: Number,
+  articleId: String,
 })
 
 const showDialog = async () => {

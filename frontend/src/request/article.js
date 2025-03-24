@@ -108,3 +108,28 @@ export const forwardArticle = (id) =>
     }).then(response => {
         return response["data"];
     })
+
+export const getCommentListByArticleId = (id, latest = false, pageNumber, pageSize) =>
+    request({
+        url: '/article/' + id + '/comment/list',
+        method: 'GET',
+        params: {
+            latest: latest,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+        }
+    }).then(response => {
+        return response["data"];
+    })
+
+export const createCommentByArticleId = (articleId, content, targetCommentId = null) =>
+    request({
+        url: '/article/' + articleId + '/comment',
+        method: 'PUT',
+        data: {
+            content: content,
+            targetCommentId: targetCommentId,
+        }
+    }).then(response => {
+        return response["data"];
+    })

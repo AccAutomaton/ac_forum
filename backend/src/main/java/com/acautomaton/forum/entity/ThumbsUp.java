@@ -1,5 +1,6 @@
 package com.acautomaton.forum.entity;
 
+import com.acautomaton.forum.enumerate.ThumbsUpType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,6 +19,7 @@ public class ThumbsUp {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer thumbsUper;
+    private ThumbsUpType type;
     private Integer beThumbsUpedId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date time;

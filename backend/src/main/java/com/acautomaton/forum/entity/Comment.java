@@ -23,7 +23,6 @@ public class Comment {
     private String content;
     private Integer targetArticle;
     private Integer targetComment;
-    private Integer targetCommenter;
     private Integer thumbsUp;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;

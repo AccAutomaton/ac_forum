@@ -1,5 +1,6 @@
 package com.acautomaton.forum.controller.normal;
 
+import com.acautomaton.forum.dto.article.AddCommentDTO;
 import com.acautomaton.forum.dto.article.CreateArticleDTO;
 import com.acautomaton.forum.enumerate.ArticleQueryType;
 import com.acautomaton.forum.response.Response;
@@ -94,5 +95,19 @@ public class ArticleController {
     public Response forward(@PathVariable Integer articleId) {
         articleService.forward(userService.getCurrentUser().getUid(), articleId);
         return Response.success();
+    }
+
+    @PutMapping("/{articleId}/comment")
+    public Response addComment(@PathVariable Integer articleId, @RequestBody AddCommentDTO dto) {
+        Integer commentId = articleService.addComment(userService.getCurrentUser(), articleId, dto.getTargetCommentId(), dto.getContent());
+        return Response.success(Map.of("commentId", commentId));
+    }
+
+    @GetMapping("/{articleId}/comment/list")
+    public Response getCommentList(@PathVariable Integer articleId,
+                                   @RequestParam(defaultValue = "false") Boolean latest,
+                                   @RequestParam(defaultValue = "1") Integer pageNumber,
+                                   @RequestParam(defaultValue = "10") Integer pageSize) {
+        return Response.success(articleService.getCommentListByArticleId(userService.getCurrentUser().getUid(), articleId, latest, pageNumber, pageSize));
     }
 }

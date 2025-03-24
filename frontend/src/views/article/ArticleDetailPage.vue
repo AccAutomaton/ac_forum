@@ -25,9 +25,8 @@ const title = ref(""), content = ref("");
 const createTime = ref(""), updateTime = ref("");
 const owner = ref(""), ownerNickname = ref(""), ownerAvatar = ref(""), ownerFans = ref(0), ownerArticles = ref(0);
 const topic = ref(""), topicTitle = ref(""), topicAvatar = ref(""), topicArticles = ref(0), topicVisits = ref(0);
-const visits = ref(0), thumbsUp = ref(0), collections = ref(0), tipping = ref(0), forwards = ref(0);
+const visits = ref(0), thumbsUp = ref(0), collections = ref(0), tipping = ref(0), forwards = ref(0), comments = ref(0);
 const alreadyFollowOwner = ref(false), alreadyThumbsUp = ref(false), alreadyCollected = ref(false);
-const comments = ref(0);
 
 const getArticle = async () => {
   const data = await getArticleById(articleId);
@@ -77,9 +76,9 @@ const getArticle = async () => {
     collections.value = data["collections"];
     tipping.value = data["tipping"];
     forwards.value = data["forwards"];
+    comments.value = data["comments"];
     alreadyThumbsUp.value = data["alreadyThumbsUp"];
     alreadyCollected.value = data["alreadyCollected"];
-    comments.value = data["comments"];
   }
 }
 getArticle();
@@ -147,11 +146,18 @@ const tippingDialogRef = ref(), commentDrawerRef = ref();
 const increaseTipping = (volume) => {
   tipping.value += volume;
 }
+const increaseComments = () => {
+  comments.value++;
+}
+const decreaseComments = () => {
+  comments.value--;
+}
 </script>
 
 <template>
   <TippingDialog ref="tippingDialogRef" @onTippingSuccess="increaseTipping" :articleId="articleId"/>
-  <CommentDrawer ref="commentDrawerRef"/>
+  <CommentDrawer ref="commentDrawerRef" @onAddingComment="increaseComments" @onDeletingComment="decreaseComments"
+                 :articleId="articleId" :comments="comments" :articleOwner="owner"/>
   <el-container>
     <el-main style="padding: 0">
       <el-card style="border-style: none; padding-left: 30px">
@@ -426,7 +432,7 @@ const increaseTipping = (volume) => {
           </el-row>
         </el-card>
         <el-card style="margin-top: 20px; padding: 10px 5px; font-size: 14px; border-radius: 15px; cursor: pointer"
-                 shadow="hover">
+                 shadow="hover" @click="commentDrawerRef.showDrawer()">
           <el-row el-row align="middle" justify="center" style="height: 25px" :gutter="20">
             <el-col :span="2"/>
             <el-col :span="10" style="font-size: 16px; font-weight: bolder">
