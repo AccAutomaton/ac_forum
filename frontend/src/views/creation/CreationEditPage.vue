@@ -2,11 +2,16 @@
 import {ref} from "vue";
 import {MdEditor} from 'md-editor-v3';
 import {SyncGetObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
-import {ElMessage, ElNotification} from "element-plus";
+import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import {queryTopicIdAndTitleList} from "@/request/topic.js";
-import {createArticle, getArticleImageUploadAuthorization} from "@/request/article.js";
+import {
+  getArticleById,
+  getArticleImageUploadAuthorization,
+  updateArticleById
+} from "@/request/article.js";
 import router from "@/router/index.js";
 import {useStorage} from "@vueuse/core";
+import {useRoute} from "vue-router";
 
 const toolbars = [
   'bold',
@@ -41,17 +46,52 @@ const toolbars = [
   'catalog',
 ];
 
-const articleCache = useStorage("createArticleCache", {
+const articleId = useRoute().params.articleId;
+const articleCache = useStorage("editArticleCache_" + articleId, {
   title: "",
   topicId: undefined,
   topicTitle: "",
   content: "",
 });
-
-const title = ref(articleCache.value.title), content = ref(articleCache.value.content);
-const topicId = ref(articleCache.value.topicId);
+const title = ref(""), content = ref("");
+const topicId = ref(0);
 const options = ref([]), showDefaultTopic = ref(false);
 const topicListLoadingStatus = ref(true);
+
+const init = async () => {
+  const data = await getArticleById(articleId);
+  if (data !== null) {
+    if (articleCache.value.content === "" || articleCache.value.content === data["content"]) {
+      articleCache.value.title = data["title"];
+      articleCache.value.topicId = data["topic"];
+      articleCache.value.topicTitle = data["topicTitle"];
+      articleCache.value.content = data["content"];
+    } else {
+      ElMessageBox.confirm(
+          '本地已存储修改该文章的草稿',
+          '请选择要保留的内容',
+          {
+            confirmButtonText: '使用本地数据',
+            cancelButtonText: '使用云端数据覆盖',
+            type: 'warning',
+          }
+      ).then(() => {
+        ElMessage("使用本地数据");
+      }).catch(() => {
+        articleCache.value.title = data["title"];
+        articleCache.value.topicId = data["topic"];
+        articleCache.value.topicTitle = data["topicTitle"];
+        articleCache.value.content = data["content"];
+        ElMessage("使用云端数据覆盖");
+      });
+    }
+    title.value = articleCache.value.title;
+    topicId.value = articleCache.value.topicId;
+    content.value = articleCache.value.content;
+  }
+}
+init();
+
 const searchTopics = async (keyword) => {
   topicListLoadingStatus.value = true;
   const data = await queryTopicIdAndTitleList(keyword);
@@ -105,7 +145,7 @@ const onUploadImg = async (files, callback) => {
   callback(res.map((item) => item));
 };
 
-const onClickCreateArticleButton = async () => {
+const onClickEditArticleButton = async () => {
   if (title.value === "") {
     ElNotification({title: "标题不能为空", type: "warning"});
     return;
@@ -122,11 +162,11 @@ const onClickCreateArticleButton = async () => {
     ElNotification({title: "请选择话题", type: "warning"});
     return;
   }
-  const data = await createArticle(topicId.value, title.value, content.value);
+  const data = await updateArticleById(articleId, topicId.value, title.value, content.value);
   if (data !== null) {
     articleCache.value = null;
     ElNotification({title: "发布成功", type: "success"});
-    router.push("/article/" + data["articleId"]).then(() => {
+    router.push("/article/" + articleId).then(() => {
     });
   }
 }
@@ -184,7 +224,7 @@ const onBlur = () => {
           </el-select-v2>
         </el-col>
         <el-col :span="3">
-          <el-button style="width: 100%" type="primary" plain @click="onClickCreateArticleButton">发布文章</el-button>
+          <el-button style="width: 100%" type="primary" plain @click="onClickEditArticleButton">发布文章</el-button>
         </el-col>
       </el-row>
       <el-row>

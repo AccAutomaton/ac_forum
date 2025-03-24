@@ -5,6 +5,10 @@ const creationRoutes = [
             {
                 path: 'create',
                 component: () => import("@/views/creation/CreationCreatePage.vue")
+            },
+            {
+                path: 'edit/:articleId',
+                component: () => import("@/views/creation/CreationEditPage.vue")
             }
         ],
         meta: {

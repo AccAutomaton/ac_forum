@@ -102,7 +102,8 @@ const clickOwner = (ownerId) => {
                     <el-row class="owner" align="middle" justify="center" @click="clickTopic(record['topic'])"
                             style="text-align: center; border-radius: 25px; cursor: pointer; pointer-events: visible">
                       <el-col :span="4">
-                        <el-avatar v-if="record['topicAvatar'] === ''" shape="square" size="small">{{
+                        <el-avatar v-if="record['topicAvatar'] === ''" shape="square" size="small">
+                          {{
                             record["topicTitle"].slice(0, 1)
                           }}
                         </el-avatar>

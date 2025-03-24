@@ -241,7 +241,11 @@ const decreaseComments = () => {
         <el-card style="margin-top: 20px; padding: 10px 5px; font-size: 14px; border-radius: 15px" shadow="never">
           <el-row el-row align="middle" justify="center" style="text-align: center; height: 60px" :gutter="20">
             <el-col :span="6">
-              <el-avatar style="background-color: transparent; float: right" :size="50" :src="topicAvatar"/>
+              <el-avatar v-if="topicAvatar === ''" style="float: right; font-size: 16px" :size="50"
+                         :src="topicAvatar" shape="square">
+                {{ topicTitle.slice(0, 2) }}
+              </el-avatar>
+              <el-avatar v-else style="background-color: transparent; float: right" :size="50" :src="topicAvatar" shape="square"/>
             </el-col>
             <el-col :span="10">
               <el-row>

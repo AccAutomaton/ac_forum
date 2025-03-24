@@ -222,7 +222,7 @@ public class ArticleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateArticleById(Integer uid, Integer articleId, String title, String content) {
+    public void updateArticleById(Integer uid, Integer articleId, String title, String content, Integer topicId) {
         LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         articleLambdaUpdateWrapper.eq(Article::getId, articleId);
         Article article = articleMapper.selectOne(articleLambdaUpdateWrapper);
@@ -232,13 +232,24 @@ public class ArticleService {
         if (!article.getOwner().equals(uid)) {
             throw new ForumIllegalAccountException("没有权限进行此操作");
         }
-        articleLambdaUpdateWrapper.set(Article::getTitle, title);
-        articleLambdaUpdateWrapper.set(Article::getContent, content);
-        articleLambdaUpdateWrapper.set(Article::getUpdateTime, new Date());
+        LambdaQueryWrapper<Topic> topicLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        topicLambdaQueryWrapper.eq(Topic::getId, topicId);
+        if (!topicMapper.exists(topicLambdaQueryWrapper)) {
+            throw new ForumExistentialityException("话题不存在");
+        }
+        articleLambdaUpdateWrapper
+                .set(Article::getTopic, topicId)
+                .set(Article::getTitle, title)
+                .set(Article::getContent, content)
+                .set(Article::getFirstImage, getFirstImageUrlOfMarkdown(content))
+                .set(Article::getUpdateTime, new Date());
         articleMapper.update(articleLambdaUpdateWrapper);
         log.info("用户 {} 修改了文章 {}", uid, articleId);
         articleAsyncService.synchronizeArticleToElasticSearchByArticleId(articleId);
-        topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
+        topicAsyncService.synchronizeTopicToElasticSearchByArticleId(topicId);
+        if (!article.getTopic().equals(topicId)) {
+            topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getTopic());
+        }
     }
 
     public CosAuthorizationVO getArticleImageUpdateAuthorization(Integer uid) {

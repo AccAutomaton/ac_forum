@@ -41,6 +41,12 @@ public class ArticleController {
         return Response.success(articleService.getAriticleById(userService.getCurrentUser().getUid(), articleId));
     }
 
+    @PatchMapping("/{articleId}")
+    public Response updateArticle(@PathVariable Integer articleId, @RequestBody CreateArticleDTO dto) {
+        articleService.updateArticleById(userService.getCurrentUser().getUid(), articleId, dto.getTitle(), dto.getContent(), dto.getTopic());
+        return Response.success();
+    }
+
     @GetMapping("/list")
     public Response getList(@RequestParam(required = false) Integer topicId,
                             @RequestParam(defaultValue = "0") Integer pageNumber,

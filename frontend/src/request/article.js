@@ -58,6 +58,19 @@ export const getArticleById = (id) =>
         return response["data"];
     })
 
+export const updateArticleById = (articleId, topic, title, content) =>
+    request({
+        url: '/article/' + articleId,
+        method: 'PATCH',
+        data: {
+            topic: topic,
+            title: title,
+            content: content,
+        }
+    }).then(response => {
+        return response["data"];
+    })
+
 export const thumbsUpArticle = (id) =>
     request({
         url: '/article/' + id + '/thumbsUp',
