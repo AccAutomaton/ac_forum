@@ -11,15 +11,15 @@ export const getCommentById = (commentId) =>
 export const thumbsUpCommentById = (commentId) =>
     request({
         url: '/comment/' + commentId + '/thumbsUp',
-        method: 'PATCH',
+        method: 'PUT',
     }).then(response => {
         return response["data"];
     })
 
 export const unThumbsUpCommentById = (commentId) =>
     request({
-        url: '/comment/' + commentId + '/unThumbsUp',
-        method: 'PATCH',
+        url: '/comment/' + commentId + '/thumbsUp',
+        method: 'DELETE',
     }).then(response => {
         return response["data"];
     })

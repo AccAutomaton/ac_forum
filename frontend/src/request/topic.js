@@ -16,7 +16,7 @@ export const queryTopicList = (pageNumber, pageSize, queryType, keyword) =>
 
 export const createTopic = (title, description) =>
     request({
-        url: '/topic/create',
+        url: '/topic',
         method: 'PUT',
         data: {
             title: title,
@@ -36,7 +36,7 @@ export const getTopicById = (id) =>
 
 export const deleteTopic = (id) =>
     request({
-        url: '/topic/delete',
+        url: '/topic',
         method: 'DELETE',
         params: {
             topicId: id,
@@ -47,10 +47,9 @@ export const deleteTopic = (id) =>
 
 export const updateTopic = (id, title, description) =>
     request({
-        url: '/topic/update',
+        url: '/topic/' + id,
         method: 'PATCH',
         data: {
-            id: id,
             title: title,
             description: description,
         }

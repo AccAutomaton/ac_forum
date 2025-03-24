@@ -1,8 +1,8 @@
 import request from "@/request/index.js";
 
 export const follow = (targetUid) => request({
-    url: 'follow/do',
-    method: 'PATCH',
+    url: '/follow',
+    method: 'PUT',
     params: {
         targetUid: targetUid,
     }
@@ -11,8 +11,8 @@ export const follow = (targetUid) => request({
 })
 
 export const unfollow = (targetUid) => request({
-    url: 'follow/undo',
-    method: 'PATCH',
+    url: '/follow',
+    method: 'DELETE',
     params: {
         targetUid: targetUid,
     }

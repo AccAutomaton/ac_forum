@@ -47,13 +47,13 @@ public class CoinController {
         return Response.success(Map.of("hasNewStatus", result));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/record/list")
     public Response getCoinRecordList(@RequestParam Integer pageNumber,
                                       @RequestParam Integer pageSize) {
         return Response.success(coinService.getCoinRecordList(userService.getCurrentUser().getUid(), pageNumber, pageSize));
     }
 
-    @GetMapping("/{coinRecordId}")
+    @GetMapping("/record/{coinRecordId}")
     public Response getCoinRecord(@PathVariable Integer coinRecordId) {
         return Response.success(coinService.getCoinRecordById(coinRecordId, userService.getCurrentUser().getUid()));
     }

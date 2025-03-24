@@ -39,7 +39,7 @@ export const refreshPayingStatus = () =>
 
 export const getCoinRecordList = (pageNumber, pageSize) =>
     request({
-        url: '/coin/list',
+        url: '/coin/record/list',
         method: 'GET',
         params: {
             pageNumber: pageNumber,
@@ -51,7 +51,7 @@ export const getCoinRecordList = (pageNumber, pageSize) =>
 
 export const getCoinRecordById = (coinRecordId) =>
     request({
-        url: '/coin/' + coinRecordId,
+        url: '/coin/record/' + coinRecordId,
         method: 'GET',
     }).then((response) => {
         return response["data"];

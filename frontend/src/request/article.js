@@ -31,7 +31,7 @@ export const queryArticleList = (pageNumber, pageSize, queryType, keyword = "") 
 
 export const getArticleImageUploadAuthorization = () =>
     request({
-        url: '/article/image/updateAuthorization',
+        url: '/article/image/authorization/update',
         method: 'GET',
     }).then(response => {
         return response["data"];
@@ -39,7 +39,7 @@ export const getArticleImageUploadAuthorization = () =>
 
 export const createArticle = (topic, title, content) =>
     request({
-        url: '/article/create',
+        url: '/article',
         method: 'PUT',
         data: {
             topic: topic,
@@ -74,15 +74,15 @@ export const updateArticleById = (articleId, topic, title, content) =>
 export const thumbsUpArticle = (id) =>
     request({
         url: '/article/' + id + '/thumbsUp',
-        method: 'PATCH',
+        method: 'PUT',
     }).then(response => {
         return response["data"];
     })
 
 export const unThumbsUpArticle = (id) =>
     request({
-        url: '/article/' + id + '/unThumbsUp',
-        method: 'PATCH',
+        url: '/article/' + id + '/thumbsUp',
+        method: 'DELETE',
     }).then(response => {
         return response["data"];
     })
@@ -90,15 +90,15 @@ export const unThumbsUpArticle = (id) =>
 export const collectArticle = (id) =>
     request({
         url: '/article/' + id + '/collect',
-        method: 'PATCH',
+        method: 'PUT',
     }).then(response => {
         return response["data"];
     })
 
 export const unCollectArticle = (id) =>
     request({
-        url: '/article/' + id + '/unCollect',
-        method: 'PATCH',
+        url: '/article/' + id + '/collect',
+        method: 'DELETE',
     }).then(response => {
         return response["data"];
     })

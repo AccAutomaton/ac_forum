@@ -25,21 +25,21 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @PutMapping("/create")
+    @PutMapping("")
     public Response createTopic(@Validated @RequestBody CreateTopicDTO dto) {
         Integer topicId = topicService.createTopic(dto.getTitle(), dto.getDescription(), userService.getCurrentUser().getUid());
         return Response.success(Map.of("topicId", topicId));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("")
     public Response deleteTopic(@RequestParam Integer topicId) {
         topicService.deleteTopic(topicId, userService.getCurrentUser().getUid());
         return Response.success();
     }
 
-    @PatchMapping("/update")
-    public Response updateTopic(@Validated @RequestBody UpdateTopicDTO dto) {
-        topicService.updateTopic(dto.getId(), userService.getCurrentUser().getUid(), dto.getTitle(), dto.getDescription());
+    @PatchMapping("/{topicId}")
+    public Response updateTopic(@PathVariable Integer topicId, @Validated @RequestBody UpdateTopicDTO dto) {
+        topicService.updateTopic(topicId, userService.getCurrentUser().getUid(), dto.getTitle(), dto.getDescription());
         return Response.success();
     }
 

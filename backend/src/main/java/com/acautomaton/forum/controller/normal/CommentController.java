@@ -23,13 +23,13 @@ public class CommentController {
         return Response.success(commentService.getCommentById(userService.getCurrentUser().getUid(), commentId));
     }
 
-    @PatchMapping("/{commentId}/thumbsUp")
+    @PutMapping("/{commentId}/thumbsUp")
     public Response thumbsUp(@PathVariable Integer commentId) {
         commentService.thumbsUp(userService.getCurrentUser(), commentId);
         return Response.success();
     }
 
-    @PatchMapping("/{commentId}/unThumbsUp")
+    @DeleteMapping("/{commentId}/thumbsUp")
     public Response unThumbsUp(@PathVariable Integer commentId) {
         commentService.unThumbsUp(userService.getCurrentUser().getUid(), commentId);
         return Response.success();

@@ -7,8 +7,6 @@ import lombok.Data;
 
 @Data
 public class UpdateTopicDTO {
-    @NotNull(message = "话题ID不能为空")
-    Integer id;
     @NotBlank(message = "话题名不能为空")
     @Size(max = 32, message = "话题名不能超过32个字")
     String title;

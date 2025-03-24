@@ -28,7 +28,7 @@ public class ArticleController {
         this.userService = userService;
     }
 
-    @PutMapping("/create")
+    @PutMapping("")
     public Response createArticle(@RequestBody CreateArticleDTO dto) {
         Integer articleId = articleService.createArticle(
                 userService.getCurrentUser().getUid(), dto.getTopic(), dto.getTitle(), dto.getContent()
@@ -62,30 +62,30 @@ public class ArticleController {
         return Response.success(vo);
     }
 
-    @GetMapping("/image/updateAuthorization")
+    @GetMapping("/image/authorization/update")
     public Response getImageUpdateAuthorization() {
         return Response.success(articleService.getArticleImageUpdateAuthorization(userService.getCurrentUser().getUid()));
     }
 
-    @PatchMapping("/{articleId}/thumbsUp")
+    @PutMapping("/{articleId}/thumbsUp")
     public Response thumbsUp(@PathVariable Integer articleId) {
         articleService.thumbsUp(userService.getCurrentUser(), articleId);
         return Response.success();
     }
 
-    @PatchMapping("/{articleId}/unThumbsUp")
+    @DeleteMapping("/{articleId}/thumbsUp")
     public Response unThumbsUp(@PathVariable Integer articleId) {
         articleService.unThumbsUp(userService.getCurrentUser().getUid(), articleId);
         return Response.success();
     }
 
-    @PatchMapping("/{articleId}/collect")
+    @PutMapping("/{articleId}/collect")
     public Response collect(@PathVariable Integer articleId) {
         articleService.collect(userService.getCurrentUser().getUid(), articleId);
         return Response.success();
     }
 
-    @PatchMapping("/{articleId}/unCollect")
+    @DeleteMapping("/{articleId}/collect")
     public Response unCollect(@PathVariable Integer articleId) {
         articleService.uncollect(userService.getCurrentUser().getUid(), articleId);
         return Response.success();

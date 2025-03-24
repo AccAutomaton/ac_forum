@@ -4,10 +4,7 @@ import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.FollowService;
 import com.acautomaton.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/follow")
@@ -21,13 +18,13 @@ public class FollowController {
         this.followService = followService;
     }
 
-    @PatchMapping("/do")
+    @PutMapping("")
     public Response follow(@RequestParam Integer targetUid) {
         followService.follow(userService.getCurrentUser().getUid(), targetUid);
         return Response.success();
     }
 
-    @PatchMapping("/undo")
+    @DeleteMapping("")
     public Response unfollow(@RequestParam Integer targetUid) {
         followService.unfollow(userService.getCurrentUser().getUid(), targetUid);
         return Response.success();
