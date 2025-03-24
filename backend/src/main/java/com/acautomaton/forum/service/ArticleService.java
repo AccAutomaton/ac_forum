@@ -245,7 +245,18 @@ public class ArticleService {
                 .set(Article::getUpdateTime, new Date());
         articleMapper.update(articleLambdaUpdateWrapper);
         log.info("用户 {} 修改了文章 {}", uid, articleId);
-        articleAsyncService.synchronizeArticleToElasticSearchByArticleId(articleId);
+        MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
+        queryWrapper
+                .eq(Article::getId, articleId)
+                .select(Article::getId, Article::getOwner, Article::getTopic, Article::getTitle, Article::getContent, Article::getFirstImage, Article::getVisits, Article::getThumbsUp, Article::getCollections, Article::getTipping, Article::getForwards, Article::getCreateTime, Article::getUpdateTime)
+                .selectAs(User::getNickname, EsArticle::getOwnerNickname)
+                .selectAs(User::getAvatar, EsArticle::getOwnerAvatar)
+                .selectAs(Topic::getTitle, EsArticle::getTopicTitle)
+                .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
+                .innerJoin(User.class, User::getUid, Article::getOwner)
+                .innerJoin(Topic.class, Topic::getId, Article::getTopic);
+        esArticleRepository.save(articleMapper.selectJoinOne(EsArticle.class, queryWrapper));
+
         topicAsyncService.synchronizeTopicToElasticSearchByArticleId(topicId);
         if (!article.getTopic().equals(topicId)) {
             topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getTopic());
