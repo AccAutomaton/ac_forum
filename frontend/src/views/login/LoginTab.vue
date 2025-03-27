@@ -4,7 +4,6 @@ import {ref} from "vue";
 import {login} from "@/request/login.js";
 import {useStorage} from "@vueuse/core";
 import store from "@/store/index.js";
-import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {getNavigationBarUserInformation} from "@/request/user.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
@@ -24,10 +23,6 @@ const Login = async () => {
     const authorization = useStorage("Authorization", "");
     authorization.value = loginData["authorization"];
     store.commit("setAuthorizationCode", loginData["authorization"]);
-    ElNotification({
-      "title": "登录成功",
-      "type": "success"
-    });
     const userData = await getNavigationBarUserInformation();
     if (userData !== null) {
       store.commit("setNickname", userData["nickname"]);
@@ -35,7 +30,7 @@ const Login = async () => {
       await getObjectUrlOfPublicResources(userData["avatar"], (url) => {
         store.commit("setAvatar", url);
         store.commit("setIsLogin", true);
-        router.push("/home");
+        router.push("/home").then(() => window.location.reload());
       });
     }
   }

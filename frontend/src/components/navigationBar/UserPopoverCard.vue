@@ -3,7 +3,6 @@ import store from "@/store/index.js";
 import {ArrowRight, Coin, EditPen, User} from "@element-plus/icons-vue";
 import {computed} from "vue";
 import router from "@/router/index.js";
-import {useStorage} from "@vueuse/core";
 
 const {userInfomation} = defineProps({
   userInfomation: {
@@ -97,9 +96,8 @@ const currentLeveIndex = computed(() => {
   return levels.length - 1;
 })
 
-const authorization = useStorage("Authorization", "");
 const logout = () => {
-  authorization.value = "";
+  localStorage.setItem("Authorization", "");
   store.commit('clearLoginInformation');
   store.commit('clearUserInformation');
   router.push("/login");
