@@ -1,15 +1,12 @@
 package com.acautomaton.forum.server;
 
 import com.acautomaton.forum.config.WebSocketConfiguration;
-import com.acautomaton.forum.entity.Message;
+import com.acautomaton.forum.entity.ChatMessage;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnError;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -24,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@ServerEndpoint(value = "/webSocket/message", configurator = WebSocketConfiguration.class)
-public class MessageWebSocketServer implements ApplicationContextAware {
-    private static final ConcurrentHashMap<Integer, MessageWebSocketServer> webSocketMap = new ConcurrentHashMap<>();
+@ServerEndpoint(value = "/webSocket/chat", configurator = WebSocketConfiguration.class)
+public class ChatWebSocketServer implements ApplicationContextAware {
+    private static final ConcurrentHashMap<Integer, ChatWebSocketServer> webSocketMap = new ConcurrentHashMap<>();
     private static ApplicationContext applicationContext;
     private Session session;
     private User user;
@@ -34,10 +31,10 @@ public class MessageWebSocketServer implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
         try {
-            MessageWebSocketServer.applicationContext = applicationContext;
-            log.info("WebSocket.Message -- 连接初始化成功");
+            ChatWebSocketServer.applicationContext = applicationContext;
+            log.info("WebSocket.Chat -- 连接初始化成功");
         } catch (BeansException e) {
-            log.error("初始化 WebSocket-Message 上下文时出现异常: {}", e.getMessage());
+            log.error("初始化 WebSocket-Chat 上下文时出现异常: {}", e.getMessage());
         }
     }
 
@@ -52,42 +49,42 @@ public class MessageWebSocketServer implements ApplicationContextAware {
         } else {
             webSocketMap.put(this.user.getUid(), this);
         }
-        log.info("用户 {} 连接到 WebSocket-Message: {} 成功, 当前在线数 {}", this.user.getUid(), session.getRequestURI().getPath(), getOnlineCount());
+        log.info("用户 {} 连接到 WebSocket-Chat: {} 成功, 当前在线数 {}", this.user.getUid(), session.getRequestURI().getPath(), getOnlineCount());
     }
 
     @OnClose
     public void onClose() {
         webSocketMap.remove(this.user.getUid());
-        log.info("用户 {} 断开与 WebSocket-Message: {} 的连接, 当前在线数 {}", this.user.getUid(), this.session.getRequestURI().getPath(), getOnlineCount());
+        log.info("用户 {} 断开与 WebSocket-Chat: {} 的连接, 当前在线数 {}", this.user.getUid(), this.session.getRequestURI().getPath(), getOnlineCount());
     }
 
     @OnError
     public void onError(Throwable error) {
-        log.warn("用户 {} 与 WebSocket-Message: {} 通信时发生错误: {}", this.user.getUid(), this.session.getRequestURI().getPath(), error.getMessage());
+        log.warn("用户 {} 与 WebSocket-Chat: {} 通信时发生错误: {}", this.user.getUid(), this.session.getRequestURI().getPath(), error.getMessage());
     }
 
     private void Send(String message) {
         try {
             this.session.getBasicRemote().sendText(message);
         } catch (IOException e) {
-            log.error("发送 WebSocket-Message: {} 消息给 {} 时发生错误: {}", this.session.getRequestURI().getPath(), this.user.getUid(), e.getMessage());
+            log.error("发送 WebSocket-Chat: {} 消息给 {} 时发生错误: {}", this.session.getRequestURI().getPath(), this.user.getUid(), e.getMessage());
         }
     }
 
-    public static boolean sendMessage(Integer uid, Message message) {
+    public static boolean sendMessage(Integer uid, ChatMessage chatMessage) {
         if (webSocketMap.containsKey(uid)) {
             ObjectMapper objectMapper = new ObjectMapper();
             String msg;
             try {
-                msg = objectMapper.writeValueAsString(message);
+                msg = objectMapper.writeValueAsString(chatMessage);
             } catch (JsonProcessingException e) {
                 msg = "error";
-                log.error("发送 WebSocket-Message (step: on Message) 给用户 {} 时序列化异常: {}", uid, e.getMessage());
+                log.error("发送 WebSocket-Chat (step: on Message) 给用户 {} 时序列化异常: {}", uid, e.getMessage());
             }
             webSocketMap.get(uid).Send(msg);
             return true;
         } else {
-            log.debug("发送 WebSocket-Message 消息给用户 {} 失败(用户不在线)", uid);
+            log.debug("发送 WebSocket-Chat 消息给用户 {} 失败(用户不在线)", uid);
             return false;
         }
     }
@@ -97,9 +94,9 @@ public class MessageWebSocketServer implements ApplicationContextAware {
         if (header == null) {
             try {
                 session.close();
-                log.warn("session header 为空, WebSocket-Message 已断开 (session: {})", session);
+                log.warn("session header 为空, WebSocket-Chat 已断开 (session: {})", session);
             } catch (IOException e) {
-                log.warn("session header 为空, 尝试断开 WebSocket-Message 失败 (session: {})", session);
+                log.warn("session header 为空, 尝试断开 WebSocket-Chat 失败 (session: {})", session);
             }
         }
         return header;

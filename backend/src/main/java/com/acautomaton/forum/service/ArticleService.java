@@ -263,11 +263,11 @@ public class ArticleService {
         }
     }
 
-    public CosAuthorizationVO getArticleImageUpdateAuthorization(Integer uid) {
+    public CosAuthorizationVO getArticleImageUploadAuthorization(Integer uid) {
         Integer expireSeconds = 60;
         String imagePrefix;
         do {
-            imagePrefix = CosFolderPath.ARTICLE_IMAGE.getPath() + UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + ".png";
+            imagePrefix = CosFolderPath.ARTICLE_IMAGE + UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + ".png";
         } while (cosService.objectExists(imagePrefix));
         Credentials credentials = cosService.getCosAccessAuthorization(
                 expireSeconds, CosActions.PUT_OBJECT, List.of(imagePrefix)

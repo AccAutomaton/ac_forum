@@ -5,6 +5,7 @@ import com.acautomaton.forum.dto.user.SetEmailDTO;
 import com.acautomaton.forum.dto.user.SetNicknameDTO;
 import com.acautomaton.forum.dto.user.SetPasswordDTO;
 import com.acautomaton.forum.enumerate.CosFolderPath;
+import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.UserService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
@@ -38,7 +39,7 @@ public class UserController {
         return Response.success(CosFolderPath.AVATAR + userService.getAvatarByUid(userService.getCurrentUser().getUid()));
     }
 
-    @GetMapping("/avatar/updateAuthorization")
+    @GetMapping("/avatar/authorization/update")
     public Response getAvatarUpdateAuthorization() {
         CosAuthorizationVO vo = userService.getAvatarUpdateAuthorizationByUid(userService.getCurrentUser().getUid());
         return Response.success(Map.of("targetAvatar", vo));
@@ -78,5 +79,17 @@ public class UserController {
     public Response setPassword(@Validated @RequestBody SetPasswordDTO dto) {
         userService.setPassword(userService.getCurrentUser().getUid(), dto.getOldPassword(), dto.getNewPassword());
         return Response.success();
+    }
+
+    @GetMapping("/list/uidAndNickname")
+    public Response getUidAndNicknameList(@RequestParam(required = false) Integer uid,
+                                          @RequestParam(required = false) String nicknameKeyword) {
+        if (uid != null && nicknameKeyword.isBlank()) {
+            return Response.success(userService.queryUserUidAndNicknameByUid(uid));
+        } else if (uid == null && !nicknameKeyword.isBlank()) {
+            return Response.success(userService.queryUserUidAndNicknameByNickname(nicknameKeyword));
+        } else {
+            throw new ForumIllegalArgumentException("参数非法");
+        }
     }
 }

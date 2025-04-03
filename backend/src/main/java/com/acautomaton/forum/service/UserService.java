@@ -2,6 +2,7 @@ package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.entity.*;
 import com.acautomaton.forum.enumerate.*;
+import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.exception.ForumVerifyException;
 import com.acautomaton.forum.mapper.ArtistMapper;
@@ -15,6 +16,7 @@ import com.acautomaton.forum.vo.user.GetDetailsVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.tencent.cloud.Credentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -91,6 +94,9 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void setAvatarCustomization(Integer uid) {
+        if (!cosService.objectExists(CosFolderPath.AVATAR + "uid_" + uid + "_avatar.png")) {
+            throw new ForumExistentialityException("上传失败，请重试");
+        }
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("uid", uid);
         updateWrapper.set("avatar", "uid_" + uid + "_avatar.png");
@@ -167,5 +173,28 @@ public class UserService {
         return userMapper.selectOne(queryWrapper);
     }
 
+    public List<GetDetailsVO> queryUserUidAndNicknameByUid(Integer uid) {
+        MPJLambdaWrapper<User> queryWrapper = new MPJLambdaWrapper<>();
+        queryWrapper
+                .eq(User::getUid, uid)
+                .selectAs(User::getUid, GetDetailsVO::getUid)
+                .selectAs(User::getNickname, GetDetailsVO::getNickname);
+        GetDetailsVO vo = userMapper.selectJoinOne(GetDetailsVO.class, queryWrapper);
+        List<GetDetailsVO> voList = new ArrayList<>();
+        if (vo != null) {
+            voList.add(vo);
+        }
+        return voList;
+    }
 
+    public List<GetDetailsVO> queryUserUidAndNicknameByNickname(String keyword) {
+        MPJLambdaWrapper<User> queryWrapper = new MPJLambdaWrapper<>();
+        queryWrapper
+                .like(User::getNickname, keyword)
+                .orderByDesc(User::getPoints)
+                .last("limit 10")
+                .selectAs(User::getUid, GetDetailsVO::getUid)
+                .selectAs(User::getNickname, GetDetailsVO::getNickname);
+        return userMapper.selectJoinList(GetDetailsVO.class, queryWrapper);
+    }
 }

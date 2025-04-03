@@ -1,5 +1,6 @@
 package com.acautomaton.forum.entity;
 
+import com.acautomaton.forum.enumerate.ChatMessageType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -20,6 +21,7 @@ public class ChatMessage {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer chatId;
+    private ChatMessageType type;
     private Integer sender;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

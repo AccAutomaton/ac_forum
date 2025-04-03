@@ -1,5 +1,6 @@
 package com.acautomaton.forum.service;
 
+import com.acautomaton.forum.controller.root.RootLoginController;
 import com.acautomaton.forum.dto.login.*;
 import com.acautomaton.forum.entity.Artist;
 import com.acautomaton.forum.entity.User;
@@ -91,6 +92,32 @@ public class LoginService {
             vipMapper.insert(new Vip(user.getUid(), VipType.NONE, null, 0));
         } else {
             log.warn("用户 {} 注册失败", user.getUsername());
+            throw new ForumException("注册失败，请稍后再试");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void rootRegister(RootLoginController.RootRegisterDTO dto) {
+        if (usernameExists(dto.getUsername())) {
+            throw new ForumIllegalArgumentException("该用户名已注册");
+        }
+        if (userEmailExists(dto.getEmail())) {
+            throw new ForumIllegalArgumentException("该邮箱已注册");
+        }
+
+        Date now = new Date();
+        User user = new User(null, dto.getUsername(), passwordEncoder.encode(dto.getPassword()),
+                dto.getEmail(), UserStatus.NORMAL, UserType.USER, dto.getUsername(), "default-avatar.png",
+                0, 0, now, now, 0);
+        userMapper.insert(user);
+        if (user.getUid() != null && user.getUid() > 10000000) {
+            log.info("[Root Mode]用户 {} 注册成功", user.getUsername());
+            messageService.createMessage(user.getUid(), "欢迎您注册AC论坛!", MessageType.NORMAL,
+                    "感谢您的支持", "");
+            artistMapper.insert(new Artist(user.getUid(), 0, 0, 0, 0, 0));
+            vipMapper.insert(new Vip(user.getUid(), VipType.NONE, null, 0));
+        } else {
+            log.warn("[Root Mode]用户 {} 注册失败", user.getUsername());
             throw new ForumException("注册失败，请稍后再试");
         }
     }

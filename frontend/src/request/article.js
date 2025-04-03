@@ -31,7 +31,7 @@ export const queryArticleList = (pageNumber, pageSize, queryType, keyword = "") 
 
 export const getArticleImageUploadAuthorization = () =>
     request({
-        url: '/article/image/authorization/update',
+        url: '/article/image/authorization/upload',
         method: 'GET',
     }).then(response => {
         return response["data"];

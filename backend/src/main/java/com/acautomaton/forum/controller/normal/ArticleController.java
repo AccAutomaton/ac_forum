@@ -62,9 +62,9 @@ public class ArticleController {
         return Response.success(vo);
     }
 
-    @GetMapping("/image/authorization/update")
-    public Response getImageUpdateAuthorization() {
-        return Response.success(articleService.getArticleImageUpdateAuthorization(userService.getCurrentUser().getUid()));
+    @GetMapping("/image/authorization/upload")
+    public Response getImageUploadAuthorization() {
+        return Response.success(articleService.getArticleImageUploadAuthorization(userService.getCurrentUser().getUid()));
     }
 
     @PutMapping("/{articleId}/thumbsUp")

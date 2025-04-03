@@ -223,7 +223,7 @@ if (showComment) {
             </el-col>
             <el-col :span="6" style="font-size: 14px">
               <el-row align="middle" style="height: 100%; font-size: 12px; color: grey">
-                {{ moment(comment["createTime"], 'YYYY-MM-DD hh:mm:ss').fromNow() }}
+                {{ moment(comment["createTime"], 'YYYY-MM-DD HH:mm:ss').fromNow() }}
               </el-row>
             </el-col>
           </el-row>

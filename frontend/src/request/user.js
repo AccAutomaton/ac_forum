@@ -18,7 +18,7 @@ export const getAvatarGetAuthorization = () =>
 
 export const getAvatarUpdateAuthorization = () =>
     request({
-        url: '/user/avatar/updateAuthorization',
+        url: '/user/avatar/authorization/update',
         method: 'GET',
     }).then((response) => {
         return response["data"];
@@ -83,6 +83,18 @@ export const setPassword = (oldPassword, newPassword) =>
         data: {
             oldPassword: oldPassword,
             newPassword: newPassword,
+        }
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const getUidAndNicknameList = (uid, nicknameKeyword) =>
+    request({
+        url: '/user/list/uidAndNickname',
+        method: 'GET',
+        params: {
+            uid: uid,
+            nicknameKeyword: nicknameKeyword,
         }
     }).then((response) => {
         return response["data"];

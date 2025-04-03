@@ -22,7 +22,7 @@ public class MessageController {
     public Response getList(@RequestParam Integer pageNumber,
                             @RequestParam Integer pageSize,
                             @RequestParam(required = false) Boolean seen) {
-        return Response.success(messageService.getMessagesByUid(
+        return Response.success(messageService.getMessagesByUidExcludeChat(
             userService.getCurrentUser().getUid(), seen, pageNumber, pageSize
         ));
     }

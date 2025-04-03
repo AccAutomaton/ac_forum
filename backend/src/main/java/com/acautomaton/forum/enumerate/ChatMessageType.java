@@ -10,22 +10,22 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum MessageType {
+public enum ChatMessageType {
+    SYSTEM(-1, "系统消息"),
     NORMAL(0, "普通消息"),
-    RECHARGE(1, "充值消息"),
-    CHAT(2, "聊天消息");
+    IMAGE(1, "图片消息");
 
     @EnumValue
     private final Integer index;
     private final String value;
 
     @JsonCreator
-    public static MessageType getById(Integer index) throws ForumIllegalArgumentException {
-        for (MessageType value: values()) {
+    public static ChatMessageType getById(Integer index) throws ForumIllegalArgumentException {
+        for (ChatMessageType value: values()) {
             if (value.index.equals(index)) {
                 return value;
             }
         }
-        throw new ForumIllegalArgumentException("非法的 MessageType index 枚举值: " + index);
+        throw new ForumIllegalArgumentException("非法的 ChatMessageType index 枚举值: " + index);
     }
 }

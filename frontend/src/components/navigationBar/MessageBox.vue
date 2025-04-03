@@ -51,6 +51,7 @@ const onChangeSegmentedValue = async () => {
   nextPageNumber = 1;
   records.value = [];
   await getMoreMessage();
+  await refreshNotSeenMessageCount();
 }
 
 const readMessage = async (messageId, targetUrl, seen, index) => {
@@ -74,9 +75,18 @@ const initWebSocket = () => {
   );
   webSocket.onopen = () => {
   }
-  webSocket.onmessage = (event) => {
+  webSocket.onmessage = async (event) => {
     let data = JSON.parse(event.data);
-    records.value.unshift(data);
+    if (segmentedValue.value === "notSeen") {
+      for (let i = 0; i < records.value.length; i++) {
+        if (records.value[i]["id"] === data["id"]) {
+          records.value[i] = data;
+          records.value.unshift(records.value.splice(i, 1)[0]);
+          return;
+        }
+      }
+      records.value.unshift(data);
+    }
     notSeenMessageCount.value++;
   }
   webSocket.onerror = () => {
@@ -114,7 +124,9 @@ watch(() => store.getters.getIsLogin, (newValue) => {
                 :offset="[0, 15]"
                 :show-zero="false">
         <el-button style="width: 40px;">
-          <el-icon size="large"><MessageBox /></el-icon>
+          <el-icon size="large">
+            <MessageBox/>
+          </el-icon>
         </el-button>
       </el-badge>
     </template>
@@ -126,17 +138,23 @@ watch(() => store.getters.getIsLogin, (newValue) => {
         <li v-for="(record, index) in records" :key="record['id']" style="list-style: none;">
           <el-card shadow="hover" style="margin-bottom: 10px; cursor: pointer"
                    @click="readMessage(record['id'], record['targetUrl'], record['seen'], index)">
-            <div v-if="record['type']['index'] === 0" style="font-weight: bold">{{ record["title"] }}</div>
-            <div v-else-if="record['type']['index'] === 1" style="font-weight: bold; color: rgb(236,41,174)">{{ record["title"] }}</div>
-            <div>{{ record["content"] }}</div>
+            <div v-if="record['type']['index'] === 0 || record['type']['index'] === 2" style="font-weight: bold">{{ record["title"] }}</div>
+            <div v-else-if="record['type']['index'] === 1" style="font-weight: bold; color: rgb(236,41,174)">
+              {{ record["title"] }}
+            </div>
+            <el-row style="width: 100%">
+              <el-text line-clamp="4">{{ record["content"] }}</el-text>
+            </el-row>
             <div style="float: right; color: #a19b9b; margin-bottom: 5px">
-              {{ moment(record["createTime"], "YYYY-MM-DD hh:mm:ss").fromNow() }}
+              {{ moment(record["createTime"], "YYYY-MM-DD HH:mm:ss").fromNow() }}
             </div>
           </el-card>
         </li>
       </ul>
       <el-empty v-if="records.length === 0" description="暂无消息" :image-size="125"/>
-      <div v-if="isLastPage && records.length !== 0" style="text-align: center; color: #a19b9b;">- - - 我也是有底线的 - - -</div>
+      <div v-if="isLastPage && records.length !== 0" style="text-align: center; color: #a19b9b;">- - - 我也是有底线的 -
+        - -
+      </div>
       <div v-if="isLoading" style="text-align: center; color: #a19b9b;">- - - 加载中 - - -</div>
     </el-scrollbar>
   </el-popover>

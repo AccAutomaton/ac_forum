@@ -305,12 +305,12 @@ const decreaseComments = () => {
           <el-row align="middle" justify="center" style="text-align: center; height: 25px; margin-top: 10px"
                   :gutter="20">
             <el-col :span="12" style="color: grey">发布时间</el-col>
-            <el-col :span="12">{{ moment(createTime, 'YYYY-MM-DD hh:mm:ss').fromNow() }}</el-col>
+            <el-col :span="12">{{ moment(createTime, 'YYYY-MM-DD HH:mm:ss').fromNow() }}</el-col>
           </el-row>
           <el-row align="middle" justify="center" style="text-align: center; height: 25px; margin-top: 10px"
                   :gutter="20">
             <el-col :span="12" style="color: grey">最后修改时间</el-col>
-            <el-col :span="12">{{ moment(updateTime, 'YYYY-MM-DD hh:mm:ss').fromNow() }}</el-col>
+            <el-col :span="12">{{ moment(updateTime, 'YYYY-MM-DD HH:mm:ss').fromNow() }}</el-col>
           </el-row>
         </el-card>
         <el-card style="margin-top: 20px; padding: 10px 0; font-size: 14px; border-radius: 15px" shadow="never">

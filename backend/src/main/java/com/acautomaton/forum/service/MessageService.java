@@ -6,6 +6,7 @@ import com.acautomaton.forum.exception.ForumIllegalAccountException;
 import com.acautomaton.forum.mapper.MessageMapper;
 import com.acautomaton.forum.server.MessageWebSocketServer;
 import com.acautomaton.forum.vo.util.PageHelperVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
@@ -49,9 +50,9 @@ public class MessageService {
         return CompletableFuture.completedFuture(result);
     }
 
-    public PageHelperVO<Message> getMessagesByUid(Integer uid, Boolean seen, Integer pageNumber, Integer pageSize) {
+    public PageHelperVO<Message> getMessagesByUidExcludeChat(Integer uid, Boolean seen, Integer pageNumber, Integer pageSize) {
         return new PageHelperVO<>(
-                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getMessagesByUid(uid, seen))
+                PageHelper.startPage(pageNumber, pageSize < 10 ? pageSize : 10).doSelectPageInfo(() -> getMessagesByUidExcludeChat(uid, seen))
         );
     }
 
@@ -62,12 +63,12 @@ public class MessageService {
         return messageMapper.selectCount(queryWrapper);
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    private List<Message> getMessagesByUid(Integer uid, Boolean seen) {
-        QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", uid);
-        queryWrapper.eq(seen != null, "seen", Boolean.TRUE.equals(seen) ? 1 : 0);
-        queryWrapper.orderByDesc("create_time");
+    private List<Message> getMessagesByUidExcludeChat(Integer uid, Boolean seen) {
+        LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Message::getUid, uid)
+                .eq(seen != null, Message::getSeen, Boolean.TRUE.equals(seen) ? 1 : 0)
+                .ne(seen != null && seen, Message::getType, MessageType.CHAT)
+                .orderByDesc(Message::getCreateTime);
         return messageMapper.selectList(queryWrapper);
     }
 

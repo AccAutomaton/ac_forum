@@ -21,6 +21,8 @@ public class Chat {
     private Integer id;
     private Integer participant1;
     private Integer participant2;
+    private Integer participant1NotReadMessages;
+    private Integer participant2NotReadMessages;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
     @JsonIgnore
