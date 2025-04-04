@@ -4,8 +4,10 @@ import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.MessageService;
 import com.acautomaton.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/message")
 public class MessageController {

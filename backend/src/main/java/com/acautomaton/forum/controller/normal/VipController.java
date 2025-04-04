@@ -42,7 +42,7 @@ public class VipController {
     }
 
     @PostMapping("/buy")
-    public Response buyVip(@RequestBody BuyVipDTO buyVipDTO) throws AlipayApiException {
+    public Response buyVip(@RequestBody @Validated BuyVipDTO buyVipDTO) throws AlipayApiException {
         return Response.success(vipService.buyVip(
                 userService.getCurrentUser().getUid(), VipType.getById(buyVipDTO.getTargetVipIndex()), buyVipDTO.getMode()
         ));

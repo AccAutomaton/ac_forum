@@ -3,10 +3,12 @@ package com.acautomaton.forum.controller.normal;
 import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.util.CosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/cos")
 public class CosController {

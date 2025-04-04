@@ -5,10 +5,12 @@ import com.acautomaton.forum.service.RechargeService;
 import com.acautomaton.forum.service.UserService;
 import com.alipay.api.AlipayApiException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Validated
 @RestController
 @RequestMapping("/recharge")
 public class RechargeController {

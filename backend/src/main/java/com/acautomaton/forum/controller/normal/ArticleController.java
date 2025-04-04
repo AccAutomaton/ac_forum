@@ -29,7 +29,7 @@ public class ArticleController {
     }
 
     @PutMapping("")
-    public Response createArticle(@RequestBody CreateArticleDTO dto) {
+    public Response createArticle(@RequestBody @Validated CreateArticleDTO dto) {
         Integer articleId = articleService.createArticle(
                 userService.getCurrentUser().getUid(), dto.getTopic(), dto.getTitle(), dto.getContent()
         );
@@ -42,7 +42,7 @@ public class ArticleController {
     }
 
     @PatchMapping("/{articleId}")
-    public Response updateArticle(@PathVariable Integer articleId, @RequestBody CreateArticleDTO dto) {
+    public Response updateArticle(@PathVariable Integer articleId, @RequestBody @Validated CreateArticleDTO dto) {
         articleService.updateArticleById(userService.getCurrentUser().getUid(), articleId, dto.getTitle(), dto.getContent(), dto.getTopic());
         return Response.success();
     }
@@ -104,7 +104,7 @@ public class ArticleController {
     }
 
     @PutMapping("/{articleId}/comment")
-    public Response addComment(@PathVariable Integer articleId, @RequestBody AddCommentDTO dto) {
+    public Response addComment(@PathVariable Integer articleId, @RequestBody @Validated AddCommentDTO dto) {
         Integer commentId = articleService.addComment(userService.getCurrentUser(), articleId, dto.getTargetCommentId(), dto.getContent());
         return Response.success(Map.of("commentId", commentId));
     }
