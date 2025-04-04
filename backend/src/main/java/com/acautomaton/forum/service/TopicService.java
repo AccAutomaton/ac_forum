@@ -3,6 +3,7 @@ package com.acautomaton.forum.service;
 import com.acautomaton.forum.entity.EsTopic;
 import com.acautomaton.forum.entity.Topic;
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.enumerate.CosActions;
 import com.acautomaton.forum.enumerate.CosFolderPath;
 import com.acautomaton.forum.enumerate.TopicQueryType;
 import com.acautomaton.forum.exception.ForumExistentialityException;
@@ -13,12 +14,14 @@ import com.acautomaton.forum.service.async.ArticleAsyncService;
 import com.acautomaton.forum.service.async.TopicAsyncService;
 import com.acautomaton.forum.service.util.CosService;
 import com.acautomaton.forum.service.util.RedisService;
+import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.topic.GetTopicListVO;
 import com.acautomaton.forum.vo.topic.GetTopicVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.tencent.cloud.Credentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -101,6 +105,37 @@ public class TopicService {
         esTopicRepository.save(new EsTopic((topic)));
         log.info("用户 {} 修改了话题 {}", operatorUid, id);
         articleAsyncService.synchronizeArticleToElasticSearchByTopicId(id);
+    }
+
+    public CosAuthorizationVO getTopicAvatarUploadAuthorization(Integer uid) {
+        Integer expireSeconds = 60;
+        String avatarKey;
+        do {
+            avatarKey = CosFolderPath.TOPIC_AVATAR + UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + ".png";
+        } while (cosService.objectExists(avatarKey));
+        Credentials credentials = cosService.getCosAccessAuthorization(
+                expireSeconds, CosActions.PUT_OBJECT, List.of(avatarKey)
+        );
+        log.info("用户 {} 请求了图片 {} 上传权限", uid, avatarKey);
+        return CosAuthorizationVO.keyAuthorization(credentials, expireSeconds, cosService.getBucketName(), cosService.getRegion(), avatarKey);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public String updateTopicAvatarByTopicId(Integer uid, Integer topicId, String avatarFileName) {
+        QueryWrapper<Topic> topicQueryWrapper = new QueryWrapper<>();
+        topicQueryWrapper.eq("id", topicId);
+        topicQueryWrapper.eq("administrator", uid);
+        Topic topic = topicMapper.selectOne(topicQueryWrapper);
+        if (topic == null) {
+            throw new ForumIllegalAccountException("您没有权限修改该话题");
+        }
+        String avatarKey = CosFolderPath.TOPIC_AVATAR + "/" + avatarFileName;
+        if (!cosService.objectExists(avatarKey)) {
+            throw new ForumExistentialityException("上传失败，请重试");
+        }
+        topic.setAvatar(avatarFileName);
+        topicMapper.updateById(topic);
+        return avatarKey;
     }
 
     public GetTopicVO getTopicById(Integer uid, Integer topidId) {

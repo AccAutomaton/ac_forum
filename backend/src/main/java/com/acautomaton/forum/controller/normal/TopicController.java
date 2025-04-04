@@ -44,6 +44,17 @@ public class TopicController {
         return Response.success();
     }
 
+    @GetMapping("/avatar/authorization/upload")
+    public Response getTopicAvatarUploadAuthorization() {
+        return Response.success(topicService.getTopicAvatarUploadAuthorization(userService.getCurrentUser().getUid()));
+    }
+
+    @PatchMapping("/{topicId}/avatar")
+    public Response updateTopicAvatar(@PathVariable Integer topicId, @RequestParam String avatarFileName) {
+        String avatarKey = topicService.updateTopicAvatarByTopicId(userService.getCurrentUser().getUid(), topicId, avatarFileName);
+        return Response.success(Map.of("avatarKey", avatarKey));
+    }
+
     @GetMapping("/{topicId}")
     public Response getOneTopic(@PathVariable Integer topicId) {
         GetTopicVO vo = topicService.getTopicById(userService.getCurrentUser().getUid(), topicId);

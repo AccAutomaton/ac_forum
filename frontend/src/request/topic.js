@@ -67,3 +67,22 @@ export const queryTopicIdAndTitleList = (keyword) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getTopicAvatarUploadAuthorization = () =>
+    request({
+        url: '/topic/avatar/authorization/upload',
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const updateTopicAvatarById = (id, avatarFileName) =>
+    request({
+        url: '/topic/' + id + '/avatar',
+        method: 'PATCH',
+        params: {
+            avatarFileName: avatarFileName,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

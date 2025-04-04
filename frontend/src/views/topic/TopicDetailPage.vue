@@ -1,8 +1,14 @@
 <!--suppress CssUnusedSymbol -->
 <script setup>
 import {useRoute} from "vue-router";
-import {deleteTopic, getTopicById, updateTopic} from "@/request/topic.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {
+  deleteTopic,
+  getTopicAvatarUploadAuthorization,
+  getTopicById,
+  updateTopic,
+  updateTopicAvatarById
+} from "@/request/topic.js";
+import {getObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
 import moment from "moment";
 import ArtistInformationPopoverContent from "@/components/user/ArtistInformationPopoverContent.vue";
 import {ref} from 'vue'
@@ -73,6 +79,35 @@ const onClickCancelUpdateTopicButton = () => {
   newTopicTitle.value = title.value;
   newTopicDescription.value = description.value;
 }
+
+const onClickUpdateTopicAvatarButton = () => {
+  window.showOpenFilePicker({
+    types: [
+      {
+        description: "图片（头像）",
+        accept: {
+          "image/*": [".png", ".gif", ".jpeg", ".jpg"],
+        }
+      }
+    ],
+    excludeAcceptAllOption: true,
+    multiple: false,
+  }).then(async (res) => {
+    const file = await res[0].getFile();
+    const data = await getTopicAvatarUploadAuthorization();
+    const avatarFileName = data["key"].substring(data["key"].lastIndexOf("/") + 1);
+    if (data !== null) {
+      uploadObject(data, file, async () => {
+        const data = await updateTopicAvatarById(topicId, avatarFileName);
+        if (data !== null) {
+          await getObjectUrlOfPublicResources(data["avatarKey"], (url) => {
+            avatar.value = url;
+          })
+        }
+      })
+    }
+  })
+}
 </script>
 
 <template>
@@ -93,7 +128,9 @@ const onClickCancelUpdateTopicButton = () => {
             <el-text style="font-size: xx-large; font-weight: bolder; color: black" truncated>{{ title }}</el-text>
           </el-col>
           <el-col :span="2">
-            <el-button v-if="administratorId === store.getters.getUid" round :icon="Setting" @click="manageTopicDialogVisible = true">管理话题</el-button>
+            <el-button v-if="administratorId === store.getters.getUid" round :icon="Setting"
+                       @click="manageTopicDialogVisible = true">管理话题
+            </el-button>
           </el-col>
           <el-col :span="2" style="text-align: center">
             <el-statistic :value="articles" style="float: right">
@@ -143,7 +180,7 @@ const onClickCancelUpdateTopicButton = () => {
             <el-popover ref="administratorInformationPopoverRef" :virtual-ref="administratorStatisticRef"
                         trigger="click" virtual-triggering width="300" :offset="24" :persistent="false">
               <ArtistInformationPopoverContent :uid="administratorId" :nickname="administratorNickname"
-                                        :avatar="administratorAvatar"/>
+                                               :avatar="administratorAvatar"/>
             </el-popover>
           </el-col>
         </el-row>
@@ -168,18 +205,28 @@ const onClickCancelUpdateTopicButton = () => {
     </el-container>
   </el-container>
 
-  <el-dialog
-      v-model="manageTopicDialogVisible"
-      title="话题管理"
-      width="400"
-      align-center
-      destroy-on-close
-  >
-    <el-row style="margin-bottom: 5px">
-      <el-text>话题名称</el-text>
-    </el-row>
-    <el-row style="margin-bottom: 10px">
-      <el-input v-model="newTopicTitle" placeholder="请输入话题名称" clearable maxlength="32" show-word-limit/>
+  <el-dialog v-model="manageTopicDialogVisible" title="话题管理" width="400" align-center destroy-on-close>
+    <el-row :gutter="20" style="margin-bottom: 10px">
+      <el-col :span="19">
+        <el-row style="margin-bottom: 5px">
+          <el-text>话题名称</el-text>
+        </el-row>
+        <el-row style="height: 56px">
+          <el-input v-model="newTopicTitle" placeholder="请输入话题名称" clearable maxlength="32" show-word-limit/>
+        </el-row>
+      </el-col>
+      <el-col :span="5">
+        <el-row style="margin-bottom: 5px">
+          <el-text>话题头像</el-text>
+        </el-row>
+        <el-row style="cursor: pointer" @click="onClickUpdateTopicAvatarButton">
+          <el-avatar v-if="avatar === ''" shape="square" size="large">
+            <span style="font-size: large">{{ title.slice(0, 2) }}</span>
+          </el-avatar>
+          <el-avatar v-else shape="square" size="large" :src="avatar"
+                     style="background-color: transparent;"/>
+        </el-row>
+      </el-col>
     </el-row>
     <el-row style="margin-bottom: 5px">
       <el-text>话题简介</el-text>
