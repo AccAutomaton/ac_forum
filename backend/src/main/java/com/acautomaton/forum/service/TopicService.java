@@ -178,6 +178,12 @@ public class TopicService {
         return new GetTopicListVO(new PageHelperVO<>(esTopics), CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
+    public GetTopicListVO getTopicListByAdministratorUid(Integer administratorUid, TopicQueryType queryType, Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize > 20 ? 20 : pageSize, queryType.getSort());
+        Page<EsTopic> esTopics = esTopicRepository.findByAdministrator(administratorUid, pageable);
+        return new GetTopicListVO(new PageHelperVO<>(esTopics), CosFolderPath.TOPIC_AVATAR.getPath());
+    }
+
     public List<EsTopic> getTopicIdAndTitleList(String keyword) {
         Pageable pageable = PageRequest.of(0, 20, TopicQueryType.VISITS_DESC.getSort());
         Page<EsTopic> esTopics;

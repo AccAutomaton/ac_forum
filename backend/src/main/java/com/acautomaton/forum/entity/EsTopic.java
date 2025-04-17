@@ -28,6 +28,8 @@ public class EsTopic {
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String description;
     @Field(type = FieldType.Integer)
+    private Integer administrator;
+    @Field(type = FieldType.Integer)
     private Integer articles;
     @Field(type = FieldType.Integer)
     private Integer visits;
@@ -41,6 +43,7 @@ public class EsTopic {
         this.id = topic.getId();
         this.title = topic.getTitle();
         this.description = topic.getDescription();
+        this.administrator = topic.getAdministrator();
         this.articles = topic.getArticles();
         this.visits = topic.getVisits();
         this.createTime = topic.getCreateTime();

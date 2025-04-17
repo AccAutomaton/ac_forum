@@ -1,8 +1,9 @@
 <script setup>
 import store from "@/store/index.js";
 import {ArrowRight, Coin, EditPen, User} from "@element-plus/icons-vue";
-import {computed} from "vue";
 import router from "@/router/index.js";
+import VipTag from "@/components/navigationBar/VipTag.vue";
+import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
 
 const {userInfomation} = defineProps({
   userInfomation: {
@@ -19,81 +20,6 @@ const {userInfomation} = defineProps({
     collections: Number,
     articles: Number,
   },
-})
-
-const levels = [
-  {
-    value: "黑铁",
-    maxPoint: 1024,
-    disableColor: "rgba(37,37,37,0.1)",
-    disableFontColor: "rgba(37,37,37,0.3)",
-    enableColor: "rgba(37,37,37,1)",
-  },
-  {
-    value: "青铜",
-    maxPoint: 2048,
-    disableColor: "rgba(80,56,7,0.1)",
-    disableFontColor: "rgba(80,56,7,0.3)",
-    enableColor: "rgba(80,56,7,1)",
-  },
-  {
-    value: "白银",
-    maxPoint: 4096,
-    disableColor: "rgba(142,140,138,0.1)",
-    disableFontColor: "rgba(142,140,138,0.5)",
-    enableColor: "rgba(142,140,138,1)",
-  },
-  {
-    value: "黄金",
-    maxPoint: 8192,
-    disableColor: "rgba(221,140,32,0.1)",
-    disableFontColor: "rgba(221,140,32,0.4)",
-    enableColor: "rgba(221,140,32,1)",
-  },
-  {
-    value: "铂金",
-    maxPoint: 16384,
-    disableColor: "rgba(47,150,170,0.1)",
-    disableFontColor: "rgba(47,150,170,0.3)",
-    enableColor: "rgba(47,150,170,1)",
-  },
-  {
-    value: "钻石",
-    maxPoint: 32768,
-    disableColor: "rgba(191,109,218,0.1)",
-    disableFontColor: "rgba(191,109,218,0.4)",
-    enableColor: "rgba(191,109,218,1)",
-  },
-  {
-    value: "超凡",
-    maxPoint: 65536,
-    disableColor: "rgba(33,133,78,0.1)",
-    disableFontColor: "rgba(33,133,78,0.3)",
-    enableColor: "rgba(33,133,78,1)",
-  },
-  {
-    value: "神话",
-    maxPoint: 131072,
-    disableColor: "rgba(157,29,65,0.1)",
-    disableFontColor: "rgba(157,29,65,0.3)",
-    enableColor: "rgba(157,29,65,1)",
-  },
-  {
-    value: "辐能",
-    maxPoint: 999999999,
-    disableColor: "rgba(242,246,6,0.1)",
-    disableFontColor: "rgba(169,174,11,0.4)",
-    enableColor: "rgba(169,174,11,1)",
-  },
-];
-
-const currentLeveIndex = computed(() => {
-  for (let i = 0; i < levels.length; i++) {
-    if (userInfomation.points < levels[i].maxPoint) {
-      return i;
-    }
-  }
-  return levels.length - 1;
 })
 
 const logout = () => {
@@ -114,26 +40,7 @@ const logout = () => {
       <el-text style="font-weight: bolder; color: black">{{ store.getters.getNickname }}</el-text>
     </el-row>
     <el-row align="middle" justify="center" style="margin-top: 5px; cursor: pointer" @click="router.push('/vip')">
-      <el-tag v-if="userInfomation.vip.vipType.index === 0" effect="dark" color="rgba(112,111,111,0.5)" round
-              style="border-color: transparent">
-        大众会员
-      </el-tag>
-      <el-tag v-else-if="userInfomation.vip.vipType.index === 1" effect="dark" color="rgba(255,174,0,0.7)" round
-              style="border-color: transparent">
-        周度会员
-      </el-tag>
-      <el-tag v-else-if="userInfomation.vip.vipType.index === 2" effect="dark" color="rgba(255,174,0,0.8)" round
-              style="border-color: transparent">
-        月度会员
-      </el-tag>
-      <el-tag v-else-if="userInfomation.vip.vipType.index === 3" effect="dark" color="rgba(255,174,0,0.9)" round
-              style="border-color: transparent">
-        季度会员
-      </el-tag>
-      <el-tag v-else-if="userInfomation.vip.vipType.index === 4" effect="dark" color="rgba(255,174,0,1)" round
-              style="border-color: transparent">
-        年度会员
-      </el-tag>
+      <VipTag :vip-type="userInfomation.vip.vipType"/>
     </el-row>
     <el-row align="middle" justify="center" style="margin-top: 5px; cursor: pointer" @click="router.push('/userCenter/purse/balance')">
       <el-icon style="margin-right: 5px">
@@ -142,23 +49,7 @@ const logout = () => {
       <el-text>{{ userInfomation.coins }}</el-text>
     </el-row>
     <el-row align="middle" justify="center" style="text-align: center; margin-top: 5px; cursor: pointer" @click="router.push('/userCenter/account/level')">
-      <el-col :span="3" :style="'font-weight: bold; color: ' + levels[currentLeveIndex].enableColor">
-        {{ levels[currentLeveIndex].value }}
-      </el-col>
-      <el-col :span="18">
-        <el-progress
-            :text-inside="true"
-            :stroke-width="15"
-            :percentage="userInfomation.points * 100 / levels[currentLeveIndex].maxPoint"
-            :color="levels[currentLeveIndex].enableColor"
-        >
-          <span>{{ userInfomation.points + " / " + levels[currentLeveIndex].maxPoint }}</span>
-        </el-progress>
-      </el-col>
-      <el-col :span="3"
-              :style="'font-weight: bold; color: ' + levels[currentLeveIndex === levels.length - 1 ? currentLeveIndex : currentLeveIndex + 1].disableFontColor">
-        {{ levels[currentLeveIndex === levels.length - 1 ? currentLeveIndex : currentLeveIndex + 1].value }}
-      </el-col>
+      <LevelProgress :current-points="userInfomation.points"/>
     </el-row>
     <el-row align="middle" justify="center" style="margin-top: 10px; text-align: center">
       <el-col :span="8" class="line-button" style="border-radius: 5px">
@@ -178,7 +69,20 @@ const logout = () => {
           <User/>
         </el-icon>
       </el-col>
-      <el-col :span="12" style="font-size: 14px">个人中心</el-col>
+      <el-col :span="12" style="font-size: 14px">账户管理</el-col>
+      <el-col :span="6" style="text-align: center; font-size: 16px; height: 16px">
+        <el-icon>
+          <ArrowRight/>
+        </el-icon>
+      </el-col>
+    </el-row>
+    <el-row class="line-button" align="middle" justify="center" style="height: 40px; border-radius: 5px; margin-top: 5px" @click="router.push(`/artist/${store.getters.getUid}/livingRoom`)">
+      <el-col :span="6" style="text-align: center; font-size: 16px; height: 16px">
+        <el-icon>
+          <icon-home/>
+        </el-icon>
+      </el-col>
+      <el-col :span="12" style="font-size: 14px">个人空间</el-col>
       <el-col :span="6" style="text-align: center; font-size: 16px; height: 16px">
         <el-icon>
           <ArrowRight/>

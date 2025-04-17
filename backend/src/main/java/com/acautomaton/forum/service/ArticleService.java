@@ -204,6 +204,54 @@ public class ArticleService {
         return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
     }
 
+    public GetEsArticalListVO getEsArticalListByOwnerUid(Integer ownerUid, ArticleQueryType queryType, Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize > 20 ? 20 : pageSize, queryType.getSort());
+        Page<EsArticle> esArticles = esArticleRepository.findByOwner(ownerUid, pageable);
+        return new GetEsArticalListVO(new PageHelperVO<>(limitLengthOfContent(esArticles)), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
+    }
+
+    public GetEsArticalListVO getEsArticleListByThumbsUperUid(Integer thumbsUperUid, Integer pageNumber, Integer pageSize) {
+        return new GetEsArticalListVO(new PageHelperVO<>(
+                PageHelper.startPage(pageNumber, pageSize > 20 ? 20 : pageSize).doSelectPageInfo(() -> {
+                    MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
+                    queryWrapper
+                            .select(Article::getId, Article::getOwner, Article::getTopic, Article::getTitle, Article::getContent, Article::getFirstImage, Article::getVisits, Article::getThumbsUp, Article::getCollections, Article::getTipping, Article::getForwards, Article::getCreateTime, Article::getUpdateTime)
+                            .selectAs(User::getNickname, EsArticle::getOwnerNickname)
+                            .selectAs(User::getAvatar, EsArticle::getOwnerAvatar)
+                            .selectAs(Topic::getTitle, EsArticle::getTopicTitle)
+                            .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
+                            .eq(ThumbsUp::getThumbsUper, thumbsUperUid)
+                            .eq(ThumbsUp::getType, ThumbsUpType.ARTICLE)
+                            .orderByDesc(ThumbsUp::getTime)
+                            .innerJoin(User.class, User::getUid, Article::getOwner)
+                            .innerJoin(Topic.class, Topic::getId, Article::getTopic)
+                            .innerJoin(ThumbsUp.class, ThumbsUp::getBeThumbsUpedId, Article::getId);
+                    articleMapper.selectJoinList(EsArticle.class, queryWrapper);
+                })
+        ), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
+    }
+
+    public GetEsArticalListVO getEsArticleListByCollectorUid(Integer collectorUid, Integer pageNumber, Integer pageSize) {
+        return new GetEsArticalListVO(new PageHelperVO<>(
+                PageHelper.startPage(pageNumber, pageSize > 20 ? 20 : pageSize).doSelectPageInfo(() -> {
+                    MPJLambdaWrapper<Article> queryWrapper = new MPJLambdaWrapper<>();
+                    queryWrapper
+                            .select(Article::getId, Article::getOwner, Article::getTopic, Article::getTitle, Article::getContent, Article::getFirstImage, Article::getVisits, Article::getThumbsUp, Article::getCollections, Article::getTipping, Article::getForwards, Article::getCreateTime, Article::getUpdateTime)
+                            .selectAs(User::getNickname, EsArticle::getOwnerNickname)
+                            .selectAs(User::getAvatar, EsArticle::getOwnerAvatar)
+                            .selectAs(Topic::getTitle, EsArticle::getTopicTitle)
+                            .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
+                            .eq(Collection::getCollector, collectorUid)
+                            .eq(Collection::getType, CollectionType.ARTICLE)
+                            .orderByDesc(ThumbsUp::getTime)
+                            .innerJoin(User.class, User::getUid, Article::getOwner)
+                            .innerJoin(Topic.class, Topic::getId, Article::getTopic)
+                            .innerJoin(Collection.class, Collection::getBeCollectedId, Article::getId);
+                    articleMapper.selectJoinList(EsArticle.class, queryWrapper);
+                })
+        ), CosFolderPath.AVATAR.getPath(), CosFolderPath.ARTICLE_IMAGE.getPath(), CosFolderPath.TOPIC_AVATAR.getPath());
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void deleteArticleById(Integer uid, Integer topicId) {
         LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();

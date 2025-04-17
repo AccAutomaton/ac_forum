@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface EsTopicRepository extends ElasticsearchRepository<EsTopic, Integer> {
     Page<EsTopic> findByTitleOrDescription(String title, String description, Pageable pageable);
+    Page<EsTopic> findByAdministrator(Integer administrator, Pageable pageable);
 }

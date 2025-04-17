@@ -170,7 +170,7 @@ const onKeyUp = (event) => {
   <el-row v-loading="loading" v-if="currentChat.id">
     <el-row align="middle" justify="center" style="width: 100%; height: 52px">
       <el-link style="font-size: 18px; font-weight: bolder"
-               @click="router.push('/artist/livingRoom/' + currentChat.receiverUid)">
+               @click="router.push(`/artist/${currentChat.receiverUid}/livingRoom/`)">
         {{ currentChat.receiverNickname }}
       </el-link>
     </el-row>

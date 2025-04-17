@@ -183,7 +183,7 @@ const decreaseComments = () => {
             <el-col :span="10">
               <el-row>
                 <el-link style="font-weight: bolder; font-size: 18px; margin-bottom: 5px"
-                         @click="router.push('/artist/livingRoom/' + owner)">{{ ownerNickname }}
+                         @click="router.push(`/artist/${owner}/livingRoom`)">{{ ownerNickname }}
                 </el-link>
               </el-row>
               <el-row style="text-align: left">
@@ -218,7 +218,7 @@ const decreaseComments = () => {
             <el-col :span="8">
               <span v-if="store.getters.getUid === owner">
                 <el-button type="primary" round plain
-                           @click="router.push('/artist/livingRoom/' + owner)">创作中心</el-button>
+                           @click="router.push(`/artist/${owner}/livingRoom`)">创作中心</el-button>
               </span>
               <span v-else>
                 <el-popconfirm v-if="alreadyFollowOwner" confirm-button-text="确认" cancel-button-text="取消"

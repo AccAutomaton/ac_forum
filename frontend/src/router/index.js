@@ -8,6 +8,7 @@ import notFoundRoutes from "@/router/notFound.js";
 import articleRoutes from "@/router/article.js";
 import creationRoutes from "@/router/creation.js";
 import chatRoutes from "@/router/chat.js";
+import artistRoutes from "@/router/artist.js";
 
 const indexRoutes = [
     {
@@ -32,7 +33,7 @@ const indexRoutes = [
 ];
 
 // noinspection JSCheckFunctionSignatures
-const routes = indexRoutes.concat(userCenterRoutes, topicRoutes, vipRoutes, articleRoutes, creationRoutes, chatRoutes, notFoundRoutes)
+const routes = indexRoutes.concat(userCenterRoutes, topicRoutes, vipRoutes, articleRoutes, creationRoutes, chatRoutes, artistRoutes, notFoundRoutes)
 
 const router = createRouter({
     history: createWebHistory(),

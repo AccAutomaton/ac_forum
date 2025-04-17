@@ -212,7 +212,7 @@ if (showComment) {
             </el-col>
             <el-col :span="16">
               <el-text line-clamp="1" truncated>
-                <el-link style="font-weight: bold; font-size: 15px" @click="router.push('/artist/livingRoom/' + comment['commenter'])">
+                <el-link style="font-weight: bold; font-size: 15px" @click="router.push(`/artist/${comment['commenter']}/livingRoom/`)">
                   {{ comment["commenterNickname"] }}
                 </el-link>
                 <el-tag v-if="comment['commenter'] === articleOwner" size="small" effect="plain"

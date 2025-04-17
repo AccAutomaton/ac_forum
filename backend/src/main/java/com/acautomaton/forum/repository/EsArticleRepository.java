@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 public interface EsArticleRepository extends ElasticsearchRepository<EsArticle, Integer> {
     Page<EsArticle> findByTitleOrContentOrOwnerNickname(String title, String content, String ownerNickname, Pageable pageable);
     Page<EsArticle> findByTopic(Integer topicId, Pageable pageable);
-
     @Query(""" 
               {
                 "bool": {
@@ -56,4 +55,5 @@ public interface EsArticleRepository extends ElasticsearchRepository<EsArticle, 
               }
             """)
     Page<EsArticle> findByTopicAndTitleOrContentOrOwnerNickname(Integer topic, String title, String content, String ownerNickname, Pageable pageable);
+    Page<EsArticle> findByOwner(Integer owner, Pageable pageable);
 }

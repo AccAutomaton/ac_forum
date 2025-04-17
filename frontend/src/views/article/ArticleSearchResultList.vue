@@ -67,7 +67,7 @@ const clickTopic = (topicId) => {
 
 const clickOwner = (ownerId) => {
   ownerLock = true;
-  router.push(`/artist/livingRoom/${ownerId}`).then(() => {
+  router.push(`/artist/${ownerId}/livingRoom`).then(() => {
     setTimeout(() => {
       ownerLock = false;
     }, 100)
