@@ -6,6 +6,11 @@ import router from "@/router/index.js";
 import {ref} from "vue";
 import {getArtistStatisticDataByUid} from "@/request/artist.js";
 import moment from "moment";
+import ArtistArticleList from "@/views/artist/ArtistArticleList.vue";
+import {useRoute} from "vue-router";
+import ArtistTopicList from "@/views/artist/ArtistTopicList.vue";
+import ArtistThumbsUpList from "@/views/artist/ArtistThumbsUpList.vue";
+import ArtistCollectionList from "@/views/artist/ArtistCollectionList.vue";
 
 const statistic = ref({});
 const init = async () => {
@@ -15,6 +20,15 @@ const init = async () => {
   }
 }
 init();
+
+const activeIndex = ref(useRoute().query.tab === undefined ? "articles" : useRoute().query.tab);
+if (!["articles", "topics", "thumbsUp", "collections", "follows", "fans"].includes(activeIndex.value)) {
+  router.push("/404");
+}
+const handleSelect = (value) => {
+  activeIndex.value = value;
+  router.push({query: {tab: value}});
+}
 </script>
 
 <template>
@@ -150,6 +164,10 @@ init();
           </span>
         </el-menu-item>
       </el-menu>
+      <ArtistArticleList v-if="activeIndex === 'articles'"/>
+      <ArtistTopicList v-else-if="activeIndex === 'topics'"/>
+      <ArtistThumbsUpList v-else-if="activeIndex === 'thumbsUp'" @decreaseThumbsUp="statistic['thumbsUp']--"/>
+      <ArtistCollectionList v-else-if="activeIndex === 'collections'" @decreaseCollections="statistic['collections']--"/>
     </el-main>
   </el-container>
 </template>

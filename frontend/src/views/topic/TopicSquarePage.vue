@@ -6,18 +6,10 @@ import TopicSearchResultList from "@/views/topic/TopicSearchResultList.vue";
 import {createTopic} from "@/request/topic.js";
 import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
+import {topicQueryOptions} from "@/utils/options.js";
 
 const searchInput = ref("");
 const selectSearchType = ref(0);
-const selectOptions = [
-  {value: 0, label: "最佳匹配"},
-  {value: 1, label: "时间升序"},
-  {value: 2, label: "时间降序"},
-  {value: 3, label: "浏览量升序"},
-  {value: 4, label: "浏览量降序"},
-  {value: 5, label: "文章数升序"},
-  {value: 6, label: "文章数降序"},
-]
 const createTopicDialogVisible = ref(false);
 const newTopicTitle = ref(""), newTopicDescription = ref("");
 
@@ -71,7 +63,7 @@ const onClickConfirmCreateTopicButton = async () => {
           <template #append>
             <el-select v-model="selectSearchType" placeholder="请选择排序方式" style="margin-right: 20px; height: 40px"
                        size="large" @change="search">
-              <el-option v-for="option in selectOptions" :key="option.value" :label="option.label"
+              <el-option v-for="option in topicQueryOptions" :key="option.value" :label="option.label"
                          :value="option.value"/>
             </el-select>
             <el-button style="padding: 0 25px;" @click="search">
@@ -116,10 +108,12 @@ const onClickConfirmCreateTopicButton = async () => {
 </template>
 
 <style scoped>
+/*noinspection CssUnusedSymbol*/
 :deep() .el-card__body {
   padding: 0;
 }
 
+/*noinspection CssUnusedSymbol*/
 :deep(.el-input-group__prepend) {
   height: 40px;
   font-size: 16px;
@@ -129,6 +123,7 @@ const onClickConfirmCreateTopicButton = async () => {
   border-bottom-left-radius: 25px;
 }
 
+/*noinspection CssUnusedSymbol*/
 :deep(.el-input-group__append) {
   width: 200px;
   height: 40px;

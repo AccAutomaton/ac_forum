@@ -46,29 +46,29 @@ public class ArtistController {
 
     @GetMapping("/{artistId}/thumbsUp")
     public Response getThumbsUpList(@PathVariable Integer artistId,
-                                    @RequestParam(defaultValue = "0") Integer pageNumber,
+                                    @RequestParam(defaultValue = "1") Integer pageNumber,
                                     @RequestParam(defaultValue = "10") Integer pageSize) {
         return Response.success(articleService.getEsArticleListByThumbsUperUid(artistId, pageNumber, pageSize));
     }
 
     @GetMapping("/{artistId}/collection")
     public Response getCollectionList(@PathVariable Integer artistId,
-                                    @RequestParam(defaultValue = "0") Integer pageNumber,
-                                    @RequestParam(defaultValue = "10") Integer pageSize) {
+                                      @RequestParam(defaultValue = "1") Integer pageNumber,
+                                      @RequestParam(defaultValue = "10") Integer pageSize) {
         return Response.success(articleService.getEsArticleListByCollectorUid(artistId, pageNumber, pageSize));
     }
 
     @GetMapping("/{artistId}/follows")
     public Response getFollowsList(@PathVariable Integer artistId,
-                                    @RequestParam(defaultValue = "0") Integer pageNumber,
-                                    @RequestParam(defaultValue = "10") Integer pageSize) {
+                                   @RequestParam(defaultValue = "1") Integer pageNumber,
+                                   @RequestParam(defaultValue = "10") Integer pageSize) {
         return Response.success(artistService.getFollows(artistId, pageNumber, pageSize));
     }
 
     @GetMapping("/{artistId}/fans")
     public Response getFansList(@PathVariable Integer artistId,
-                                    @RequestParam(defaultValue = "0") Integer pageNumber,
-                                    @RequestParam(defaultValue = "10") Integer pageSize) {
+                                @RequestParam(defaultValue = "1") Integer pageNumber,
+                                @RequestParam(defaultValue = "10") Integer pageSize) {
         return Response.success(artistService.getFans(artistId, pageNumber, pageSize));
     }
 }

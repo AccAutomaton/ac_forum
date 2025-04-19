@@ -7,7 +7,7 @@ import router from "@/router/index.js";
 
 const enableTab = ref(useRoute().query.tab === undefined ? "cash" : useRoute().query.tab);
 
-if (!(enableTab.value === "cash" || enableTab.value === "coin")) {
+if (!["cash", "coin"].includes(enableTab.value)) {
   router.push("/404");
 }
 

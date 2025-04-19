@@ -4,22 +4,10 @@ import {ref} from "vue";
 import ArticleVisitsRankingList from "@/views/article/ArticleVisitsRankingList.vue";
 import ArticleSearchResultList from "@/views/article/ArticleSearchResultList.vue";
 import router from "@/router/index.js";
+import {articleQueryOptions} from "@/utils/options.js";
 
 const searchInput = ref("");
 const selectSearchType = ref(0);
-const selectOptions = [
-  {value: 0, label: "最佳匹配"},
-  {value: 1, label: "时间升序"},
-  {value: 2, label: "时间降序"},
-  {value: 3, label: "浏览量升序"},
-  {value: 4, label: "浏览量降序"},
-  {value: 5, label: "点赞量升序"},
-  {value: 6, label: "点赞量降序"},
-  {value: 7, label: "投币量升序"},
-  {value: 8, label: "投币量降序"},
-  {value: 9, label: "转发量升序"},
-  {value: 10, label: "转发量降序"},
-]
 
 const onClickCreateArticleButton = () => {
   router.push("/creation/create")
@@ -55,7 +43,7 @@ const search = () => {
           <template #append>
             <el-select v-model="selectSearchType" placeholder="请选择排序方式" style="margin-right: 20px; height: 40px"
                        size="large" @change="search">
-              <el-option v-for="option in selectOptions" :key="option.value" :label="option.label"
+              <el-option v-for="option in articleQueryOptions" :key="option.value" :label="option.label"
                          :value="option.value"/>
             </el-select>
             <el-button style="padding: 0 25px;" @click="search">

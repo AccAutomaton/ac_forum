@@ -10,7 +10,7 @@ const currentQueryType = ref(0), currentKeyWord = ref("");
 const currentPageNumber = ref(1), currentPageSize = ref(5), pages = ref(0);
 const articleList = ref([]);
 
-const refreshTopicList = async () => {
+const refreshArticleList = async () => {
   const data = await queryArticleList(currentPageNumber.value - 1, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
   if (data !== null) {
     articleList.value = data["articleList"]["records"];
@@ -36,42 +36,29 @@ const refreshTopicList = async () => {
     }
   }
 }
-refreshTopicList();
+refreshArticleList();
 
 const search = (queryType, keyword) => {
   currentQueryType.value = queryType;
   currentKeyWord.value = keyword;
   currentPageNumber.value = 1;
-  refreshTopicList();
+  refreshArticleList();
 }
 
 defineExpose({
   search,
 });
 
-let ownerLock = false;
 const clickArticle = (articleId) => {
-  if (!ownerLock) {
-    router.push(`/article/${articleId}`);
-  }
+  router.push(`/article/${articleId}`);
 }
 
 const clickTopic = (topicId) => {
-  ownerLock = true;
-  router.push(`/topic/${topicId}`).then(() => {
-    setTimeout(() => {
-      ownerLock = false;
-    }, 100)
-  });
+  router.push(`/topic/${topicId}`);
 }
 
 const clickOwner = (ownerId) => {
-  ownerLock = true;
-  router.push(`/artist/${ownerId}/livingRoom`).then(() => {
-    setTimeout(() => {
-      ownerLock = false;
-    }, 100)
-  });
+  router.push(`/artist/${ownerId}/livingRoom`);
 }
 </script>
 
@@ -99,7 +86,7 @@ const clickOwner = (ownerId) => {
                 </el-row>
                 <el-row :gutter="5">
                   <el-col :span="8">
-                    <el-row class="owner" align="middle" justify="center" @click="clickTopic(record['topic'])"
+                    <el-row class="owner" align="middle" justify="center" @click.stop="clickTopic(record['topic'])"
                             style="text-align: center; border-radius: 25px; cursor: pointer; pointer-events: visible">
                       <el-col :span="4">
                         <el-avatar v-if="record['topicAvatar'] === ''" shape="square" size="small">
@@ -107,7 +94,8 @@ const clickOwner = (ownerId) => {
                             record["topicTitle"].slice(0, 1)
                           }}
                         </el-avatar>
-                        <el-avatar v-else :size="25" :src="record['topicAvatar']" shape="square" style="background-color: transparent"/>
+                        <el-avatar v-else :size="25" :src="record['topicAvatar']" shape="square"
+                                   style="background-color: transparent"/>
                       </el-col>
                       <el-col :span="20" style="text-align: start;">
                         <el-text line-clamp="1">{{ record["topicTitle"] }}</el-text>
@@ -115,14 +103,15 @@ const clickOwner = (ownerId) => {
                     </el-row>
                   </el-col>
                   <el-col :span="8">
-                    <el-row class="owner" align="middle" justify="center" @click="clickOwner(record['owner'])"
+                    <el-row class="owner" align="middle" justify="center" @click.stop="clickOwner(record['owner'])"
                             style="text-align: center; border-radius: 25px; cursor: pointer; pointer-events: visible">
                       <el-col :span="4">
                         <el-avatar v-if="record['ownerAvatar'] === ''" size="small">{{
                             record["ownerNickname"].slice(0, 1)
                           }}
                         </el-avatar>
-                        <el-avatar v-else :size="25" :src="record['ownerAvatar']" style="background-color: transparent"/>
+                        <el-avatar v-else :size="25" :src="record['ownerAvatar']"
+                                   style="background-color: transparent"/>
                       </el-col>
                       <el-col :span="20" style="text-align: start;">
                         <el-text line-clamp="1">{{ record["ownerNickname"] }}</el-text>
@@ -205,7 +194,8 @@ const clickOwner = (ownerId) => {
             </el-row>
           </el-col>
           <el-col v-if="record['firstImage'] !== ''" :span="4" style="text-align: center">
-            <el-image :src="record['firstImage']" loading="lazy" fit="contain" style="height: 100px"/>
+            <el-image :src="record['firstImage']" loading="lazy" fit="cover"
+                      style="height: 90px; width: 100%; border-radius: 10px"/>
           </el-col>
           <el-col v-else :span="4" style="text-align: center; font-size: 14px; color: #a19b9b">
             无图片
@@ -223,7 +213,7 @@ const clickOwner = (ownerId) => {
         size=large
         layout="prev, pager, next, ->, sizes"
         :page-count="pages"
-        @change="refreshTopicList"
+        @change="refreshArticleList"
     />
   </div>
 </template>

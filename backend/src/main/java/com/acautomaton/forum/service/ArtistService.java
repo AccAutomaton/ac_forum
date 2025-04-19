@@ -60,6 +60,7 @@ public class ArtistService {
                             .selectAs(Artist::getFollows, GetArtistStatisticDataVO::getFollows)
                             .selectAs(Artist::getFans, GetArtistStatisticDataVO::getFans)
                             .eq(Follow::getFollower, uid)
+                            .orderByDesc(Follow::getTime)
                             .innerJoin(Artist.class, Artist::getUid, User::getUid)
                             .innerJoin(Follow.class, Follow::getBeFollowed, User::getUid);
                     userMapper.selectJoinList(GetArtistStatisticDataVO.class, userLambdaWrapper);
@@ -78,6 +79,7 @@ public class ArtistService {
                             .selectAs(Artist::getFollows, GetArtistStatisticDataVO::getFollows)
                             .selectAs(Artist::getFans, GetArtistStatisticDataVO::getFans)
                             .eq(Follow::getBeFollowed, uid)
+                            .orderByDesc(Follow::getTime)
                             .innerJoin(Artist.class, Artist::getUid, User::getUid)
                             .innerJoin(Follow.class, Follow::getFollower, User::getUid);
                     userMapper.selectJoinList(GetArtistStatisticDataVO.class, userLambdaWrapper);

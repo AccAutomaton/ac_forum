@@ -40,7 +40,7 @@ const refreshTopicList = async () => {
     }
   }
 }
-refreshTopicList("");
+refreshTopicList();
 
 const onPaginationParametersChanged = () => {
   refreshTopicList();
@@ -88,10 +88,24 @@ defineExpose({
                   </el-col>
                   <el-col :span="8" style="text-align: center">
                     <div>
-                      <el-text type="info" size="small" line-clamp="1">{{ record["articles"] }} 篇文章</el-text>
+                      <el-text type="info" size="small" line-clamp="1">
+                        {{
+                          Intl.NumberFormat('en', {
+                            notation: "compact",
+                            maximumFractionDigits: 1
+                          }).format(record["articles"])
+                        }} 篇文章
+                      </el-text>
                     </div>
                     <div>
-                      <el-text type="info" size="small" line-clamp="1">{{ record["visits"] }} 次浏览</el-text>
+                      <el-text type="info" size="small" line-clamp="1">
+                        {{
+                          Intl.NumberFormat('en', {
+                            notation: "compact",
+                            maximumFractionDigits: 1
+                          }).format(record["visits"])
+                        }} 次浏览
+                      </el-text>
                     </div>
                   </el-col>
                 </el-row>

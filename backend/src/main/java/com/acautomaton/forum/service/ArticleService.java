@@ -243,7 +243,7 @@ public class ArticleService {
                             .selectAs(Topic::getAvatar, EsArticle::getTopicAvatar)
                             .eq(Collection::getCollector, collectorUid)
                             .eq(Collection::getType, CollectionType.ARTICLE)
-                            .orderByDesc(ThumbsUp::getTime)
+                            .orderByDesc(Collection::getTime)
                             .innerJoin(User.class, User::getUid, Article::getOwner)
                             .innerJoin(Topic.class, Topic::getId, Article::getTopic)
                             .innerJoin(Collection.class, Collection::getBeCollectedId, Article::getId);
