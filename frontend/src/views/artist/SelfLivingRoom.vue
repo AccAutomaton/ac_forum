@@ -11,6 +11,8 @@ import {useRoute} from "vue-router";
 import ArtistTopicList from "@/views/artist/ArtistTopicList.vue";
 import ArtistThumbsUpList from "@/views/artist/ArtistThumbsUpList.vue";
 import ArtistCollectionList from "@/views/artist/ArtistCollectionList.vue";
+import ArtistFollowsList from "@/views/artist/ArtistFollowsList.vue";
+import ArtistFansList from "@/views/artist/ArtistFansList.vue";
 
 const statistic = ref({});
 const init = async () => {
@@ -168,6 +170,8 @@ const handleSelect = (value) => {
       <ArtistTopicList v-else-if="activeIndex === 'topics'"/>
       <ArtistThumbsUpList v-else-if="activeIndex === 'thumbsUp'" @decreaseThumbsUp="statistic['thumbsUp']--"/>
       <ArtistCollectionList v-else-if="activeIndex === 'collections'" @decreaseCollections="statistic['collections']--"/>
+      <ArtistFollowsList v-else-if="activeIndex === 'follows'" @decreaseFollows="statistic['follows']--"/>
+      <ArtistFansList v-else-if="activeIndex === 'fans'"/>
     </el-main>
   </el-container>
 </template>

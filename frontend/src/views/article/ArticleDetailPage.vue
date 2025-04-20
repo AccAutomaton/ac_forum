@@ -87,6 +87,7 @@ const onClickFollowButton = async () => {
   const data = await follow(owner.value);
   if (data !== null) {
     alreadyFollowOwner.value = true;
+    ownerFans.value++;
   }
 }
 
@@ -94,6 +95,7 @@ const onClickUnfollowButton = async () => {
   const data = await unfollow(owner.value);
   if (data !== null) {
     alreadyFollowOwner.value = false;
+    ownerFans.value--;
   }
 }
 
@@ -160,7 +162,7 @@ const decreaseComments = () => {
                  :articleId="articleId" :comments="comments" :articleOwner="owner"/>
   <el-container>
     <el-main style="padding: 0">
-      <el-card style="border-style: none; padding-left: 30px">
+      <el-card style="border-style: none; padding-left: 30px" shadow="never">
         <div>
           <el-text style="font-size: 32px; font-weight: bolder; color: black">
             {{ title }}
