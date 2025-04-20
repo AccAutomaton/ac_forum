@@ -3,8 +3,15 @@ import {useRoute} from "vue-router";
 import SelfLivingRoom from "@/views/artist/SelfLivingRoom.vue";
 import store from "@/store/index.js";
 import OthersLivingRoom from "@/views/artist/OthersLivingRoom.vue";
+import {computed, inject, watch} from "vue";
 
-const artistId = useRoute().params.artistId;
+const route = useRoute();
+
+const artistId = computed(() => route.params.artistId);
+
+watch(artistId, () => {
+  inject("reloadPage");
+})
 </script>
 
 <template>

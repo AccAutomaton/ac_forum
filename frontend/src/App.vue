@@ -1,15 +1,20 @@
-<script>
-import NavigationBar from "@/components/navigationBar/NavigationBar.vue";
+<script setup>
+import NavigationBar from "@/components/navigationBar/NavigationBar.vue"
+import {nextTick, ref, provide} from "vue";
 
-export default {
-  name: "App",
-  components: {NavigationBar},
+const isRefreshFlag = ref(true)
+const reloadPage = () => {
+  isRefreshFlag.value = false
+  nextTick(() => {
+    isRefreshFlag.value = true
+  })
 }
+provide("reloadPage", reloadPage);
 </script>
 
 <template>
   <NavigationBar>
-    <router-view/>
+    <router-view v-if="isRefreshFlag"/>
   </NavigationBar>
 </template>
 

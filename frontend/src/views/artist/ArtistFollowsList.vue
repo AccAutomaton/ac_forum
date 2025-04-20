@@ -1,16 +1,18 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useRoute} from "vue-router";
 import {getArtistFollowsListByUid} from "@/request/artist.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import {Warning} from "@element-plus/icons-vue";
 import {unfollow} from "@/request/follow.js";
 import router from "@/router/index.js";
+import store from "@/store/index.js";
 
 const currentPageNumber = ref(1), currentPageSize = ref(12), pages = ref(0);
 const followsList = ref([]);
 
 const artistId = useRoute().params.artistId;
+const isSelfLivingRoom = computed(() => artistId === store.getters.getUid.toString());
 
 const getFollowsList = async () => {
   const data = await getArtistFollowsListByUid(artistId, currentPageNumber.value, currentPageSize.value);
@@ -54,7 +56,7 @@ const onClickUnfollowButton = async (index, uid) => {
               <el-col :span="6">
                 <el-avatar style="background-color: transparent; float: right" :size="50" :src="follow['avatar']"/>
               </el-col>
-              <el-col :span="10">
+              <el-col :span="isSelfLivingRoom ? 10 : 18">
                 <el-row>
                   <el-text style="font-weight: bolder; font-size: 18px; margin-bottom: 5px" line-clamp="1">
                     {{ follow["nickname"] }}
@@ -89,7 +91,7 @@ const onClickUnfollowButton = async (index, uid) => {
                   </el-col>
                 </el-row>
               </el-col>
-              <el-col :span="8">
+              <el-col v-if="isSelfLivingRoom" :span="8">
                 <el-popconfirm confirm-button-text="确认" cancel-button-text="取消"
                                :icon="Warning"
                                icon-color="red"

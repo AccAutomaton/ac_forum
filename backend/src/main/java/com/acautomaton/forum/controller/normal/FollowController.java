@@ -31,4 +31,9 @@ public class FollowController {
         followService.unfollow(userService.getCurrentUser().getUid(), targetUid);
         return Response.success();
     }
+
+    @GetMapping("/{beFollowedUid}")
+    public Response hadFollowed(@PathVariable Integer beFollowedUid) {
+        return Response.success(followService.hadFollowed(userService.getCurrentUser().getUid(), beFollowedUid));
+    }
 }

@@ -19,3 +19,10 @@ export const unfollow = (targetUid) => request({
 }).then(response => {
     return response["data"];
 })
+
+export const hadFollowed = (targetUid) => request({
+    url: `/follow/${targetUid}`,
+    method: 'GET',
+}).then(response => {
+    return response["data"];
+})

@@ -3,7 +3,7 @@ import store from "@/store/index.js";
 import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
 import {ChatLineSquare, Document, More} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
-import {ref} from "vue";
+import {computed, inject, ref, watch} from "vue";
 import {getArtistStatisticDataByUid} from "@/request/artist.js";
 import moment from "moment";
 import ArtistArticleList from "@/views/artist/ArtistArticleList.vue";
@@ -14,6 +14,15 @@ import ArtistCollectionList from "@/views/artist/ArtistCollectionList.vue";
 import ArtistFollowsList from "@/views/artist/ArtistFollowsList.vue";
 import ArtistFansList from "@/views/artist/ArtistFansList.vue";
 
+const route = useRoute();
+
+const artistId = computed(() => route.params.artistId);
+
+watch(artistId, () => {
+  inject("reloadPage");
+  init();
+})
+
 const statistic = ref({});
 const init = async () => {
   const data = await getArtistStatisticDataByUid(store.getters.getUid);
@@ -23,7 +32,7 @@ const init = async () => {
 }
 init();
 
-const activeIndex = ref(useRoute().query.tab === undefined ? "articles" : useRoute().query.tab);
+const activeIndex = ref(route.query.tab === undefined ? "articles" : route.query.tab);
 if (!["articles", "topics", "thumbsUp", "collections", "follows", "fans"].includes(activeIndex.value)) {
   router.push("/404");
 }
@@ -51,7 +60,7 @@ const handleSelect = (value) => {
               <template #content>
                 <el-row>
                   <el-text>UID：</el-text>
-                  <el-text>{{ statistic["uid"] }}</el-text>
+                  <el-text>{{ store.getters.getUid }}</el-text>
                 </el-row>
                 <el-row>
                   <el-text>注册于</el-text>
@@ -73,8 +82,9 @@ const handleSelect = (value) => {
           </el-row>
         </el-col>
         <el-col :span="11">
-          <el-button plain icon="editPen" size="large" style="float: right; margin-right: 40px"
-                     @click="router.push('/creation/center')">创作中心
+          <el-button plain icon="editPen" size="large" style="float: right; margin-right: 40px; border-radius: 10px"
+                     @click="router.push('/creation/center')">
+            创作中心
           </el-button>
         </el-col>
       </el-row>

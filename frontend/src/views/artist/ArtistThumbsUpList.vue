@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useRoute} from "vue-router";
 import {getArtistThumbsUpListByUid} from "@/request/artist.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
@@ -8,11 +8,13 @@ import removeMd from "remove-markdown";
 import moment from "moment";
 import {Warning} from "@element-plus/icons-vue";
 import {unThumbsUpArticle} from "@/request/article.js";
+import store from "@/store/index.js";
 
 const currentPageNumber = ref(1), currentPageSize = ref(10), pages = ref(0);
 const articleList = ref([]);
 
 const artistId = useRoute().params.artistId;
+const isSelfLivingRoom = computed(() => artistId === store.getters.getUid.toString());
 
 const getArticleList = async () => {
   const data = await getArtistThumbsUpListByUid(artistId, currentPageNumber.value, currentPageSize.value);
@@ -64,7 +66,7 @@ const onClickUnThumbsUpButton = async (index, articleId) => {
           <el-card shadow="hover" @click="router.push(`/article/${article['id']}`)"
                    style="border-radius: 10px; border-color: rgba(211,211,211,0.5); border-width: thin; width: 100%; cursor: pointer; margin-bottom: 10px">
             <el-row align="middle" style="padding: 10px 15px">
-              <el-col :span="17">
+              <el-col :span="isSelfLivingRoom ? 17 : 19">
                 <el-row align="middle">
                   <el-col :span="16">
                     <el-row>
@@ -192,7 +194,7 @@ const onClickUnThumbsUpButton = async (index, articleId) => {
               <el-col v-else :span="5" style="text-align: center; font-size: 14px; color: #a19b9b">
                 无图片
               </el-col>
-              <el-col :span="2">
+              <el-col v-if="isSelfLivingRoom" :span="2">
                 <el-row align="middle" justify="center" style="margin-right: -15px">
                   <el-popconfirm confirm-button-text="确认" cancel-button-text="取消"
                                  :icon="Warning"

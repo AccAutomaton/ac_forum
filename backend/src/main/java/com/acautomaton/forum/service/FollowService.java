@@ -77,4 +77,12 @@ public class FollowService {
         artistMapper.update(artistLambdaUpdateWrapper);
         log.info("用户 {} 取消关注 {}", followerUid, beFollowedUid);
     }
+
+    public Boolean hadFollowed(Integer follower, Integer beFollowed) {
+        LambdaQueryWrapper<Follow> followQueryWrapper = new LambdaQueryWrapper<>();
+        followQueryWrapper
+                .eq(Follow::getFollower, follower)
+                .eq(Follow::getBeFollowed, beFollowed);
+        return followMapper.exists(followQueryWrapper);
+    }
 }

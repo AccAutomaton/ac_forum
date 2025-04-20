@@ -31,7 +31,7 @@ getFansList();
 
 <template>
   <template v-if="fansList.length === 0">
-    <el-empty description="无关注" :image-size="150"/>
+    <el-empty description="无粉丝" :image-size="150"/>
   </template>
   <template v-else>
     <el-scrollbar height="58.5vh" width="100%">
