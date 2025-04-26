@@ -36,4 +36,9 @@ public class FollowController {
     public Response hadFollowed(@PathVariable Integer beFollowedUid) {
         return Response.success(followService.hadFollowed(userService.getCurrentUser().getUid(), beFollowedUid));
     }
+
+    @GetMapping("/increament")
+    public Response getFansIncreamentNearly7Days() {
+        return Response.success(followService.getFansIncreamentNearly7Days(userService.getCurrentUser().getUid()));
+    }
 }

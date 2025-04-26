@@ -81,3 +81,19 @@ export const getArtistFansListByUid = (uid, pageNumber, pageSize) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getDashboardData = () =>
+    request({
+        url: `/artist/dashboard`,
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })
+
+export const getTippingIncreamentNearly7Days = () =>
+    request({
+        url: `/artist/tipping/increament`,
+        method: 'GET',
+    }).then((response) => {
+        return response["data"];
+    })

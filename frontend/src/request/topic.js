@@ -86,3 +86,14 @@ export const updateTopicAvatarById = (id, avatarFileName) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getOwnTopicsVisitsTopX = (x) =>
+    request({
+        url: '/topic/list/visit',
+        method: 'GET',
+        params: {
+            topX: x
+        }
+    }).then((response) => {
+        return response["data"];
+    })

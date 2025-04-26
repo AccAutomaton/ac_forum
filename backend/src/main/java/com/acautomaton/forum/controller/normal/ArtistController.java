@@ -6,6 +6,7 @@ import com.acautomaton.forum.response.Response;
 import com.acautomaton.forum.service.ArticleService;
 import com.acautomaton.forum.service.ArtistService;
 import com.acautomaton.forum.service.TopicService;
+import com.acautomaton.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +16,15 @@ public class ArtistController {
     ArtistService artistService;
     ArticleService articleService;
     TopicService topicService;
+    UserService userService;
 
     @Autowired
-    public ArtistController(ArtistService artistService, ArticleService articleService, TopicService topicService) {
+    public ArtistController(ArtistService artistService, ArticleService articleService, TopicService topicService,
+                            UserService userService) {
         this.artistService = artistService;
         this.articleService = articleService;
         this.topicService = topicService;
+        this.userService = userService;
     }
 
     @GetMapping("/{artistId}/statistic")
@@ -70,5 +74,15 @@ public class ArtistController {
                                 @RequestParam(defaultValue = "1") Integer pageNumber,
                                 @RequestParam(defaultValue = "10") Integer pageSize) {
         return Response.success(artistService.getFans(artistId, pageNumber, pageSize));
+    }
+
+    @GetMapping("/dashboard")
+    public Response getDashboardData() {
+        return Response.success(artistService.getCreationDashboardData(userService.getCurrentUser().getUid()));
+    }
+
+    @GetMapping("/tipping/increament")
+    public Response getTippingIncreamentNearly7Days() {
+        return Response.success(articleService.getTippingsIncreamentNearly7Days(userService.getCurrentUser().getUid()));
     }
 }

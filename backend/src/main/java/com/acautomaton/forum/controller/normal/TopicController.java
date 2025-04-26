@@ -73,4 +73,9 @@ public class TopicController {
     public Response getTopicIdAndTitleList(@RequestParam String keyword) {
         return Response.success(topicService.getTopicIdAndTitleList(keyword));
     }
+
+    @GetMapping("/list/visit")
+    public Response getTopicListVisitTopX(@RequestParam Integer topX) {
+        return Response.success(topicService.getTopicVisitTopXByAdministratorId(userService.getCurrentUser().getUid(), topX));
+    }
 }

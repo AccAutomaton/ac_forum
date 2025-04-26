@@ -116,4 +116,9 @@ public class ArticleController {
                                    @RequestParam(defaultValue = "10") Integer pageSize) {
         return Response.success(articleService.getCommentListByArticleId(userService.getCurrentUser().getUid(), articleId, latest, pageNumber, pageSize));
     }
+
+    @GetMapping("/list/visit")
+    public Response getArticleListVisitTopX(@RequestParam Integer topX) {
+        return Response.success(articleService.getArticleVisitTopXListByOwnerId(userService.getCurrentUser().getUid(), topX));
+    }
 }

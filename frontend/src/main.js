@@ -32,4 +32,9 @@ app.use(ArcoVueIcon)
 // --- md-editor-vs --- //
 import 'md-editor-v3/lib/style.css';
 
+// --- vue-echarts --- //
+import 'echarts'
+import ECharts from 'vue-echarts'
+app.component('VueEcharts', ECharts)
+
 app.mount('#app')

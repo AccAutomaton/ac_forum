@@ -59,4 +59,10 @@ public class ExceptionHandler {
         log.warn("支付宝服务异常: {}", e.getMessage());
         return Response.error("服务器错误，请稍后重试");
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = Exception.class)
+    public Response OtherException(Exception e) {
+        log.error(e.getMessage());
+        return Response.error("服务器错误，请稍后重试");
+    }
 }

@@ -195,6 +195,18 @@ public class TopicService {
         return EsTopic.getIdAndTitle(esTopics.getContent());
     }
 
+    public List<EsTopic> getTopicVisitTopXByAdministratorId(Integer administratorId, Integer topX) {
+        MPJLambdaWrapper<Topic> mpjLambdaWrapper = new MPJLambdaWrapper<>();
+        mpjLambdaWrapper
+                .selectAs(Topic::getId, EsTopic::getId)
+                .selectAs(Topic::getTitle, EsTopic::getTitle)
+                .selectAs(Topic::getVisits, EsTopic::getVisits)
+                .eq(Topic::getAdministrator, administratorId)
+                .orderByDesc(Topic::getVisits)
+                .last("limit " + (topX > 0 && topX <= 20 ? topX : 20));
+        return topicMapper.selectJoinList(EsTopic.class, mpjLambdaWrapper);
+    }
+
     private Boolean hasVisitedTopic(Integer uid, Integer topicId, Integer intervalSeconds) {
         String key = "has_visited_topic_" + topicId + "_uid_" + uid + "_interval_" + intervalSeconds;
         if (redisService.hasKey(key)) {

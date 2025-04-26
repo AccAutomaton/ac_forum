@@ -146,3 +146,14 @@ export const createCommentByArticleId = (articleId, content, targetCommentId = n
     }).then(response => {
         return response["data"];
     })
+
+export const getOwnArticlesVisitsTopX = (x) =>
+    request({
+        url: '/article/list/visit',
+        method: 'GET',
+        params: {
+            topX: x,
+        }
+    }).then(response => {
+        return response["data"];
+    })

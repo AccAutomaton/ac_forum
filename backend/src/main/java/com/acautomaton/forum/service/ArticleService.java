@@ -1,6 +1,7 @@
 package com.acautomaton.forum.service;
 
 import com.acautomaton.forum.entity.*;
+import com.acautomaton.forum.entity.Collection;
 import com.acautomaton.forum.enumerate.*;
 import com.acautomaton.forum.exception.ForumException;
 import com.acautomaton.forum.exception.ForumExistentialityException;
@@ -18,10 +19,12 @@ import com.acautomaton.forum.entity.EsArticle;
 import com.acautomaton.forum.vo.article.GetArticleVO;
 import com.acautomaton.forum.vo.article.GetCommentListVO;
 import com.acautomaton.forum.vo.article.GetEsArticalListVO;
+import com.acautomaton.forum.vo.article.GetTippingsIncreamentVO;
 import com.acautomaton.forum.vo.comment.GetCommentVO;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.util.PageHelperVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -34,9 +37,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -531,6 +535,56 @@ public class ArticleService {
         );
         return new GetCommentListVO(commentPageHelperVO, CosFolderPath.AVATAR.getPath());
     }
+
+    public List<EsArticle> getArticleVisitTopXListByOwnerId(Integer ownerId, Integer topX) {
+        MPJLambdaWrapper<Article> articleLambdaWrapper = new MPJLambdaWrapper<>();
+        articleLambdaWrapper
+                .selectAs(Article::getId, EsArticle::getId)
+                .selectAs(Article::getTitle, EsArticle::getTitle)
+                .selectAs(Article::getVisits, EsArticle::getVisits)
+                .eq(Article::getOwner, ownerId)
+                .orderByDesc(Article::getVisits)
+                .last("limit " + (topX > 0 && topX <= 20 ? topX : 20));
+        return articleMapper.selectJoinList(EsArticle.class, articleLambdaWrapper);
+    }
+    
+    public List<GetTippingsIncreamentVO> getTippingsIncreamentNearly7Days(Integer owner) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -6);
+        Timestamp sevenDaysAgo = new Timestamp(calendar.getTimeInMillis());
+
+        QueryWrapper<CoinRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("DATE(update_time) as date", "SUM(coin_volume) as count")
+                .eq("uid", owner)
+                .eq("type", CoinRecordType.COIN_INCOME.getIndex())
+                .ge("update_time", sevenDaysAgo)
+                .groupBy("DATE(update_time)")
+                .orderByAsc("DATE(update_time)");
+        List<Map<String, Object>> increamentList = coinRecordMapper.selectMaps(queryWrapper);
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<Date> dateRange = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            dateRange.add(calendar.getTime());
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        Map<String, Integer> resultMap = new HashMap<>();
+        for (Map<String, Object> map : increamentList) {
+            Date date = (Date) map.get("date");
+            String dateStr = sdf.format(date);
+            Integer count = ((BigDecimal) map.get("count")).intValue();
+            resultMap.put(dateStr, count);
+        }
+        List<GetTippingsIncreamentVO> tippingsIncreamentList = new ArrayList<>();
+        for (Date date : dateRange) {
+            String dateStr = sdf.format(date);
+            Integer count = resultMap.getOrDefault(dateStr, 0);
+            tippingsIncreamentList.add(new GetTippingsIncreamentVO(date, count));
+        }
+
+        return tippingsIncreamentList;
+    }
+
 
     private Boolean hasVisitedArticle(Integer uid, Integer articleId, Integer intervalSeconds) {
         String key = "has_visited_article_" + articleId + "_uid_" + uid + "_interval_" + intervalSeconds;

@@ -26,3 +26,11 @@ export const hadFollowed = (targetUid) => request({
 }).then(response => {
     return response["data"];
 })
+
+export const getFansIncreamentNearly7Days = () =>
+    request({
+        url: '/follow/increament',
+        method: 'GET',
+    }).then(response => {
+        return response["data"];
+    })
