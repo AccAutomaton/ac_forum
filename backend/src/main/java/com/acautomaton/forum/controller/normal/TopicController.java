@@ -78,4 +78,11 @@ public class TopicController {
     public Response getTopicListVisitTopX(@RequestParam Integer topX) {
         return Response.success(topicService.getTopicVisitTopXByAdministratorId(userService.getCurrentUser().getUid(), topX));
     }
+
+    @GetMapping("/list/own")
+    public Response getOwnTopicList(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                    @RequestParam(defaultValue = "10") Integer pageSize,
+                                    @RequestParam(defaultValue = "2") Integer queryType) {
+        return Response.success(topicService.getTopicListByAdministratorUid(userService.getCurrentUser().getUid(), TopicQueryType.getById(queryType), pageNumber, pageSize));
+    }
 }

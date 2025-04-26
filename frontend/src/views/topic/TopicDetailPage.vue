@@ -17,7 +17,7 @@ import store from "@/store/index.js";
 import ArticleOfTopicVisitsRankingList from "@/views/topic/ArticleOfTopicVisitsRankingList.vue";
 import ArticleOfTopicThumbsUpRankingList from "@/views/topic/ArticleOfTopicThumbsUpRankingList.vue";
 import ArticleListOfTopic from "@/views/topic/ArticleListOfTopic.vue";
-import {ElNotification} from "element-plus";
+import {ElMessageBox, ElNotification} from "element-plus";
 import router from "@/router/index.js";
 
 const topicId = useRoute().params.topicId;
@@ -65,13 +65,24 @@ const onClickConfirmUpdateTopicButton = async () => {
   }
 }
 
-const onClickConfirmDeleteTopicButton = async () => {
-  const data = await deleteTopic(topicId);
-  if (data !== null) {
-    ElNotification({type: "success", title: "删除成功"});
-    manageTopicDialogVisible.value = false;
-    router.back();
-  }
+const onClickConfirmDeleteTopicButton = () => {
+  ElMessageBox.confirm(
+      '确定要删除此话题？',
+      '警告：删除话题',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  ).then(async () => {
+    const data = await deleteTopic(topicId);
+    if (data !== null) {
+      ElNotification({type: "success", title: "删除成功"});
+      manageTopicDialogVisible.value = false;
+      router.back();
+    }
+  }).catch(() => {
+  })
 }
 
 const onClickCancelUpdateTopicButton = () => {

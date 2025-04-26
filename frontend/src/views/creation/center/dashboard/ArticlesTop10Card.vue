@@ -33,7 +33,7 @@ const init = async () => {
           type: "bar",
           data: articleVisitsList.value,
           itemStyle: {
-            barBorderRadius: 3,
+            borderRadius: 3,
             color: 'rgba(64,158,255,0.75)',
           },
           label: {

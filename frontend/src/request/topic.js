@@ -97,3 +97,16 @@ export const getOwnTopicsVisitsTopX = (x) =>
     }).then((response) => {
         return response["data"];
     })
+
+export const getOwnTopicList = (pageNumber, pageSize, queryType = 2) =>
+    request({
+        url: '/topic/list/own',
+        method: 'GET',
+        params: {
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            queryType: queryType,
+        }
+    }).then((response) => {
+        return response["data"];
+    })

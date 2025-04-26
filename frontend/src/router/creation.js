@@ -2,7 +2,7 @@ const creationRoutes = [
     {
         path: '/creation',
         redirect: '/creation/dashboard',
-        component: () => import('@/views/creation/CreationCenterPage.vue'),
+        component: () => import('@/views/creation/center/CreationCenterPage.vue'),
         children: [
             {
                 path: 'create',
@@ -14,15 +14,15 @@ const creationRoutes = [
             },
             {
                 path: 'dashboard',
-                component: () => import("@/views/creation/DashboardTab.vue")
+                component: () => import("@/views/creation/center/dashboard/DashboardTab.vue")
             },
             {
                 path: 'topics',
-                component: () => import("@/views/creation/TopicsTab.vue")
+                component: () => import("@/views/creation/center/TopicsTab.vue")
             },
             {
                 path: 'articles',
-                component: () => import("@/views/creation/ArticlesTab.vue")
+                component: () => import("@/views/creation/center/ArticlesTab.vue")
             }
         ],
         meta: {

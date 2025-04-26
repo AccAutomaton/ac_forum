@@ -2,10 +2,10 @@
 import {ref} from "vue";
 import {getDashboardData} from "@/request/artist.js";
 import {ChatLineSquare, Coin, Document, User} from "@element-plus/icons-vue";
-import TopicsTop10Card from "@/views/creation/TopicsTop10Card.vue";
-import ArticlesTop10Card from "@/views/creation/ArticlesTop10Card.vue";
-import FansIncreamentCard from "@/views/creation/FansIncreamentCard.vue";
-import TippingsIncreamentCard from "@/views/creation/TippingsIncreamentCard.vue";
+import TopicsTop10Card from "@/views/creation/center/dashboard/TopicsTop10Card.vue";
+import ArticlesTop10Card from "@/views/creation/center/dashboard/ArticlesTop10Card.vue";
+import FansIncreamentCard from "@/views/creation/center/dashboard/FansIncreamentCard.vue";
+import TippingsIncreamentCard from "@/views/creation/center/dashboard/TippingsIncreamentCard.vue";
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
 
