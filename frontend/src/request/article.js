@@ -157,3 +157,24 @@ export const getOwnArticlesVisitsTopX = (x) =>
     }).then(response => {
         return response["data"];
     })
+
+export const getOwnArticleList = (pageNumber, pageSize, queryType = 2) =>
+    request({
+        url: '/article/list/own',
+        method: 'GET',
+        params: {
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            queryType: queryType,
+        }
+    }).then(response => {
+        return response["data"];
+    })
+
+export const deleteArticleById = (id) =>
+    request({
+        url: '/article/' + id,
+        method: 'DELETE',
+    }).then(response => {
+        return response["data"];
+    })

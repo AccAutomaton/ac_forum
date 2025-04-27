@@ -122,6 +122,9 @@ public class ArtistService {
                     .select("SUM(coin_volume) AS tippings")
                     .eq("uid", uid)
                     .eq("type", CoinRecordType.COIN_INCOME.getIndex());
+            if (coinRecordMapper.selectMaps(coinRecordQueryWrapper).getFirst() == null) {
+                return 0;
+            }
             return ((BigDecimal) coinRecordMapper.selectMaps(coinRecordQueryWrapper).getFirst().get("tippings")).intValue();
         }, command -> Thread.ofVirtual().name("virtual-thread-coin-record-jdbc-", 1).start(command));
 

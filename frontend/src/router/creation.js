@@ -5,14 +5,6 @@ const creationRoutes = [
         component: () => import('@/views/creation/center/CreationCenterPage.vue'),
         children: [
             {
-                path: 'create',
-                component: () => import("@/views/creation/CreationCreatePage.vue")
-            },
-            {
-                path: 'edit/:articleId',
-                component: () => import("@/views/creation/CreationEditPage.vue")
-            },
-            {
                 path: 'dashboard',
                 component: () => import("@/views/creation/center/dashboard/DashboardTab.vue")
             },
@@ -28,7 +20,15 @@ const creationRoutes = [
         meta: {
             require_authentication: true,
         }
-    }
+    },
+    {
+        path: '/creation/create',
+        component: () => import("@/views/creation/CreationCreatePage.vue")
+    },
+    {
+        path: '/creation/edit/:articleId',
+        component: () => import("@/views/creation/CreationEditPage.vue")
+    },
 ]
 
 export default creationRoutes;

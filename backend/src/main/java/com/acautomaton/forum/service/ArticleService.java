@@ -257,9 +257,9 @@ public class ArticleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteArticleById(Integer uid, Integer topicId) {
+    public void deleteArticleById(Integer uid, Integer articleId) {
         LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        articleLambdaUpdateWrapper.eq(Article::getId, topicId);
+        articleLambdaUpdateWrapper.eq(Article::getId, articleId);
         Article article = articleMapper.selectOne(articleLambdaUpdateWrapper);
         if (article == null) {
             throw new ForumExistentialityException("文章不存在");
@@ -268,8 +268,21 @@ public class ArticleService {
             throw new ForumIllegalAccountException("没有权限进行此操作");
         }
         articleMapper.delete(articleLambdaUpdateWrapper);
-        log.info("用户 {} 删除了文章 {}", uid, topicId);
-        articleAsyncService.synchronizeDeleteArticleToElasticSearchByTopicId(topicId);
+        log.info("用户 {} 删除了文章 {}", uid, articleId);
+
+        LambdaUpdateWrapper<Artist> artistLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        artistLambdaUpdateWrapper
+                .eq(Artist::getUid, uid)
+                .setDecrBy(Artist::getArticles, 1);
+        artistMapper.update(artistLambdaUpdateWrapper);
+
+        LambdaUpdateWrapper<Topic> topicLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        topicLambdaUpdateWrapper
+                .eq(Topic::getId, article.getTopic())
+                .setDecrBy(Topic::getArticles, 1);
+        topicMapper.update(topicLambdaUpdateWrapper);
+
+        articleAsyncService.synchronizeDeleteArticleToElasticSearchByTopicId(articleId);
         topicAsyncService.synchronizeTopicToElasticSearchByArticleId(article.getId());
     }
 

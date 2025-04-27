@@ -121,4 +121,17 @@ public class ArticleController {
     public Response getArticleListVisitTopX(@RequestParam Integer topX) {
         return Response.success(articleService.getArticleVisitTopXListByOwnerId(userService.getCurrentUser().getUid(), topX));
     }
+
+    @GetMapping("/list/own")
+    public Response getOwnArticleList(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                      @RequestParam(defaultValue = "10") Integer pageSize,
+                                      @RequestParam(defaultValue = "2") Integer queryType) {
+        return Response.success(articleService.getEsArticalListByOwnerUid(userService.getCurrentUser().getUid(), ArticleQueryType.getById(queryType), pageNumber, pageSize));
+    }
+
+    @DeleteMapping("/{articleId}")
+    public Response deleteArticle(@PathVariable Integer articleId) {
+        articleService.deleteArticleById(userService.getCurrentUser().getUid(), articleId);
+        return Response.success();
+    }
 }

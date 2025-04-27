@@ -60,16 +60,16 @@ refreshTopicList();
     </el-table-column>
   </el-table>
   <div style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 15px">
-      <el-pagination
-          v-model:current-page="currentPageNumber"
-          v-model:page-size="currentPageSize"
-          :page-sizes="[10, 20]"
-          size=large
-          layout="prev, pager, next, ->, sizes"
-          :page-count="pages"
-          @change="refreshTopicList"
-      />
-    </div>
+    <el-pagination
+        v-model:current-page="currentPageNumber"
+        v-model:page-size="currentPageSize"
+        :page-sizes="[10, 20]"
+        size=large
+        layout="prev, pager, next, ->, sizes"
+        :page-count="pages"
+        @change="refreshTopicList"
+    />
+  </div>
 </template>
 
 <style scoped>
