@@ -18,6 +18,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class CosService {
 
     COSClient cosClient;
 
+    @Async
     @PostConstruct
     public void initCosClient() {
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);

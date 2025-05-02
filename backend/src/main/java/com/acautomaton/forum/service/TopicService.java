@@ -5,6 +5,7 @@ import com.acautomaton.forum.entity.Topic;
 import com.acautomaton.forum.entity.User;
 import com.acautomaton.forum.enumerate.CosActions;
 import com.acautomaton.forum.enumerate.CosFolderPath;
+import com.acautomaton.forum.enumerate.PointRecordType;
 import com.acautomaton.forum.enumerate.TopicQueryType;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalAccountException;
@@ -42,17 +43,19 @@ public class TopicService {
     TopicMapper topicMapper;
     CosService cosService;
     RedisService redisService;
+    PointService pointService;
     EsTopicRepository esTopicRepository;
 
     @Autowired
     public TopicService(TopicMapper topicMapper, CosService cosService, RedisService redisService, TopicAsyncService topicAsyncService,
-                        ArticleAsyncService articleAsyncService, EsTopicRepository esTopicRepository) {
+                        ArticleAsyncService articleAsyncService, EsTopicRepository esTopicRepository, PointService pointService) {
         this.topicMapper = topicMapper;
         this.cosService = cosService;
         this.redisService = redisService;
         this.topicAsyncService = topicAsyncService;
         this.articleAsyncService = articleAsyncService;
         this.esTopicRepository = esTopicRepository;
+        this.pointService = pointService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -66,6 +69,7 @@ public class TopicService {
         topicMapper.insert(topic);
         log.info("用户 {} 创建了话题 {}", administrator, topic.getId());
         esTopicRepository.save(new EsTopic(topic));
+        pointService.addPoint(administrator, PointRecordType.NORMAL_INCOME, 10, "发起话题", title);
         return topic.getId();
     }
 

@@ -65,6 +65,7 @@ public class ArticleService {
     RedisService redisService;
     CosService cosService;
     MessageService messageService;
+    PointService pointService;
 
     @Autowired
     public ArticleService(ArticleMapper articleMapper, ArtistMapper artistMapper, TopicMapper topicMapper,
@@ -73,7 +74,7 @@ public class ArticleService {
                           CosService cosService, EsTopicRepository esTopicRepository, FollowMapper followMapper,
                           CommentMapper commentMapper, ThumbsUpMapper thumbsUpMapper, CollectionMapper collectionMapper,
                           UserMapper userMapper, CoinRecordMapper coinRecordMapper, MessageService messageService,
-                          PointRecordMapper pointRecordMapper) {
+                          PointRecordMapper pointRecordMapper, PointService pointService) {
         this.articleMapper = articleMapper;
         this.artistMapper = artistMapper;
         this.topicMapper = topicMapper;
@@ -92,6 +93,7 @@ public class ArticleService {
         this.coinRecordMapper = coinRecordMapper;
         this.messageService = messageService;
         this.pointRecordMapper = pointRecordMapper;
+        this.pointService = pointService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -123,6 +125,7 @@ public class ArticleService {
                 .innerJoin(User.class, User::getUid, Article::getOwner)
                 .innerJoin(Topic.class, Topic::getId, Article::getTopic);
         esArticleRepository.save(articleMapper.selectJoinOne(EsArticle.class, queryWrapper));
+        pointService.addPoint(owner, PointRecordType.NORMAL_INCOME, 100, "发布文章", title);
         log.info("用户 {} 创建了文章 {}", owner, article.getId());
         return article.getId();
     }
@@ -362,6 +365,7 @@ public class ArticleService {
         articleAsyncService.increaseThumbsUpById(articleId);
         messageService.createMessage(article.getOwner(), "您的文章收到来自用户 " + user.getNickname() + " 的点赞", MessageType.NORMAL,
                 "文章: " + article.getTitle(), "/article/" + articleId);
+        pointService.addPoint(user.getUid(), PointRecordType.NORMAL_INCOME, 1, "点赞文章", article.getTitle());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -382,7 +386,8 @@ public class ArticleService {
     public void collect(Integer uid, Integer articleId) {
         LambdaQueryWrapper<Article> articleLambdaQueryWrapper = new LambdaQueryWrapper<>();
         articleLambdaQueryWrapper.eq(Article::getId, articleId);
-        if (!articleMapper.exists(articleLambdaQueryWrapper)) {
+        Article article = articleMapper.selectOne(articleLambdaQueryWrapper);
+        if (article == null) {
             throw new ForumExistentialityException("目标文章不存在");
         }
         LambdaQueryWrapper<Collection> collectionLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -401,6 +406,7 @@ public class ArticleService {
         artistMapper.update(artistLambdaUpdateWrapper);
         log.info("用户 {} 收藏了文章 {}", uid, articleId);
         articleAsyncService.increaseCollectionsById(articleId);
+        pointService.addPoint(uid, PointRecordType.NORMAL_INCOME, 1, "收藏文章", article.getTitle());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -475,11 +481,13 @@ public class ArticleService {
     public void forward(Integer uid, Integer articleId) {
         LambdaUpdateWrapper<Article> articleLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         articleLambdaUpdateWrapper.eq(Article::getId, articleId);
-        if (!articleMapper.exists(articleLambdaUpdateWrapper)) {
+        Article article = articleMapper.selectOne(articleLambdaUpdateWrapper);
+        if (article == null) {
             throw new ForumExistentialityException("目标文章不存在");
         }
         log.info("用户 {} 转发文章 {}", uid, articleId);
         articleAsyncService.increaseForwardsById(articleId);
+        pointService.addPoint(uid, PointRecordType.NORMAL_INCOME, 1, "转发文章", article.getTitle());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -509,6 +517,7 @@ public class ArticleService {
             messageService.createMessage(targetComment.getCommenter(), "用户 " + user.getNickname() + " 回复了你的评论", MessageType.NORMAL, comment.getContent(),
                     "/article/" + comment.getTargetArticle() + "?showComment=" + comment.getId());
         }
+        pointService.addPoint(user.getUid(), PointRecordType.NORMAL_INCOME, 10, "评论文章", article.getTitle());
         return comment.getId();
     }
 

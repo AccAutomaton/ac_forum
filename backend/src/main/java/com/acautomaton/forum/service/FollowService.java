@@ -3,6 +3,7 @@ package com.acautomaton.forum.service;
 import com.acautomaton.forum.entity.Artist;
 import com.acautomaton.forum.entity.Follow;
 import com.acautomaton.forum.entity.User;
+import com.acautomaton.forum.enumerate.PointRecordType;
 import com.acautomaton.forum.exception.ForumExistentialityException;
 import com.acautomaton.forum.exception.ForumIllegalArgumentException;
 import com.acautomaton.forum.mapper.ArtistMapper;
@@ -26,11 +27,13 @@ public class FollowService {
     FollowMapper followMapper;
     UserMapper userMapper;
     ArtistMapper artistMapper;
+    PointService pointService;
 
-    public FollowService(FollowMapper followMapper, UserMapper userMapper, ArtistMapper artistMapper) {
+    public FollowService(FollowMapper followMapper, UserMapper userMapper, ArtistMapper artistMapper, PointService pointService) {
         this.followMapper = followMapper;
         this.userMapper = userMapper;
         this.artistMapper = artistMapper;
+        this.pointService = pointService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -40,7 +43,8 @@ public class FollowService {
         }
         LambdaQueryWrapper<User> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(User::getUid, beFollowedUid);
-        if (!userMapper.exists(userQueryWrapper)) {
+        User beFollowedUser = userMapper.selectOne(userQueryWrapper);
+        if (beFollowedUser == null) {
             throw new ForumExistentialityException("目标用户不存在");
         }
         LambdaQueryWrapper<Follow> followQueryWrapper = new LambdaQueryWrapper<>();
@@ -60,6 +64,7 @@ public class FollowService {
                 .eq(Artist::getUid, followerUid)
                 .setIncrBy(Artist::getFollows, 1);
         artistMapper.update(artistLambdaUpdateWrapper);
+        pointService.addPoint(followerUid, PointRecordType.NORMAL_INCOME, 1, "关注用户", beFollowedUser.getNickname());
         log.info("用户 {} 关注了 {}", followerUid, beFollowedUid);
     }
 

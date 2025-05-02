@@ -18,6 +18,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public class AlipayService {
         this.rechargeMapper = rechargeMapper;
     }
 
+    @Async
     @PostConstruct
     public void initAlipayClient() throws AlipayApiException {
         AlipayConfig config = new AlipayConfig();
