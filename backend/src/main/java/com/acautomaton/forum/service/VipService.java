@@ -22,8 +22,10 @@ import com.alipay.api.domain.GoodsDetail;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +50,28 @@ public class VipService {
         this.rechargeMapper = rechargeMapper;
         this.coinRecordMapper = coinRecordMapper;
         this.messageService = messageService;
+    }
+
+    @PostConstruct
+    @Scheduled(cron = "0 0 0 * * *")
+    public void refreshVipStatus() {
+        LambdaQueryWrapper<Vip> vipLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        long count = vipMapper.selectCount(vipLambdaQueryWrapper);
+        for (long i = 0; i < count; i += 100) {
+            vipLambdaQueryWrapper.last("limit " + i + ", 100");
+            List<Vip> vips = vipMapper.selectList(vipLambdaQueryWrapper);
+            for (Vip vip : vips) {
+                if (vip.getExpirationTime() != null && vip.getExpirationTime().before(new Date())) {
+                    LambdaUpdateWrapper<Vip> vipLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                    vipLambdaUpdateWrapper
+                            .eq(Vip::getUid, vip.getUid())
+                            .set(Vip::getVipType, VipType.NONE)
+                            .set(Vip::getExpirationTime, null);
+                    vipMapper.update(vipLambdaUpdateWrapper);
+                }
+            }
+        }
+        log.info("VipService --- 已刷新会员状态");
     }
 
     public Vip getVipByUid(int uid) {
