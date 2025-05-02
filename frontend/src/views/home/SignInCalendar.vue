@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {getSignInInfo, signIn} from "@/request/signIn.js";
+import {getSignInInfo, signIn} from "@/request/normal/signIn.js";
 import {ElNotification} from "element-plus";
 
 const signedInSet = ref(new Set());

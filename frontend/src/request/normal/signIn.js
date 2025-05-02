@@ -1,4 +1,4 @@
-import request from "@/request/index.js";
+import request from "@/request/normal/index.js";
 
 const date = new Date();
 

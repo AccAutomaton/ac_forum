@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {getFansIncreamentNearly7Days} from "@/request/follow.js";
+import {getFansIncreamentNearly7Days} from "@/request/normal/follow.js";
 
 const chartOption = ref({});
 const dateList = ref([]), countList = ref([]);

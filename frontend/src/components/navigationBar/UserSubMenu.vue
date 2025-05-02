@@ -2,8 +2,8 @@
 import store from "@/store/index.js";
 import {Promotion} from "@element-plus/icons-vue";
 import {useStorage} from "@vueuse/core";
-import {getNavigationBarUserInformation} from "@/request/user.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getNavigationBarUserInformation} from "@/request/normal/user.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import UserPopoverCard from "@/components/navigationBar/UserPopoverCard.vue";
 import {ref} from "vue";
 

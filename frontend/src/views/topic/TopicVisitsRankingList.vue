@@ -1,8 +1,8 @@
 <script setup>
 import {Histogram} from "@element-plus/icons-vue";
-import {queryTopicList} from "@/request/topic.js";
+import {queryTopicList} from "@/request/normal/topic.js";
 import {ref} from "vue";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import router from "@/router/index.js";
 
 const getCardClass = (index) => {

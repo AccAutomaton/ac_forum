@@ -1,11 +1,11 @@
 <script setup>
 import {MessageBox} from "@element-plus/icons-vue";
 import {ref, watch} from "vue";
-import {doReadMessage, getMessageList, getNotSeenMessageCount} from "@/request/message.js";
+import {doReadMessage, getMessageList, getNotSeenMessageCount} from "@/request/normal/message.js";
 import moment from "moment";
 import router from "@/router/index.js";
 import store from "@/store/index.js";
-import {GetAuthorizationCode} from "@/request/index.js";
+import {GetAuthorizationCode} from "@/request/normal/index.js";
 import {ElNotification} from "element-plus";
 
 const segmentedValue = ref("notSeen")

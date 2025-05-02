@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import router from "@/router/index.js";
-import {getOwnArticlesVisitsTopX} from "@/request/article.js";
+import {getOwnArticlesVisitsTopX} from "@/request/normal/article.js";
 
 const chartOption = ref({});
 const articleTitleList = ref([]), articleVisitsList = ref([]), articleIdList = ref([]);

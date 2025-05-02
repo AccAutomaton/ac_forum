@@ -1,8 +1,8 @@
 <script setup>
 import {ref} from "vue";
 import {useRoute} from "vue-router";
-import {getArtistFansListByUid} from "@/request/artist.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getArtistFansListByUid} from "@/request/normal/artist.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import router from "@/router/index.js";
 
 const currentPageNumber = ref(1), currentPageSize = ref(12), pages = ref(0);

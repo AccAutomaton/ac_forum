@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {getTippingIncreamentNearly7Days} from "@/request/artist.js";
+import {getTippingIncreamentNearly7Days} from "@/request/normal/artist.js";
 
 const chartOption = ref({});
 const dateList = ref([]), countList = ref([]);

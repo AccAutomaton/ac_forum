@@ -1,10 +1,10 @@
 <script setup>
 import {nextTick, ref} from "vue";
 import moment from "moment";
-import {createCommentByArticleId, getCommentListByArticleId} from "@/request/article.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {createCommentByArticleId, getCommentListByArticleId} from "@/request/normal/article.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import store from "@/store/index.js";
-import {deleteCommentById, getCommentById, thumbsUpCommentById, unThumbsUpCommentById} from "@/request/comment.js";
+import {deleteCommentById, getCommentById, thumbsUpCommentById, unThumbsUpCommentById} from "@/request/normal/comment.js";
 import {ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";

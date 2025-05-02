@@ -7,11 +7,11 @@ import {
   readChatById,
   sendChatImageMessage,
   sendChatMessage
-} from "@/request/chat.js";
+} from "@/request/normal/chat.js";
 import store from "@/store/index.js";
 import {Picture, Setting} from "@element-plus/icons-vue";
 import {useStorage} from "@vueuse/core";
-import {getObjectUrl, uploadObject} from "@/request/cos.js";
+import {getObjectUrl, uploadObject} from "@/request/normal/cos.js";
 
 const {currentChat} = defineProps({
   currentChat: {},

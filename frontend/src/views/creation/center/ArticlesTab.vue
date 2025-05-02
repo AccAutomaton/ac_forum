@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {deleteArticleById, getOwnArticleList} from "@/request/article.js";
+import {deleteArticleById, getOwnArticleList} from "@/request/normal/article.js";
 import router from "@/router/index.js";
 import {Close, Edit, View} from "@element-plus/icons-vue";
 import {ElMessageBox, ElNotification} from "element-plus";

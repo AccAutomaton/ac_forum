@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {queryArticleList} from "@/request/article.js";
+import {queryArticleList} from "@/request/normal/article.js";
 import router from "@/router/index.js";
 import {Histogram} from "@element-plus/icons-vue";
 

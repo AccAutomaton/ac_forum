@@ -7,14 +7,14 @@ import {
   thumbsUpArticle,
   unCollectArticle,
   unThumbsUpArticle
-} from "@/request/article.js";
+} from "@/request/normal/article.js";
 import {ref} from "vue";
 import moment from "moment";
-import {getObjectUrlOfPublicResources, SyncGetObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources, SyncGetObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import {Coin, EditPen, Warning} from "@element-plus/icons-vue";
 import store from "@/store/index.js";
 import router from "@/router/index.js";
-import {follow, unfollow} from "@/request/follow.js";
+import {follow, unfollow} from "@/request/normal/follow.js";
 import TippingDialog from "@/views/article/TippingDialog.vue";
 import CommentDrawer from "@/views/article/CommentDrawer.vue";
 import removeMd from "remove-markdown";

@@ -1,6 +1,6 @@
 <script setup>
 
-import {getObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources, uploadObject} from "@/request/normal/cos.js";
 import {ElNotification} from "element-plus";
 import store from "@/store/index.js";
 import {ref} from "vue";
@@ -12,9 +12,9 @@ import {
   setAvatarCustomization,
   setEmail,
   setNickname
-} from "@/request/user.js";
+} from "@/request/normal/user.js";
 import {ChatDotRound, Coordinate, Edit, Message, Upload} from "@element-plus/icons-vue";
-import {getGraphicCaptchaImage} from "@/request/login.js";
+import {getGraphicCaptchaImage} from "@/request/normal/login.js";
 
 const avatar = ref(""), isDefaultAvatar = ref(false);
 const uid = ref(""), username = ref(""), email = ref("");

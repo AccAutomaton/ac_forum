@@ -35,7 +35,7 @@ public class AdministratorMessageController {
         String targetUrl;
     }
 
-    @PostMapping("/send/temporary")
+    @PutMapping("/send/temporary")
     public Response sendTemporaryMessage(@RequestBody SendMessageDTO dto) {
         MessageWebSocketServer.sendMessage(dto.getUid(), new Message(
                 null, dto.getUid(), dto.getTitle(), MessageType.getById(dto.getType()), dto.getContent(),

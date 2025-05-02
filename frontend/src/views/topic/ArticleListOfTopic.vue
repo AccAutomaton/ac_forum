@@ -1,8 +1,8 @@
 <script setup>
 import {Search} from "@element-plus/icons-vue";
 import {ref, watch} from "vue";
-import {queryArticleListOfTopic} from "@/request/article.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {queryArticleListOfTopic} from "@/request/normal/article.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import router from "@/router/index.js";
 import removeMd from "remove-markdown";
 import {articleQueryOptions} from "@/utils/options.js";

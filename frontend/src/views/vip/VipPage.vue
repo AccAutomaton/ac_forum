@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import {CaretTop, QuestionFilled, Warning} from "@element-plus/icons-vue";
-import {getVip, getVipPrice, refreshPayingStatus} from "@/request/vip.js";
+import {getVip, getVipPrice, refreshPayingStatus} from "@/request/normal/vip.js";
 import PayDialog from "@/views/vip/PayDialog.vue";
 import PaySuccessDialog from "@/views/vip/PaySuccessDialog.vue";
 import {ElNotification} from "element-plus";

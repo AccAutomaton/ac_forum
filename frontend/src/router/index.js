@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import store from "@/store/index.js";
-import {GetAuthorizationCode} from "@/request/index.js";
+import {GetAuthorizationCode} from "@/request/normal/index.js";
 import userCenterRoutes from "@/router/userCenter.js";
 import topicRoutes from "@/router/topic.js";
 import vipRoutes from "@/router/vip.js";
@@ -9,6 +9,7 @@ import articleRoutes from "@/router/article.js";
 import creationRoutes from "@/router/creation.js";
 import chatRoutes from "@/router/chat.js";
 import artistRoutes from "@/router/artist.js";
+import consoleRoutes from "@/router/console.js";
 
 const indexRoutes = [
     {
@@ -33,7 +34,7 @@ const indexRoutes = [
 ];
 
 // noinspection JSCheckFunctionSignatures
-const routes = indexRoutes.concat(userCenterRoutes, topicRoutes, vipRoutes, articleRoutes, creationRoutes, chatRoutes, artistRoutes, notFoundRoutes)
+const routes = indexRoutes.concat(userCenterRoutes, topicRoutes, vipRoutes, articleRoutes, creationRoutes, chatRoutes, artistRoutes, consoleRoutes, notFoundRoutes)
 
 const router = createRouter({
     history: createWebHistory(),
@@ -41,6 +42,14 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+    if (to.meta["require_user_type_lower_than"]) {
+        if (store.getters.getUserType.index < to.meta["require_user_type_lower_than"]) {
+        } else {
+            next({
+                path: "/home",
+            })
+        }
+    }
     if (to.meta["require_authentication"]) {
         if (store.getters.getIsLogin || GetAuthorizationCode()) {
             next();

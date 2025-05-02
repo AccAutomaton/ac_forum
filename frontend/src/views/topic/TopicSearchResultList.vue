@@ -1,7 +1,7 @@
 <script setup>
 import {ref, watch} from "vue";
-import {queryTopicList} from "@/request/topic.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {queryTopicList} from "@/request/normal/topic.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import router from "@/router/index.js";
 import {useRoute} from "vue-router";
 

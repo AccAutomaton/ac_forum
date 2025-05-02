@@ -2,7 +2,7 @@
 import {Check, Lock} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import {ElNotification} from "element-plus";
-import {setPassword} from "@/request/user.js";
+import {setPassword} from "@/request/normal/user.js";
 
 const oldPassword = ref(""), newPassword = ref(""), confirmPassword = ref("");
 

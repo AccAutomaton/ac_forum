@@ -1,10 +1,10 @@
 <script setup>
 import {ref} from "vue";
 import {Coin} from "@element-plus/icons-vue";
-import {getCoins} from "@/request/coin.js";
+import {getCoins} from "@/request/normal/coin.js";
 import router from "@/router/index.js";
 import {ElNotification} from "element-plus";
-import {tippingArticle} from "@/request/article.js";
+import {tippingArticle} from "@/request/normal/article.js";
 
 const dialogVisible = ref(false);
 const balance = ref(0);

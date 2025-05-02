@@ -3,7 +3,7 @@ import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
 import {ChatLineSquare, Document, More} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import {computed, inject, ref, watch} from "vue";
-import {getArtistStatisticDataByUid} from "@/request/artist.js";
+import {getArtistStatisticDataByUid} from "@/request/normal/artist.js";
 import moment from "moment";
 import ArtistArticleList from "@/views/artist/ArtistArticleList.vue";
 import {useRoute} from "vue-router";
@@ -12,9 +12,9 @@ import ArtistThumbsUpList from "@/views/artist/ArtistThumbsUpList.vue";
 import ArtistCollectionList from "@/views/artist/ArtistCollectionList.vue";
 import ArtistFollowsList from "@/views/artist/ArtistFollowsList.vue";
 import ArtistFansList from "@/views/artist/ArtistFansList.vue";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
-import {follow, hadFollowed, unfollow} from "@/request/follow.js";
-import {createChat} from "@/request/chat.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
+import {follow, hadFollowed, unfollow} from "@/request/normal/follow.js";
+import {createChat} from "@/request/normal/chat.js";
 
 const statistic = ref({}), hadAlreadyFollowed = ref(false);
 

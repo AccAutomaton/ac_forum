@@ -1,12 +1,12 @@
 <script setup>
 import {Check, Lock, User} from "@element-plus/icons-vue";
 import {ref} from "vue";
-import {login} from "@/request/login.js";
+import {login} from "@/request/normal/login.js";
 import {useStorage} from "@vueuse/core";
 import store from "@/store/index.js";
 import router from "@/router/index.js";
-import {getNavigationBarUserInformation} from "@/request/user.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getNavigationBarUserInformation} from "@/request/normal/user.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 
 const emit = defineEmits(["setEnabledTab"]);
 const username = ref(""), password = ref("");
@@ -51,7 +51,7 @@ const Login = async () => {
     </el-row>
     <el-row style="text-align: center; margin-bottom: 10px;" align="middle">
       <el-input v-model="password" placeholder="请输入密码" clearable show-password size="large"
-                :prefix-icon="Lock" minlength="8" @input="checkIfEnableLoginButton">
+                :prefix-icon="Lock" minlength="8" @input="checkIfEnableLoginButton" @keyup.enter="login">
         <template #prepend>
           <span style="width: 50px">密码</span>
         </template>

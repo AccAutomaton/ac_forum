@@ -23,11 +23,17 @@ const creationRoutes = [
     },
     {
         path: '/creation/create',
-        component: () => import("@/views/creation/CreationCreatePage.vue")
+        component: () => import("@/views/creation/CreationCreatePage.vue"),
+        meta: {
+            require_authentication: true,
+        }
     },
     {
         path: '/creation/edit/:articleId',
-        component: () => import("@/views/creation/CreationEditPage.vue")
+        component: () => import("@/views/creation/CreationEditPage.vue"),
+        meta: {
+            require_authentication: true,
+        }
     },
 ]
 

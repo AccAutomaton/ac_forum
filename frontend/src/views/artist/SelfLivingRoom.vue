@@ -4,7 +4,7 @@ import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
 import {ChatLineSquare, Document, More} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import {computed, inject, ref, watch} from "vue";
-import {getArtistStatisticDataByUid} from "@/request/artist.js";
+import {getArtistStatisticDataByUid} from "@/request/normal/artist.js";
 import moment from "moment";
 import ArtistArticleList from "@/views/artist/ArtistArticleList.vue";
 import {useRoute} from "vue-router";

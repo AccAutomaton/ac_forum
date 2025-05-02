@@ -3,7 +3,7 @@ import {Plus, Search} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import TopicVisitsRankingList from "@/views/topic/TopicVisitsRankingList.vue";
 import TopicSearchResultList from "@/views/topic/TopicSearchResultList.vue";
-import {createTopic} from "@/request/topic.js";
+import {createTopic} from "@/request/normal/topic.js";
 import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {topicQueryOptions} from "@/utils/options.js";

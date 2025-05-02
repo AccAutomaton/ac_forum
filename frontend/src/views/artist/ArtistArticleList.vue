@@ -1,9 +1,9 @@
 <script setup>
 import {ref} from "vue";
 import {articleQueryOptions} from "@/utils/options.js";
-import {getArtistArticleListByUid} from "@/request/artist.js";
+import {getArtistArticleListByUid} from "@/request/normal/artist.js";
 import {useRoute} from "vue-router";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import removeMd from "remove-markdown";
 import moment from "moment";
 import router from "@/router/index.js";

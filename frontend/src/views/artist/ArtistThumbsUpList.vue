@@ -1,13 +1,13 @@
 <script setup>
 import {computed, ref} from "vue";
 import {useRoute} from "vue-router";
-import {getArtistThumbsUpListByUid} from "@/request/artist.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getArtistThumbsUpListByUid} from "@/request/normal/artist.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import router from "@/router/index.js";
 import removeMd from "remove-markdown";
 import moment from "moment";
 import {Warning} from "@element-plus/icons-vue";
-import {unThumbsUpArticle} from "@/request/article.js";
+import {unThumbsUpArticle} from "@/request/normal/article.js";
 import store from "@/store/index.js";
 
 const currentPageNumber = ref(1), currentPageSize = ref(10), pages = ref(0);

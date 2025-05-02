@@ -1,8 +1,8 @@
 <script setup>
 import {ref} from "vue";
 import {useRoute} from "vue-router";
-import {getArtistTopicListByUid} from "@/request/artist.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getArtistTopicListByUid} from "@/request/normal/artist.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import {topicQueryOptions} from "@/utils/options.js";
 import router from "@/router/index.js";
 

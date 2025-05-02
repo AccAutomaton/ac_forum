@@ -3,7 +3,7 @@ import {ChatDotRound, Check, Lock, Message, User} from "@element-plus/icons-vue"
 import router from "@/router/index.js";
 import {ref} from "vue";
 import {ElMessageBox, ElNotification} from "element-plus";
-import {findBackPassword, getEmailVerifyCodeForFindingBackPassword, getGraphicCaptchaImage,} from "@/request/login.js";
+import {findBackPassword, getEmailVerifyCodeForFindingBackPassword, getGraphicCaptchaImage,} from "@/request/normal/login.js";
 
 const username = ref(""), newPassword = ref(""), confirmPassword = ref("");
 const email = ref(""), verifyCode = ref("");

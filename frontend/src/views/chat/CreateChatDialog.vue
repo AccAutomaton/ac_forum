@@ -1,8 +1,8 @@
 <script setup>
 import {ref} from "vue";
-import {getUidAndNicknameList} from "@/request/user.js";
+import {getUidAndNicknameList} from "@/request/normal/user.js";
 import {ElNotification} from "element-plus";
-import {createChat} from "@/request/chat.js";
+import {createChat} from "@/request/normal/chat.js";
 
 const isNumeric = (value) => {
   return !isNaN(parseInt(value)) && !isNaN(value);
@@ -74,7 +74,7 @@ const onClickConfirmCreateChatButton = async () => {
       <el-radio :value="1">按UID查找</el-radio>
     </el-radio-group>
     <el-select-v2 v-model="targetUid" filterable remote :remote-method="searchUser" clearable
-                  :loading="userListLoadingStatus" placeholder="话题" :options="options"
+                  :loading="userListLoadingStatus" placeholder="搜索用户..." :options="options"
                   :reserve-keyword="false" no-data-text="没有匹配的用户">
       <template #label="{ label, value }">
         <span>{{ label }}</span>

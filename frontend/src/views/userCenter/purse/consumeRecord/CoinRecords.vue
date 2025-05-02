@@ -1,7 +1,7 @@
 <script setup>
 import {Coin, View} from "@element-plus/icons-vue";
 import {ref} from "vue";
-import {getCoinRecordById, getCoinRecordList} from "@/request/coin.js";
+import {getCoinRecordById, getCoinRecordList} from "@/request/normal/coin.js";
 
 const tableData = ref([]);
 const currentPageNumber = ref(1), currentPageSize = ref(20), pages = ref(0);

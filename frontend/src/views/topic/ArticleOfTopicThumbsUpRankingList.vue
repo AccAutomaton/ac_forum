@@ -2,7 +2,7 @@
 import {Histogram} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import router from "@/router/index.js";
-import {queryArticleListOfTopic} from "@/request/article.js";
+import {queryArticleListOfTopic} from "@/request/normal/article.js";
 
 const getCardClass = (index) => {
   switch (index) {

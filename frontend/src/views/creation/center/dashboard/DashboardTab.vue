@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {getDashboardData} from "@/request/artist.js";
+import {getDashboardData} from "@/request/normal/artist.js";
 import {ChatLineSquare, Coin, Document, User} from "@element-plus/icons-vue";
 import TopicsTop10Card from "@/views/creation/center/dashboard/TopicsTop10Card.vue";
 import ArticlesTop10Card from "@/views/creation/center/dashboard/ArticlesTop10Card.vue";

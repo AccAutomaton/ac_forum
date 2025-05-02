@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
-import {getOwnTopicList} from "@/request/topic.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
+import {getOwnTopicList} from "@/request/normal/topic.js";
 import {View} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 

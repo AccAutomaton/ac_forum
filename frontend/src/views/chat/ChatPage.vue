@@ -1,14 +1,14 @@
 <script setup>
 import {Plus} from "@element-plus/icons-vue";
 import {nextTick, onBeforeUnmount, ref} from "vue";
-import {getChatById, getChatList, readChatById} from "@/request/chat.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getChatById, getChatList, readChatById} from "@/request/normal/chat.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import store from "@/store/index.js";
 import moment from "moment"
 import ChatMessageArea from "@/views/chat/ChatMessageArea.vue";
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
-import {GetAuthorizationCode} from "@/request/index.js";
+import {GetAuthorizationCode} from "@/request/normal/index.js";
 import {ElNotification} from "element-plus";
 import CreateChatDialog from "@/views/chat/CreateChatDialog.vue";
 

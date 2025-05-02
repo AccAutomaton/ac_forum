@@ -1,10 +1,10 @@
 <script setup>
 import {ref} from "vue";
 import {MdEditor} from 'md-editor-v3';
-import {SyncGetObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
+import {SyncGetObjectUrlOfPublicResources, uploadObject} from "@/request/normal/cos.js";
 import {ElMessage, ElNotification} from "element-plus";
-import {queryTopicIdAndTitleList} from "@/request/topic.js";
-import {createArticle, getArticleImageUploadAuthorization} from "@/request/article.js";
+import {queryTopicIdAndTitleList} from "@/request/normal/topic.js";
+import {createArticle, getArticleImageUploadAuthorization} from "@/request/normal/article.js";
 import router from "@/router/index.js";
 import {useStorage} from "@vueuse/core";
 

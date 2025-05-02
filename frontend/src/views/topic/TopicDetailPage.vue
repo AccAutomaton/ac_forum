@@ -7,8 +7,8 @@ import {
   getTopicById,
   updateTopic,
   updateTopicAvatarById
-} from "@/request/topic.js";
-import {getObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
+} from "@/request/normal/topic.js";
+import {getObjectUrlOfPublicResources, uploadObject} from "@/request/normal/cos.js";
 import moment from "moment";
 import {ref} from 'vue'
 import {Setting} from "@element-plus/icons-vue";

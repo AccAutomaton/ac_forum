@@ -1,5 +1,5 @@
 <script setup>
-import {getPoint, getPointRecordById, getPointRecordList} from "@/request/point.js";
+import {getPoint, getPointRecordById, getPointRecordList} from "@/request/normal/point.js";
 import {ref} from "vue";
 import {View} from "@element-plus/icons-vue";
 

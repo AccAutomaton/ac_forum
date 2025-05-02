@@ -1,7 +1,7 @@
 <script setup>
 import {nextTick, ref} from "vue";
 import {ElNotification} from "element-plus";
-import {buyVip} from "@/request/vip.js";
+import {buyVip} from "@/request/normal/vip.js";
 import router from "@/router/index.js";
 
 const payDialogVisible = ref(false), currentPrice = ref(0), currentMode = ref(0), currentTargetVipIndex = ref(0);

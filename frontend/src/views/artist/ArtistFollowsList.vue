@@ -1,10 +1,10 @@
 <script setup>
 import {computed, ref} from "vue";
 import {useRoute} from "vue-router";
-import {getArtistFollowsListByUid} from "@/request/artist.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getArtistFollowsListByUid} from "@/request/normal/artist.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import {Warning} from "@element-plus/icons-vue";
-import {unfollow} from "@/request/follow.js";
+import {unfollow} from "@/request/normal/follow.js";
 import router from "@/router/index.js";
 import store from "@/store/index.js";
 

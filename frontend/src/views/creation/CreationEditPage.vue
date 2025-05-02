@@ -1,14 +1,14 @@
 <script setup>
 import {ref} from "vue";
 import {MdEditor} from 'md-editor-v3';
-import {SyncGetObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
+import {SyncGetObjectUrlOfPublicResources, uploadObject} from "@/request/normal/cos.js";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
-import {queryTopicIdAndTitleList} from "@/request/topic.js";
+import {queryTopicIdAndTitleList} from "@/request/normal/topic.js";
 import {
   getArticleById,
   getArticleImageUploadAuthorization,
   updateArticleById
-} from "@/request/article.js";
+} from "@/request/normal/article.js";
 import router from "@/router/index.js";
 import {useStorage} from "@vueuse/core";
 import {useRoute} from "vue-router";

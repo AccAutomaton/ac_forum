@@ -4,7 +4,7 @@ const notFoundRoutes = [
         name: "404",
         component: () => import("@/views/NotFoundPage.vue"),
         meta: {
-            requestAuth: false,
+            require_authentication: false,
         }
     },
     {

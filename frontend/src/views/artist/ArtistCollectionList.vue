@@ -1,10 +1,10 @@
 <script setup>
 
-import {getArtistCollectionListByUid} from "@/request/artist.js";
+import {getArtistCollectionListByUid} from "@/request/normal/artist.js";
 import {useRoute} from "vue-router";
 import {computed, ref} from "vue";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
-import {unCollectArticle} from "@/request/article.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
+import {unCollectArticle} from "@/request/normal/article.js";
 import router from "@/router/index.js";
 import removeMd from "remove-markdown";
 import {Warning} from "@element-plus/icons-vue";

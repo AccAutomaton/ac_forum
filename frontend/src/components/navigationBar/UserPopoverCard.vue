@@ -1,6 +1,6 @@
 <script setup>
 import store from "@/store/index.js";
-import {ArrowRight, Coin, EditPen, User} from "@element-plus/icons-vue";
+import {ArrowRight, Coin, EditPen, Odometer, User} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import VipTag from "@/components/navigationBar/VipTag.vue";
 import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
@@ -112,6 +112,22 @@ const logout = () => {
       </el-col>
     </el-row>
     <el-divider style="margin: 5px 0"/>
+    <el-row v-if="store.getters.getUserType.index < 3" class="line-button" align="middle" justify="center"
+            @click="router.push('/console')"
+            style="height: 40px; border-radius: 5px; margin-top: 5px">
+      <el-col :span="6" style="text-align: center; font-size: 16px; height: 16px">
+        <el-icon>
+          <Odometer/>
+        </el-icon>
+      </el-col>
+      <el-col :span="12" style="font-size: 14px">控制台</el-col>
+      <el-col :span="6" style="text-align: center; font-size: 16px; height: 16px">
+        <el-icon>
+          <ArrowRight/>
+        </el-icon>
+      </el-col>
+    </el-row>
+    <el-divider v-if="store.getters.getUserType.index < 3" style="margin: 5px 0"/>
     <el-row class="line-button" align="middle" justify="center" @click="logout"
             style="height: 40px; border-radius: 5px; margin-top: 5px; color: darkred">
       <el-col :span="6" style="text-align: center; font-size: 16px; height: 16px">

@@ -1,4 +1,4 @@
-import request from "@/request/index.js";
+import request from "@/request/normal/index.js";
 
 export const follow = (targetUid) => request({
     url: '/follow',

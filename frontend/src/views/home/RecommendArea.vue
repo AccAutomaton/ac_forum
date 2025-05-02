@@ -1,8 +1,8 @@
 <script setup>
 import {ref} from "vue";
-import {queryArticleList} from "@/request/article.js";
+import {queryArticleList} from "@/request/normal/article.js";
 import router from "@/router/index.js";
-import {queryTopicList} from "@/request/topic.js";
+import {queryTopicList} from "@/request/normal/topic.js";
 
 const articlesRankingList = ref([]);
 const refreshArticlesRankingList = async () => {

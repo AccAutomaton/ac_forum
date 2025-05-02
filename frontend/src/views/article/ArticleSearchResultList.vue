@@ -1,7 +1,7 @@
 <script setup>
-import {queryArticleList} from "@/request/article.js";
+import {queryArticleList} from "@/request/normal/article.js";
 import {ref, watch} from "vue";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 import moment from "moment";
 import router from "@/router/index.js";
 import removeMd from "remove-markdown";

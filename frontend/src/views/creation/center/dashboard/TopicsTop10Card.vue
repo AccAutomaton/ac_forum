@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {getOwnTopicsVisitsTopX} from "@/request/topic.js";
+import {getOwnTopicsVisitsTopX} from "@/request/normal/topic.js";
 import router from "@/router/index.js";
 
 const chartOption = ref({});

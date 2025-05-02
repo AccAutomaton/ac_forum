@@ -5,8 +5,8 @@ import {Coin} from "@element-plus/icons-vue";
 import VipTag from "@/components/navigationBar/VipTag.vue";
 import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
 import {ref} from "vue";
-import {getNavigationBarUserInformation} from "@/request/user.js";
-import {getObjectUrlOfPublicResources} from "@/request/cos.js";
+import {getNavigationBarUserInformation} from "@/request/normal/user.js";
+import {getObjectUrlOfPublicResources} from "@/request/normal/cos.js";
 
 const userInformation = ref({
       coins: Number,

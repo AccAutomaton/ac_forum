@@ -1,6 +1,6 @@
 <script setup>
 import {nextTick, ref} from "vue";
-import {cancelRechargeById, continueRechargeById, getRechargeById, getRechargeList} from "@/request/recharge.js";
+import {cancelRechargeById, continueRechargeById, getRechargeById, getRechargeList} from "@/request/normal/recharge.js";
 import {Close, Money, View} from "@element-plus/icons-vue";
 import {ElMessageBox, ElNotification} from "element-plus";
 

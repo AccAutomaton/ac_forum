@@ -1,7 +1,7 @@
 <script setup>
 import {ChatDotRound, Check, Lock, Message, User} from "@element-plus/icons-vue";
 import {ref} from "vue";
-import {getEmailVerifyCodeForRegister, getGraphicCaptchaImage, register} from "@/request/login.js";
+import {getEmailVerifyCodeForRegister, getGraphicCaptchaImage, register} from "@/request/normal/login.js";
 import {ElMessageBox, ElNotification} from "element-plus";
 import router from "@/router/index.js";
 
