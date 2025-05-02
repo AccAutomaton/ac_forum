@@ -14,6 +14,10 @@ const consoleRoutes = [
             {
                 path: '/console/sql',
                 component: () => import('@/views/console/SqlConsole.vue')
+            },
+            {
+                path: '/console/user',
+                component: () => import('@/views/console/UserConsole.vue')
             }
         ],
         meta: {

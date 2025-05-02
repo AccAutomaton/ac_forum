@@ -53,17 +53,22 @@ const onClickSendMessageButton = async () => {
     const data = await sendPerpetualNormalMessage(targetUid.value, content.value, targetUrl.value);
     if (data !== null) {
       ElNotification({type: "success", title: "发送成功"});
+      if (clearContentAfterSending.value) {
+        targetUid.value = undefined;
+        content.value = "";
+        targetUrl.value = "";
+      }
     }
   } else if (messageType.value === 1) {
     const data = await sendTemporaryNormalMessage(targetUid.value, content.value, targetUrl.value);
     if (data !== null) {
       ElNotification({type: "success", title: "发送成功"});
+      if (clearContentAfterSending.value) {
+        targetUid.value = undefined;
+        content.value = "";
+        targetUrl.value = "";
+      }
     }
-  }
-  if (clearContentAfterSending.value) {
-    targetUid.value = undefined;
-    content.value = "";
-    targetUrl.value = "";
   }
 }
 </script>
@@ -113,7 +118,8 @@ const onClickSendMessageButton = async () => {
     <el-input v-model="targetUrl" placeholder="站内路径"/>
   </el-row>
   <el-row>
-    <el-button type="primary" style="margin-top: 20px; width: 100px" plain @click="onClickSendMessageButton">发送</el-button>
+    <el-button type="primary" style="margin-top: 20px; width: 100px" plain @click="onClickSendMessageButton">发送
+    </el-button>
   </el-row>
   <el-row style="margin-top: 10px">
     <el-text>发送后清空内容</el-text>

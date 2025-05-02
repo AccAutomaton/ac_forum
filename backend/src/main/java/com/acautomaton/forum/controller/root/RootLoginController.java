@@ -6,11 +6,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/root")
 public class RootLoginController {
@@ -33,7 +35,7 @@ public class RootLoginController {
         String email;
     }
     @PutMapping("/register")
-    public Response register(@RequestBody RootRegisterDTO dto) {
+    public Response register(@RequestBody @Validated RootRegisterDTO dto) {
         loginService.rootRegister(dto);
         return Response.success();
     }
