@@ -4,41 +4,31 @@ export const getNavigationBarUserInformation = () =>
     request({
         url: '/user/navigationBarInformation',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getAvatarGetAuthorization = () =>
     request({
         url: '/user/avatar',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getAvatarUpdateAuthorization = () =>
     request({
         url: '/user/avatar/authorization/update',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const setAvatarCustomization = () =>
     request({
         url: '/user/avatar/customization',
         method: 'PATCH',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getUserDetails = () =>
     request({
         url: '/user/details',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const setNickname = (newNickname) =>
     request({
@@ -47,9 +37,7 @@ export const setNickname = (newNickname) =>
         data: {
             newNickname: newNickname
         },
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getEmailVerifyCodeForSettingEmail = (newEmail, captchaUUID, captchaCode) =>
     request({
@@ -60,9 +48,7 @@ export const getEmailVerifyCodeForSettingEmail = (newEmail, captchaUUID, captcha
             captchaUUID: captchaUUID,
             captchaCode: captchaCode,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const setEmail = (newEmail, verifyCode) =>
     request({
@@ -72,9 +58,7 @@ export const setEmail = (newEmail, verifyCode) =>
             newEmail: newEmail,
             verifyCode: verifyCode,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const setPassword = (oldPassword, newPassword) =>
     request({
@@ -84,9 +68,7 @@ export const setPassword = (oldPassword, newPassword) =>
             oldPassword: oldPassword,
             newPassword: newPassword,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getUidAndNicknameList = (uid, nicknameKeyword) =>
     request({
@@ -96,6 +78,4 @@ export const getUidAndNicknameList = (uid, nicknameKeyword) =>
             uid: uid,
             nicknameKeyword: nicknameKeyword,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

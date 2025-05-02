@@ -6,9 +6,7 @@ export const follow = (targetUid) => request({
     params: {
         targetUid: targetUid,
     }
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const unfollow = (targetUid) => request({
     url: '/follow',
@@ -16,21 +14,15 @@ export const unfollow = (targetUid) => request({
     params: {
         targetUid: targetUid,
     }
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const hadFollowed = (targetUid) => request({
     url: `/follow/${targetUid}`,
     method: 'GET',
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const getFansIncreamentNearly7Days = () =>
     request({
         url: '/follow/increament',
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

@@ -3,9 +3,7 @@ import request from "@/request/normal/index.js";
 export const getCoins = () => request({
     url: '/coin',
     method: 'GET',
-}).then((response) => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const buyCoins = (coins) =>
     request({
@@ -14,9 +12,7 @@ export const buyCoins = (coins) =>
         params: {
             coins: coins,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const afterPaying = (tradeId) =>
     request({
@@ -25,17 +21,13 @@ export const afterPaying = (tradeId) =>
         params: {
             tradeId: tradeId,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const refreshPayingStatus = () =>
     request({
         url: '/coin/refresh',
         method: 'POST',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getCoinRecordList = (pageNumber, pageSize) =>
     request({
@@ -45,14 +37,10 @@ export const getCoinRecordList = (pageNumber, pageSize) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getCoinRecordById = (coinRecordId) =>
     request({
         url: '/coin/record/' + coinRecordId,
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

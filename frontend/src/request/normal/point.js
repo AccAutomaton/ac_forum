@@ -3,9 +3,7 @@ import request from "@/request/normal/index.js";
 export const getPoint = () => request({
     url: '/point',
     method: 'GET',
-}).then((response) => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const getPointRecordList = (pageNumber, pageSize) => request({
     url: '/point/list',
@@ -14,13 +12,9 @@ export const getPointRecordList = (pageNumber, pageSize) => request({
         pageNumber: pageNumber,
         pageSize: pageSize,
     }
-}).then((response) => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const getPointRecordById = (pointRecordId) => request({
     url: '/point/' + pointRecordId,
     method: 'GET',
-}).then((response) => {
-    return response["data"];
-})
+}).then(response => response["data"])

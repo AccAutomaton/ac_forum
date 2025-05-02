@@ -10,9 +10,7 @@ export const queryTopicList = (pageNumber, pageSize, queryType, keyword) =>
             queryType: queryType,
             keyword: keyword,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const createTopic = (title, description) =>
     request({
@@ -22,17 +20,13 @@ export const createTopic = (title, description) =>
             title: title,
             description: description,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getTopicById = (id) =>
     request({
         url: '/topic/' + id,
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const deleteTopic = (id) =>
     request({
@@ -41,9 +35,7 @@ export const deleteTopic = (id) =>
         params: {
             topicId: id,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const updateTopic = (id, title, description) =>
     request({
@@ -53,9 +45,7 @@ export const updateTopic = (id, title, description) =>
             title: title,
             description: description,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const queryTopicIdAndTitleList = (keyword) =>
     request({
@@ -64,17 +54,13 @@ export const queryTopicIdAndTitleList = (keyword) =>
         params: {
             keyword: keyword,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getTopicAvatarUploadAuthorization = () =>
     request({
         url: '/topic/avatar/authorization/upload',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const updateTopicAvatarById = (id, avatarFileName) =>
     request({
@@ -83,9 +69,7 @@ export const updateTopicAvatarById = (id, avatarFileName) =>
         params: {
             avatarFileName: avatarFileName,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getOwnTopicsVisitsTopX = (x) =>
     request({
@@ -94,9 +78,7 @@ export const getOwnTopicsVisitsTopX = (x) =>
         params: {
             topX: x
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getOwnTopicList = (pageNumber, pageSize, queryType = 2) =>
     request({
@@ -107,6 +89,4 @@ export const getOwnTopicList = (pageNumber, pageSize, queryType = 2) =>
             pageSize: pageSize,
             queryType: queryType,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

@@ -11,9 +11,7 @@ export const queryArticleListOfTopic = (topicId, pageNumber, pageSize, queryType
             queryType: queryType,
             keyword: keyword,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const queryArticleList = (pageNumber, pageSize, queryType, keyword = "") =>
     request({
@@ -25,17 +23,13 @@ export const queryArticleList = (pageNumber, pageSize, queryType, keyword = "") 
             queryType: queryType,
             keyword: keyword,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArticleImageUploadAuthorization = () =>
     request({
         url: '/article/image/authorization/upload',
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const createArticle = (topic, title, content) =>
     request({
@@ -46,17 +40,13 @@ export const createArticle = (topic, title, content) =>
             title: title,
             content: content,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArticleById = (id) =>
     request({
         url: '/article/' + id,
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const updateArticleById = (articleId, topic, title, content) =>
     request({
@@ -67,41 +57,31 @@ export const updateArticleById = (articleId, topic, title, content) =>
             title: title,
             content: content,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const thumbsUpArticle = (id) =>
     request({
         url: '/article/' + id + '/thumbsUp',
         method: 'PUT',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const unThumbsUpArticle = (id) =>
     request({
         url: '/article/' + id + '/thumbsUp',
         method: 'DELETE',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const collectArticle = (id) =>
     request({
         url: '/article/' + id + '/collect',
         method: 'PUT',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const unCollectArticle = (id) =>
     request({
         url: '/article/' + id + '/collect',
         method: 'DELETE',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const tippingArticle = (id, volume) =>
     request({
@@ -110,17 +90,13 @@ export const tippingArticle = (id, volume) =>
         params: {
             volume: volume,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const forwardArticle = (id) =>
     request({
         url: '/article/' + id + '/forward',
         method: 'PATCH',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getCommentListByArticleId = (id, latest = false, pageNumber, pageSize) =>
     request({
@@ -131,9 +107,7 @@ export const getCommentListByArticleId = (id, latest = false, pageNumber, pageSi
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const createCommentByArticleId = (articleId, content, targetCommentId = null) =>
     request({
@@ -143,9 +117,7 @@ export const createCommentByArticleId = (articleId, content, targetCommentId = n
             content: content,
             targetCommentId: targetCommentId,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getOwnArticlesVisitsTopX = (x) =>
     request({
@@ -154,9 +126,7 @@ export const getOwnArticlesVisitsTopX = (x) =>
         params: {
             topX: x,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getOwnArticleList = (pageNumber, pageSize, queryType = 2) =>
     request({
@@ -167,14 +137,10 @@ export const getOwnArticleList = (pageNumber, pageSize, queryType = 2) =>
             pageSize: pageSize,
             queryType: queryType,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const deleteArticleById = (id) =>
     request({
         url: '/article/' + id,
         method: 'DELETE',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

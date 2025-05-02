@@ -7,9 +7,7 @@ export const createChat = (targetUid) =>
         params: {
             receiver: targetUid,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getChatList = (pageNumber, pageSize) =>
     request({
@@ -19,25 +17,19 @@ export const getChatList = (pageNumber, pageSize) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getChatById = (id) =>
     request({
         url: `/chat/${id}`,
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const readChatById = (id) =>
     request({
         url: `/chat/${id}/read`,
         method: 'PATCH',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getChatMessageByChatId = (chatId, pageSize, before = null) =>
     request({
@@ -47,9 +39,7 @@ export const getChatMessageByChatId = (chatId, pageSize, before = null) =>
             pageSize: pageSize,
             before: before,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const sendChatMessage = (chatId, message) =>
     request({
@@ -58,25 +48,19 @@ export const sendChatMessage = (chatId, message) =>
         data: {
             content: message,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getImageUploadAuthorizationByChatId = (chatId) =>
     request({
         url: `/chat/${chatId}/image/authorization/upload`,
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getImageDownloadAuthorizationByChatId = (chatId) =>
     request({
         url: `/chat/${chatId}/image/authorization/download`,
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const sendChatImageMessage = (chatId, imageFileName) =>
     request({
@@ -85,6 +69,4 @@ export const sendChatImageMessage = (chatId, imageFileName) =>
         params: {
             imageFileName: imageFileName,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

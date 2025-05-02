@@ -11,9 +11,7 @@ export const sendTemporaryNormalMessage = (uid, content, targetUrl = "", title =
             content: content,
             targetUrl: targetUrl,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const sendPerpetualNormalMessage = (uid, content, targetUrl = "", title = "系统通知") =>
     request({
@@ -26,6 +24,4 @@ export const sendPerpetualNormalMessage = (uid, content, targetUrl = "", title =
             content: content,
             targetUrl: targetUrl,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

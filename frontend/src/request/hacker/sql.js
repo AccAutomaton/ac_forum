@@ -5,15 +5,11 @@ export const doSelectSql = (sql) =>
         url: '/hacker/sql/select',
         method: 'POST',
         data: sql
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const doUpdateSql = (sql) =>
     request({
         url: '/hacker/sql/update',
         method: 'POST',
         data: sql
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

@@ -7,16 +7,12 @@ export const getRechargeList = (pageNumber, pageSize) => request({
         pageNumber: pageNumber,
         pageSize: pageSize
     }
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const getRechargeById = (rechargeId) => request({
     url: '/recharge/' + rechargeId,
     method: 'GET',
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const continueRechargeById = (rechargeId) => request({
     url: '/recharge/continue',
@@ -24,9 +20,7 @@ export const continueRechargeById = (rechargeId) => request({
     params: {
         rechargeId: rechargeId,
     }
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])
 
 export const cancelRechargeById = (rechargeId) => request({
     url: '/recharge/cancel',
@@ -34,6 +28,4 @@ export const cancelRechargeById = (rechargeId) => request({
     params: {
         rechargeId: rechargeId,
     }
-}).then(response => {
-    return response["data"];
-})
+}).then(response => response["data"])

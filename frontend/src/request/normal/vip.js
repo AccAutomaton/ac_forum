@@ -4,9 +4,7 @@ export const getVip = () =>
     request({
         url: '/vip',
         method: 'GET',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getVipPrice = (targetVipIndex) =>
     request({
@@ -15,9 +13,7 @@ export const getVipPrice = (targetVipIndex) =>
         params: {
             targetVipIndex: targetVipIndex,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const buyVip = (targetVipIndex, mode) =>
     request({
@@ -27,9 +23,7 @@ export const buyVip = (targetVipIndex, mode) =>
             targetVipIndex: targetVipIndex,
             mode: mode,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const afterPaying = (tradeId) =>
     request({
@@ -38,14 +32,10 @@ export const afterPaying = (tradeId) =>
         params: {
             tradeId: tradeId,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const refreshPayingStatus = () => 
     request({
         url: '/vip/pay/refresh',
         method: 'POST',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

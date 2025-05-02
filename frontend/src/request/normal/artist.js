@@ -4,9 +4,7 @@ export const getArtistStatisticDataByUid = (uid) =>
     request({
         url: `/artist/${uid}/statistic`,
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArtistArticleListByUid = (uid, pageNumber, pageSize, queryType) =>
     request({
@@ -17,9 +15,7 @@ export const getArtistArticleListByUid = (uid, pageNumber, pageSize, queryType) 
             pageSize: pageSize,
             queryType: queryType,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArtistTopicListByUid = (uid, pageNumber, pageSize, queryType) =>
     request({
@@ -30,9 +26,7 @@ export const getArtistTopicListByUid = (uid, pageNumber, pageSize, queryType) =>
             pageSize: pageSize,
             queryType: queryType,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArtistThumbsUpListByUid = (uid, pageNumber, pageSize) =>
     request({
@@ -42,9 +36,7 @@ export const getArtistThumbsUpListByUid = (uid, pageNumber, pageSize) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArtistCollectionListByUid = (uid, pageNumber, pageSize) =>
     request({
@@ -54,9 +46,7 @@ export const getArtistCollectionListByUid = (uid, pageNumber, pageSize) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArtistFollowsListByUid = (uid, pageNumber, pageSize) =>
     request({
@@ -66,9 +56,7 @@ export const getArtistFollowsListByUid = (uid, pageNumber, pageSize) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getArtistFansListByUid = (uid, pageNumber, pageSize) =>
     request({
@@ -78,22 +66,16 @@ export const getArtistFansListByUid = (uid, pageNumber, pageSize) =>
             pageNumber: pageNumber,
             pageSize: pageSize,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getDashboardData = () =>
     request({
         url: `/artist/dashboard`,
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getTippingIncreamentNearly7Days = () =>
     request({
         url: `/artist/tipping/increament`,
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

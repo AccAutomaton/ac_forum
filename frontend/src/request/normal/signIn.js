@@ -10,14 +10,10 @@ export const getSignInInfo = (year = date.getFullYear(), month = date.getMonth()
             year: year,
             month: month,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const signIn = () =>
     request({
         url: '/signIn',
         method: 'PUT',
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

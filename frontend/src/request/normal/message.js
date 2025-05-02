@@ -4,9 +4,7 @@ export const getNotSeenMessageCount = () =>
     request({
         url: '/message/count/notSeen',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getMessageList = (pageNumber, pageSize, seen) =>
     request({
@@ -17,9 +15,7 @@ export const getMessageList = (pageNumber, pageSize, seen) =>
             pageSize: pageSize,
             seen: seen,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const doReadMessage = (messageId) =>
     request({
@@ -28,6 +24,4 @@ export const doReadMessage = (messageId) =>
         params: {
             messageId: messageId,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

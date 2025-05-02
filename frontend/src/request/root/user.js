@@ -9,6 +9,4 @@ export const rootRegisterUser = (username, password, email) =>
             password: password,
             email: email,
         }
-    }).then(response => {
-        return response["data"];
-    })
+    }).then(response => response["data"])

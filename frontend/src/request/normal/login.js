@@ -4,9 +4,7 @@ export const getGraphicCaptchaImage = () =>
     request({
         url: '/captcha',
         method: 'GET',
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getEmailVerifyCodeForRegister = (email, captchaUUID, captchaCode) =>
     request({
@@ -17,9 +15,7 @@ export const getEmailVerifyCodeForRegister = (email, captchaUUID, captchaCode) =
             captchaUUID: captchaUUID,
             captchaCode: captchaCode,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 
 export const register = (username, password, email, verifycode) =>
@@ -32,9 +28,7 @@ export const register = (username, password, email, verifycode) =>
             email: email,
             verifyCode: verifycode,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const login = (username, password) =>
     request({
@@ -44,9 +38,7 @@ export const login = (username, password) =>
             username: username,
             password: password,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const getEmailVerifyCodeForFindingBackPassword = (username, email, captchaUUID, captchaCode) =>
     request({
@@ -58,9 +50,7 @@ export const getEmailVerifyCodeForFindingBackPassword = (username, email, captch
             captchaUUID: captchaUUID,
             captchaCode: captchaCode,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
 
 export const findBackPassword = (username, verifyCode, newPassword) =>
     request({
@@ -71,6 +61,4 @@ export const findBackPassword = (username, verifyCode, newPassword) =>
             verifyCode: verifyCode,
             newPassword: newPassword,
         }
-    }).then((response) => {
-        return response["data"];
-    })
+    }).then(response => response["data"])
