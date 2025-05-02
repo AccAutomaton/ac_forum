@@ -1,5 +1,6 @@
 package com.acautomaton.forum.controller.hacker;
 
+import cn.hutool.json.JSONUtil;
 import com.acautomaton.forum.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,13 +17,20 @@ public class HackerController {
     }
 
     @PostMapping("/sql/update")
-    public Response doSql(@RequestBody String sql) {
-        jdbcTemplate.execute(sql);
-        return Response.success(jdbcTemplate.update(sql));
+    public Response doUpdateSql(@RequestBody String sql) {
+        try {
+            return Response.success(JSONUtil.toJsonStr(jdbcTemplate.update(sql.replaceAll("^\"|\"$", ""))));
+        } catch (Exception e) {
+            return Response.success(e.getMessage());
+        }
     }
 
-    @PostMapping("/sql/query")
+    @PostMapping("/sql/select")
     public Response doSelectSql(@RequestBody String sql) {
-        return Response.success(jdbcTemplate.queryForList(sql));
+        try {
+            return Response.success(JSONUtil.toJsonStr(jdbcTemplate.queryForList(sql.replaceAll("^\"|\"$", ""))));
+        } catch (Exception e) {
+            return Response.success(e.getMessage());
+        }
     }
 }
