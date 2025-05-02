@@ -1,8 +1,9 @@
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {queryTopicList} from "@/request/topic.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
+import {useRoute} from "vue-router";
 
 const getCardCss = (index) => {
   const css = {
@@ -18,9 +19,32 @@ const getCardCss = (index) => {
   return css;
 }
 
+const route = useRoute();
+
 const topicList = ref([]);
-const currentPageNumber = ref(1), currentPageSize = ref(15), currentQueryType = ref(0), currentKeyWord = ref("");
+const currentPageNumber = ref(route.query.pageNumber ? parseInt(route.query.pageNumber) : 1), currentPageSize = ref(route.query.pageSize ? parseInt(route.query.pageSize) : 15),
+    currentQueryType = ref(route.query.searchType ? parseInt(route.query.searchType) : 0), currentKeyWord = ref(route.query.keywords ? route.query.keywords : "");
 const pages = ref(0);
+
+const refreshRoute = () => {
+  router.push({
+    query: {
+      keywords: currentKeyWord.value,
+      searchType: currentQueryType.value,
+      pageNumber: currentPageNumber.value,
+      pageSize: currentPageSize.value
+    }
+  })
+}
+
+watch(currentPageNumber, () => {
+  refreshRoute();
+})
+
+watch(currentPageSize, () => {
+  refreshRoute();
+})
+
 const refreshTopicList = async () => {
   const data = await queryTopicList(currentPageNumber.value - 1, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
   if (data !== null) {

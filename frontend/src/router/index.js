@@ -25,7 +25,7 @@ const indexRoutes = [
     },
     {
         path: '/home',
-        component: () => import('@/views/HomePage.vue'),
+        component: () => import('@/views/home/HomePage.vue'),
         meta: {
             require_authentication: true,
         }

@@ -4,9 +4,8 @@ import {ArrowRight, Coin, EditPen, User} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import VipTag from "@/components/navigationBar/VipTag.vue";
 import LevelProgress from "@/components/navigationBar/LevelProgress.vue";
-import user from "@/store/user.js";
 
-const {userInfomation} = defineProps({
+const {userInfomation: userInformation} = defineProps({
   userInfomation: {
     coins: Number,
     points: Number,
@@ -41,31 +40,31 @@ const logout = () => {
       <el-text style="font-weight: bolder; color: black">{{ store.getters.getNickname }}</el-text>
     </el-row>
     <el-row align="middle" justify="center" style="margin-top: 5px; cursor: pointer" @click="router.push('/vip')">
-      <VipTag :vip-type="userInfomation.vip.vipType"/>
+      <VipTag :vip-type="userInformation.vip.vipType"/>
     </el-row>
     <el-row align="middle" justify="center" style="margin-top: 5px; cursor: pointer"
             @click="router.push('/userCenter/purse/balance')">
       <el-icon style="margin-right: 5px">
         <Coin/>
       </el-icon>
-      <el-text>{{ userInfomation.coins }}</el-text>
+      <el-text>{{ userInformation.coins }}</el-text>
     </el-row>
     <el-row align="middle" justify="center" style="text-align: center; margin-top: 5px; cursor: pointer"
             @click="router.push('/userCenter/account/level')">
-      <LevelProgress :current-points="userInfomation.points"/>
+      <LevelProgress :current-points="userInformation.points"/>
     </el-row>
     <el-row align="middle" justify="center" style="margin-top: 10px; text-align: center">
       <el-col :span="8" class="line-button" style="border-radius: 5px"
               @click="router.push({path: `/artist/${store.getters.getUid}/livingRoom`, query: {tab: 'follows'}})">
-        <el-statistic style="margin-bottom: 5px" title="关注" :value="userInfomation.follows"/>
+        <el-statistic style="margin-bottom: 5px" title="关注" :value="userInformation.follows"/>
       </el-col>
-      <el-col :span="8" class="line-button"
+      <el-col :span="8" class="line-button" style="border-radius: 5px"
               @click="router.push({path: `/artist/${store.getters.getUid}/livingRoom`, query: {tab: 'collections'}})">
-        <el-statistic style="margin-bottom: 5px" title="收藏" :value="userInfomation.collections"/>
+        <el-statistic style="margin-bottom: 5px" title="收藏" :value="userInformation.collections"/>
       </el-col>
-      <el-col :span="8" class="line-button"
+      <el-col :span="8" class="line-button" style="border-radius: 5px"
               @click="router.push({path: `/artist/${store.getters.getUid}/livingRoom`, query: {tab: 'articles'}})">
-        <el-statistic style="margin-bottom: 5px" title="文章" :value="userInfomation.articles"/>
+        <el-statistic style="margin-bottom: 5px" title="文章" :value="userInformation.articles"/>
       </el-col>
     </el-row>
     <el-divider style="margin: 10px 0 5px 0"/>

@@ -1,32 +1,43 @@
 <script setup>
 import {Search} from "@element-plus/icons-vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {queryArticleListOfTopic} from "@/request/article.js";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import router from "@/router/index.js";
 import removeMd from "remove-markdown";
-
-const selectOptions = [
-  {value: 0, label: "最佳匹配"},
-  {value: 1, label: "时间升序"},
-  {value: 2, label: "时间降序"},
-  {value: 3, label: "浏览量升序"},
-  {value: 4, label: "浏览量降序"},
-  {value: 5, label: "点赞量升序"},
-  {value: 6, label: "点赞量降序"},
-  {value: 7, label: "投币量升序"},
-  {value: 8, label: "投币量降序"},
-  {value: 9, label: "转发量升序"},
-  {value: 10, label: "转发量降序"},
-]
+import {articleQueryOptions} from "@/utils/options.js";
+import {useRoute} from "vue-router";
 
 const {topicId} = defineProps({
   topicId: String,
 })
 
-const currentPageNumber = ref(1), currentPageSize = ref(5), currentQueryType = ref(0), currentKeyWord = ref("");
+const route = useRoute();
+
+const currentPageNumber = ref(route.query.pageNumber ? parseInt(route.query.pageNumber) : 1), currentPageSize = ref(route.query.pageSize ? parseInt(route.query.pageSize) : 5),
+    currentQueryType = ref(route.query.searchType ? parseInt(route.query.searchType) : 0), currentKeyWord = ref(route.query.keywords ? route.query.keywords : "");
 const pages = ref(0);
 const articleList = ref([]);
+
+const refreshRoute = () => {
+  router.push({
+    query: {
+      keywords: currentKeyWord.value,
+      searchType: currentQueryType.value,
+      pageNumber: currentPageNumber.value,
+      pageSize: currentPageSize.value
+    }
+  })
+}
+
+watch(currentPageNumber, () => {
+  refreshRoute();
+})
+
+watch(currentPageSize, () => {
+  refreshRoute();
+})
+
 
 const search = async () => {
   const data = await queryArticleListOfTopic(topicId, currentPageNumber.value - 1, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
@@ -48,6 +59,7 @@ const search = async () => {
       }
     }
   }
+  refreshRoute();
 }
 search();
 
@@ -83,7 +95,7 @@ const clickOwner = (ownerId) => {
         <template #append>
           <el-select v-model="currentQueryType" placeholder="请选择排序方式" style="margin-right: 20px; height: 40px"
                      size="large" @change="search">
-            <el-option v-for="option in selectOptions" :key="option.value" :label="option.label"
+            <el-option v-for="option in articleQueryOptions" :key="option.value" :label="option.label"
                        :value="option.value"/>
           </el-select>
           <el-button style="padding: 0 25px;" @click="search">

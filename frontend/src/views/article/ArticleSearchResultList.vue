@@ -1,14 +1,36 @@
 <script setup>
 import {queryArticleList} from "@/request/article.js";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {getObjectUrlOfPublicResources} from "@/request/cos.js";
 import moment from "moment";
 import router from "@/router/index.js";
 import removeMd from "remove-markdown";
+import {useRoute} from "vue-router";
 
-const currentQueryType = ref(0), currentKeyWord = ref("");
-const currentPageNumber = ref(1), currentPageSize = ref(5), pages = ref(0);
+const route = useRoute();
+
+const currentQueryType = ref(route.query.searchType ? parseInt(route.query.searchType) : 0), currentKeyWord = ref(route.query.keywords ? route.query.keywords : "");
+const currentPageNumber = ref(route.query.pageNumber ? parseInt(route.query.pageNumber) : 1), currentPageSize = ref(route.query.pageSize ? parseInt(route.query.pageSize) : 5), pages = ref(0);
 const articleList = ref([]);
+
+const refreshRoute = () => {
+  router.push({
+    query: {
+      keywords: currentKeyWord.value,
+      searchType: currentQueryType.value,
+      pageNumber: currentPageNumber.value,
+      pageSize: currentPageSize.value
+    }
+  })
+}
+
+watch(currentPageNumber, () => {
+  refreshRoute();
+})
+
+watch(currentPageSize, () => {
+  refreshRoute();
+})
 
 const refreshArticleList = async () => {
   const data = await queryArticleList(currentPageNumber.value - 1, currentPageSize.value, currentQueryType.value, currentKeyWord.value);
@@ -43,6 +65,7 @@ const search = (queryType, keyword) => {
   currentKeyWord.value = keyword;
   currentPageNumber.value = 1;
   refreshArticleList();
+  refreshRoute();
 }
 
 defineExpose({

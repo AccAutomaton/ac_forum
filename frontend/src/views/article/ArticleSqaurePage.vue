@@ -5,9 +5,12 @@ import ArticleVisitsRankingList from "@/views/article/ArticleVisitsRankingList.v
 import ArticleSearchResultList from "@/views/article/ArticleSearchResultList.vue";
 import router from "@/router/index.js";
 import {articleQueryOptions} from "@/utils/options.js";
+import {useRoute} from "vue-router";
 
-const searchInput = ref("");
-const selectSearchType = ref(0);
+const route = useRoute();
+
+const searchInput = ref(route.query.keywords ? route.query.keywords : "");
+const selectSearchType = ref(route.query.searchType ? parseInt(route.query.searchType) : 0);
 
 const onClickCreateArticleButton = () => {
   router.push("/creation/create")
@@ -16,6 +19,7 @@ const onClickCreateArticleButton = () => {
 const articleSearchResultList = ref();
 const search = () => {
   articleSearchResultList.value.search(selectSearchType.value, searchInput.value);
+  router.push({query: {keywords: searchInput.value, searchType: selectSearchType.value}});
 }
 </script>
 

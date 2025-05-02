@@ -7,15 +7,19 @@ import {createTopic} from "@/request/topic.js";
 import {ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {topicQueryOptions} from "@/utils/options.js";
+import {useRoute} from "vue-router";
 
-const searchInput = ref("");
-const selectSearchType = ref(0);
+const route = useRoute();
+
+const searchInput = ref(route.query.keywords ? route.query.keywords : "");
+const selectSearchType = ref(route.query.searchType ? parseInt(route.query.searchType) : 0);
 const createTopicDialogVisible = ref(false);
 const newTopicTitle = ref(""), newTopicDescription = ref("");
 
 const searchResultList = ref();
 const search = () => {
   searchResultList.value.search(searchInput.value, selectSearchType.value);
+  router.push({query: {keywords: searchInput.value, searchType: selectSearchType.value}});
 }
 
 const onClickCreateTopicButton = () => {

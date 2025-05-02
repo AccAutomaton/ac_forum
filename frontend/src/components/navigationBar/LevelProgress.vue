@@ -82,13 +82,13 @@ const currentLevelIndex = computed(() => {
 </script>
 
 <template>
-  <el-col :span="3" :style="'font-weight: bold; color: ' + levels[currentLevelIndex].enableColor">
+  <el-col :span="3" :style="'font-size: 12px; font-weight: bold; color: ' + levels[currentLevelIndex].enableColor">
     {{ levels[currentLevelIndex].value }}
   </el-col>
   <el-col :span="18">
     <el-progress
         :text-inside="true"
-        :stroke-width="15"
+        :stroke-width="20"
         :percentage="currentPoints * 100 / levels[currentLevelIndex].maxPoint"
         :color="levels[currentLevelIndex].enableColor"
     >
@@ -96,7 +96,7 @@ const currentLevelIndex = computed(() => {
     </el-progress>
   </el-col>
   <el-col :span="3"
-          :style="'font-weight: bold; color: ' + levels[currentLevelIndex === levels.length - 1 ? currentLevelIndex : currentLevelIndex + 1].disableFontColor">
+          :style="'font-size: 12px; font-weight: bold; color: ' + levels[currentLevelIndex === levels.length - 1 ? currentLevelIndex : currentLevelIndex + 1].disableFontColor">
     {{ levels[currentLevelIndex === levels.length - 1 ? currentLevelIndex : currentLevelIndex + 1].value }}
   </el-col>
 </template>

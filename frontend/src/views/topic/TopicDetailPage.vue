@@ -10,7 +10,6 @@ import {
 } from "@/request/topic.js";
 import {getObjectUrlOfPublicResources, uploadObject} from "@/request/cos.js";
 import moment from "moment";
-import ArtistInformationPopoverContent from "@/components/user/ArtistInformationPopoverContent.vue";
 import {ref} from 'vue'
 import {Setting} from "@element-plus/icons-vue";
 import store from "@/store/index.js";
@@ -24,7 +23,6 @@ const topicId = useRoute().params.topicId;
 const title = ref(""), description = ref("");
 const administratorId = ref(0), administratorNickname = ref(""), administratorAvatar = ref("");
 const articles = ref(0), visits = ref(0), createTime = ref(""), avatar = ref("");
-const administratorStatisticRef = ref(), administratorInformationPopoverRef = ref();
 const manageTopicDialogVisible = ref(false), newTopicTitle = ref(""), newTopicDescription = ref("");
 
 const getTopicInfomation = async () => {
@@ -174,7 +172,7 @@ const onClickUpdateTopicAvatarButton = () => {
             </el-statistic>
           </el-col>
           <el-col :span="2" style="text-align: center">
-            <el-statistic class="administrator-statistic" :value="''" ref="administratorStatisticRef"
+            <el-statistic class="administrator-statistic" :value="''" @click="router.push(`/artist/${administratorId}/livingRoom`)"
                           style="background-color: rgba(128,128,128,0.1); border-radius: 15px">
               <template #title>
                 <div style="display: inline-flex; align-items: center">
@@ -188,11 +186,6 @@ const onClickUpdateTopicAvatarButton = () => {
                 </el-text>
               </template>
             </el-statistic>
-            <el-popover ref="administratorInformationPopoverRef" :virtual-ref="administratorStatisticRef"
-                        trigger="click" virtual-triggering width="300" :offset="24" :persistent="false">
-              <ArtistInformationPopoverContent :uid="administratorId" :nickname="administratorNickname"
-                                               :avatar="administratorAvatar"/>
-            </el-popover>
           </el-col>
         </el-row>
       </el-card>

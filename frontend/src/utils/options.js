@@ -1,3 +1,8 @@
+export const homeSearchOptions = [
+    {value: 0, label: '文章搜索'},
+    {value: 1, label: '话题搜索'},
+]
+
 export const articleQueryOptions = [
     {value: 0, label: "默认"},
     {value: 1, label: "时间升序"},

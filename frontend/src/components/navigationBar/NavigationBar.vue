@@ -18,8 +18,8 @@ import store from "@/store/index.js";
       >
         <el-menu-item style="pointer-events: none">
           <el-container>
-            <img src="@/assets/favicon.png" alt="" style="height: 3.5rem"/>
-            <div style="font-size: x-large; font-weight: bolder; margin-left: 5px">AC论坛</div>
+            <img src="@/assets/favicon.png" alt="" style="height: 3.25rem"/>
+            <div style="font-size: x-large; font-weight: bolder; margin-left: 6px; font-family: 方正小标宋简体, '小米兰亭', 微软雅黑, system-ui">论坛</div>
           </el-container>
         </el-menu-item>
         <el-menu-item index="/home">
