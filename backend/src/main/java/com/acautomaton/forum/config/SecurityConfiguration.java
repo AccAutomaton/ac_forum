@@ -55,8 +55,8 @@ public class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/login", "/register", "/getCaptcha", "/getEmailVerifyCode/register",
-                                "/getEmailVerifyCode/findBackPassword", "/findBackPassword").permitAll()
+                        .requestMatchers("/login", "/register", "/captcha", "/emailVerifyCode/register",
+                                "/emailVerifyCode/findBackPassword", "/findBackPassword").permitAll()
                         .requestMatchers("/hacker/**").hasRole("HACKER")
                         .requestMatchers("/root/**").hasAnyRole("HACKER", "ROOT")
                         .requestMatchers("/administrator/**").hasAnyRole("HACKER", "ROOT", "ADMINISTRATOR")

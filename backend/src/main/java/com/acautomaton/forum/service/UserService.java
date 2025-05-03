@@ -14,6 +14,7 @@ import com.acautomaton.forum.service.util.EmailService;
 import com.acautomaton.forum.vo.cos.CosAuthorizationVO;
 import com.acautomaton.forum.vo.user.GetDetailsVO;
 import com.acautomaton.forum.vo.user.GetNavigationBarInformationVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -196,5 +197,10 @@ public class UserService {
                 .selectAs(User::getUid, GetDetailsVO::getUid)
                 .selectAs(User::getNickname, GetDetailsVO::getNickname);
         return userMapper.selectJoinList(GetDetailsVO.class, queryWrapper);
+    }
+
+    public Long getTotalUserCount() {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        return userMapper.selectCount(queryWrapper);
     }
 }

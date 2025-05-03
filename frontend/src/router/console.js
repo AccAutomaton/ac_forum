@@ -18,6 +18,10 @@ const consoleRoutes = [
             {
                 path: '/console/user',
                 component: () => import('@/views/console/UserConsole.vue')
+            },
+            {
+                path: '/console/online',
+                component: () => import('@/views/console/OnlineConsole.vue')
             }
         ],
         meta: {

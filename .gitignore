@@ -30,7 +30,7 @@
 /backend/.vscode/
 /backend/src/main/resources/application.yml
 /backend/src/main/resources/application-dev.yml
-/backend/src/main/resources/application-pre.yml
+/backend/src/main/resources/application-pro.yml
 
 ### --- frontend --- ###
 

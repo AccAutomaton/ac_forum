@@ -192,11 +192,11 @@
             </activation>
         </profile>
         <profile>
-            <id>pre</id>
+            <id>pro</id>
             <properties>
-                <profilesActive>pre</profilesActive>
-                <modifier>-pre</modifier>
-                <jarType>pre</jarType>
+                <profilesActive>pro</profilesActive>
+                <modifier>-pro</modifier>
+                <jarType>pro</jarType>
             </properties>
         </profile>
     </profiles>
@@ -224,7 +224,7 @@
                 <configuration>
                     <profiles>
                         <profile>dev</profile>
-                        <profile>pre</profile>
+                        <profile>pro</profile>
                     </profiles>
                     <excludes>
                         <exclude>
