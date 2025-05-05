@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class AddCommentDTO {
-    @Null
     @Min(value = 10000001, message = "目标评论不存在")
     Integer targetCommentId;
     @NotBlank(message = "评论不能为空")

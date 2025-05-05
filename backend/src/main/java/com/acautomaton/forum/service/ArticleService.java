@@ -633,8 +633,8 @@ public class ArticleService {
         String regex = "!\\[.*?]\\((.*?)\\)";
         Pattern pattern = Pattern.compile(regex);
         for (int i = 0; i < esArticles.getContent().size(); i++) {
-            int length = esArticles.getContent().get(i).getContent().length();
             esArticles.getContent().get(i).setContent(pattern.matcher(esArticles.getContent().get(i).getContent()).replaceAll("[图片]"));
+            int length = esArticles.getContent().get(i).getContent().length();
             if (length > 200) {
                 esArticles.getContent().get(i).setContent(esArticles.getContent().get(i).getContent().substring(0, 200));
             }
