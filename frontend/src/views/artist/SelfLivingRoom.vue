@@ -83,7 +83,7 @@ const handleSelect = (value) => {
         </el-col>
         <el-col :span="11">
           <el-button plain icon="editPen" size="large" style="float: right; margin-right: 40px; border-radius: 10px"
-                     @click="router.push('/creation/center')">
+                     @click="router.push('/creation/dashboard')">
             创作中心
           </el-button>
         </el-col>
