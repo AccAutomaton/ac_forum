@@ -1,0 +1,62 @@
+server:
+  port: 9000
+
+logging:
+  config: classpath:log4j2-dev.yml
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ac_forum?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+  data:
+    redis:
+      database: 1
+      host: localhost
+      port: 6379
+      password: 123456
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 20
+      jedis:
+        pool:
+          max-idle: 10
+          min-idle: 5
+          max-wait: 5000ms
+      repositories:
+        enabled: false
+  elasticsearch:
+    uris: http://localhost:9002
+    username: elastic
+    password: 123456
+  mail:
+    host: smtp.qcloudmail.com
+    username: ${ac_forum_tencent_cloud_email_username}
+    password: ${ac_forum_tencent_cloud_email_password}
+    port: 465
+    default-encoding: UTF-8
+    protocol: smtps
+
+project:
+  jwt:
+    secretkey: ${jwt_secretkey}
+    timeoutDays: 7
+  cors:
+    allow-origin: http://localhost:9001
+  tencent:
+    cos:
+      secretId: ${ac_forum_tencent_cos_secretId}
+      secretKey: ${ac_forum_tencent_cos_secretKey}
+      bucketName: ${ac_forum_tencent_cos_bucketName}
+      bucketResourcePrepend: ${ac_forum_tencent_cos_bucketResourcePrepend}
+      region: ${ac_forum_tencent_cos_region}
+      objectUrlPrepend: ${ac_forum_tencent_cos_objectUrlPrepend}
+  alibaba:
+    alipay:
+      appPrivateKey: ${ac_forum_alipay_appPrivateKey}
+      alipayPublicKey: ${ac_forum_alipay_alipayPublicKey}
+      serverUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+      appId: ${ac_forum_alipay_appId}

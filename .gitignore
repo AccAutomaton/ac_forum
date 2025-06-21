@@ -28,8 +28,7 @@
 !/backend/**/src/main/**/build/
 !/backend/**/src/test/**/build/
 /backend/.vscode/
-/backend/src/main/resources/application.yml
-/backend/src/main/resources/application-dev.yml
+/backend/ac_forum_log/
 /backend/src/main/resources/application-pro.yml
 
 ### --- frontend --- ###
@@ -54,5 +53,4 @@
 /frontend/*.njsproj
 /frontend/*.sln
 /frontend/*.sw?
-/frontend/.env.development
 /frontend/.env.production

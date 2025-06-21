@@ -1,0 +1,25 @@
+spring:
+  threads:
+    virtual:
+      enabled: true
+  profiles:
+    active: @profilesActive@
+
+mybatis-plus:
+  mapper-locations: classpath:com/acautomaton/forum/mapper/*.xml, classpath:com/acautomaton/forum/mapper/**/*.xml
+  configuration:
+    auto-mapping-unknown-column-behavior: warning
+  global-config:
+    banner: false
+    db-config:
+      logic-delete-field: deleteFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+mybatis-plus-join:
+  banner: false
+
+pagehelper:
+  reasonable: true
+  auto-dialect: true
+  support-methods-arguments: true
